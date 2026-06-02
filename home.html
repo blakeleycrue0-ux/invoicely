@@ -46,6 +46,7 @@ nav {
   min-height: 100vh; display: flex; flex-direction: column;
   align-items: center; justify-content: center; text-align: center;
   padding: 120px 24px 80px; position: relative; overflow: hidden;
+  background: var(--navy);
 }
 .hero::before {
   content: ''; position: absolute; inset: 0;
@@ -352,7 +353,6 @@ footer { padding: 56px 48px 36px; border-top: 1px solid var(--border-soft); disp
     <a href="#features">Features</a>
     <a href="#templates">Templates</a>
     <a href="#tool">Try It</a>
-    <a href="#pricing">Pricing</a>
     <a href="#tool" class="nav-cta">Create Invoice</a>
   </div>
 </nav>
@@ -520,6 +520,11 @@ footer { padding: 56px 48px 36px; border-top: 1px solid var(--border-soft); disp
 
         <div class="form-section">
           <div class="form-section-title">Your Business</div>
+          <div class="form-group">
+            <label>Logo</label>
+            <input type="file" id="logoUpload" accept="image/*" onchange="handleLogo(this)" style="padding:6px 13px;cursor:pointer">
+            <div id="logoPreviewThumb" style="display:none;margin-top:8px"><img id="logoThumb" style="max-height:48px;max-width:120px;border-radius:2px" src=""/><button onclick="removeLogo()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.75rem;margin-left:8px;font-family:'Outfit',sans-serif">Remove</button></div>
+          </div>
           <div class="form-row">
             <div class="form-group">
               <label>Business Name</label>
@@ -627,45 +632,6 @@ footer { padding: 56px 48px 36px; border-top: 1px solid var(--border-soft); disp
   </div>
 </section>
 
-<!-- PRICING -->
-<section class="pricing" id="pricing">
-  <div class="pricing-inner">
-    <div class="section-label">Pricing</div>
-    <h2 class="section-title">Try it free.<br>Own it forever.</h2>
-    <div class="pricing-grid">
-      <div class="pricing-card">
-        <div class="pricing-plan">Free Trial</div>
-        <div class="pricing-price"><sup>$</sup>0</div>
-        <div class="pricing-period">2 free downloads, no credit card</div>
-        <ul class="pricing-features">
-          <li class="active">2 free PDF downloads</li>
-          <li class="active">All three templates</li>
-          <li class="active">Invoices &amp; quotes</li>
-          <li class="active">Auto-calculations</li>
-          <li class="active">Custom logo &amp; branding</li>
-          <li class="active">All features included</li>
-        </ul>
-        <a href="#tool" class="btn-primary" style="width:100%;border:none;cursor:pointer;display:block;text-align:center;text-decoration:none;box-sizing:border-box">Try It Free</a>
-      </div>
-      <div class="pricing-card featured">
-        <div class="pricing-badge">Best Value</div>
-        <div class="pricing-plan">Lifetime</div>
-        <div class="pricing-price"><sup>$</sup>2<span style="font-size:1.6rem">.99</span></div>
-        <div class="pricing-period">one-time payment — yours forever</div>
-        <ul class="pricing-features">
-          <li class="active">Unlimited downloads</li>
-          <li class="active">All three templates</li>
-          <li class="active">Invoices &amp; quotes</li>
-          <li class="active">Custom logo &amp; branding</li>
-          <li class="active">All future updates</li>
-          <li class="active">No subscription, ever</li>
-        </ul>
-        <button class="btn-primary" style="width:100%;border:none;cursor:pointer" onclick="openModal()">Unlock Forever — $2.99</button>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- TESTIMONIALS -->
 <section class="testimonials">
   <div class="testimonials-inner">
@@ -724,6 +690,28 @@ footer { padding: 56px 48px 36px; border-top: 1px solid var(--border-soft); disp
 </div>
 
 <script>
+let logoDataUrl = null;
+
+function handleLogo(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    logoDataUrl = e.target.result;
+    document.getElementById('logoThumb').src = logoDataUrl;
+    document.getElementById('logoPreviewThumb').style.display = 'block';
+    updatePreview();
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeLogo() {
+  logoDataUrl = null;
+  document.getElementById('logoUpload').value = '';
+  document.getElementById('logoPreviewThumb').style.display = 'none';
+  updatePreview();
+}
+
 let currentTemplate = 'classic';
 let currentDocType = 'invoice';
 
@@ -739,6 +727,22 @@ function isUnlocked() { return localStorage.getItem('invoicely_unlocked') === 't
 function getFreeCount() { return parseInt(localStorage.getItem('invoicely_free') || '0'); }
 function incrementFree() { localStorage.setItem('invoicely_free', getFreeCount() + 1); }
 function canDownloadFree() { return getFreeCount() < 2; }
+
+function updateFreeCounter() {
+  const el = document.getElementById('freeCounter');
+  const numEl = document.getElementById('freeCountNum');
+  if (!el) return;
+  if (isUnlocked()) {
+    el.style.display = 'none';
+  } else {
+    const left = Math.max(0, 2 - getFreeCount());
+    if (numEl) numEl.textContent = left;
+    if (left === 0) {
+      el.style.color = '#e05c5c';
+      el.innerHTML = 'No free downloads left — <strong style="color:var(--gold);cursor:pointer" onclick="openModal()">Unlock for $2.99</strong>';
+    }
+  }
+}
 
 function handleDownload() {
   if (isUnlocked()) {
@@ -865,8 +869,8 @@ function getFormData() {
     validUntil: fmtDate(document.getElementById('validUntil').value),
     quoteIntro: document.getElementById('quoteIntro') ? document.getElementById('quoteIntro').value : '',
     taxRate, items, subtotal, tax, total: subtotal + tax,
-    notes: document.getElementById('notes').value
-  };
+    notes: document.getElementById('notes').value,
+    logo: logoDataUrl
 }
 
 function buildLineRows(d, tpl) {
@@ -889,9 +893,10 @@ function renderClassic(d) {
     ? `<div style="margin-top:28px;padding:16px;border:1px solid #ddd;display:flex;justify-content:space-between;align-items:flex-end"><div><div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#aaa;margin-bottom:28px">Client Signature</div><div style="width:160px;border-bottom:1px solid #aaa"></div></div><div style="text-align:right"><div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#aaa;margin-bottom:28px">Date Accepted</div><div style="width:100px;border-bottom:1px solid #aaa"></div></div></div>` : '';
   const validityHtml = d.isQuote
     ? `<div style="margin-top:12px;font-family:'DM Mono',monospace;font-size:0.62rem;color:#c9a84c;letter-spacing:0.12em;text-transform:uppercase">Quote valid until ${d.validUntil}</div>` : '';
+  const logoHtml = d.logo ? `<img src="${d.logo}" style="max-height:52px;max-width:140px;object-fit:contain;margin-bottom:6px;display:block">` : '';
   return `<div class="tpl-classic">
     <div class="inv-header">
-      <div><div class="inv-biz-name">${d.biz}</div><div class="inv-biz-sub">${[d.contact,d.email].filter(Boolean).join(' · ')||'&nbsp;'}</div></div>
+      <div>${logoHtml}<div class="inv-biz-name">${d.biz}</div><div class="inv-biz-sub">${[d.contact,d.email].filter(Boolean).join(' · ')||'&nbsp;'}</div></div>
       <div class="inv-number-block"><span class="inv-number-label">${docLabel}</span><div class="inv-number">${d.invNum}</div>${statusHtml}</div>
     </div>
     ${introHtml}
@@ -924,9 +929,10 @@ function renderModern(d) {
   const sigHtml = d.isQuote
     ? `<div style="margin-top:24px;padding:16px;border:1px solid #1e293b;display:flex;justify-content:space-between;align-items:flex-end"><div><div style="font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#475569;margin-bottom:28px">Client Signature</div><div style="width:160px;border-bottom:1px solid #334155"></div></div><div style="text-align:right"><div style="font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#475569;margin-bottom:28px">Date Accepted</div><div style="width:100px;border-bottom:1px solid #334155"></div></div></div>` : '';
   const validityHtml = d.isQuote ? `<div style="margin-top:12px;font-size:0.62rem;color:#c9a84c;letter-spacing:0.12em;text-transform:uppercase">Quote valid until ${d.validUntil}</div>` : '';
+  const logoHtmlM = d.logo ? `<img src="${d.logo}" style="max-height:40px;max-width:120px;object-fit:contain;margin-bottom:6px;display:block;filter:brightness(10)">` : '';
   return `<div class="tpl-modern">
     <div class="inv-header">
-      <div><div class="inv-biz-name">${d.biz}</div><div class="inv-biz-sub">${[d.contact,d.email].filter(Boolean).join(' · ')||'&nbsp;'}</div></div>
+      <div>${logoHtmlM}<div class="inv-biz-name">${d.biz}</div><div class="inv-biz-sub">${[d.contact,d.email].filter(Boolean).join(' · ')||'&nbsp;'}</div></div>
       <div class="inv-number-block"><span class="inv-number-label">${docLabel}</span><div class="inv-number">${d.invNum}</div>${statusHtml}</div>
     </div>
     <div class="inv-body">
@@ -961,9 +967,10 @@ function renderMinimal(d) {
   const sigHtml = d.isQuote
     ? `<div style="margin-top:32px;padding-top:20px;border-top:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:flex-end"><div><div style="font-size:0.58rem;letter-spacing:0.16em;text-transform:uppercase;color:#bbb;margin-bottom:28px">Client Signature</div><div style="width:160px;border-bottom:1px solid #ddd"></div></div><div style="text-align:right"><div style="font-size:0.58rem;letter-spacing:0.16em;text-transform:uppercase;color:#bbb;margin-bottom:28px">Date Accepted</div><div style="width:100px;border-bottom:1px solid #ddd"></div></div></div>` : '';
   const validityHtml = d.isQuote ? `<div style="margin-top:12px;font-size:0.62rem;color:#999;letter-spacing:0.14em;text-transform:uppercase">Quote valid until ${d.validUntil}</div>` : '';
+  const logoHtmlMin = d.logo ? `<img src="${d.logo}" style="max-height:44px;max-width:130px;object-fit:contain;margin-bottom:6px;display:block">` : '';
   return `<div class="tpl-minimal">
     <div class="inv-header">
-      <div><div class="inv-biz-name">${d.biz}</div><div class="inv-biz-sub">${[d.contact,d.email].filter(Boolean).join(' · ')||'&nbsp;'}</div></div>
+      <div>${logoHtmlMin}<div class="inv-biz-name">${d.biz}</div><div class="inv-biz-sub">${[d.contact,d.email].filter(Boolean).join(' · ')||'&nbsp;'}</div></div>
       <div class="inv-number-block"><span class="inv-number-label">${docLabel}</span><div class="inv-number">${d.invNum}</div>${statusHtml}</div>
     </div>
     <div class="inv-divider"></div>
@@ -1061,21 +1068,8 @@ function downloadPDF() {
   });
 }
 
-// Init
+
 updatePreview();
-// Update free counter display
-function updateFreeCounter() {
-  if (isUnlocked()) {
-    document.getElementById('freeCounter').style.display = 'none';
-  } else {
-    const left = Math.max(0, 2 - getFreeCount());
-    document.getElementById('freeCountNum').textContent = left;
-    if (left === 0) {
-      document.getElementById('freeCounter').style.color = '#e05c5c';
-      document.getElementById('freeCounter').innerHTML = 'No free downloads left — <strong style="color:var(--gold);cursor:pointer" onclick="openModal()">Unlock for $2.99</strong>';
-    }
-  }
-}
 updateFreeCounter();
 </script>
 </body>
