@@ -289,6 +289,31 @@ footer { padding: 56px 48px 36px; border-top: 1px solid var(--border-soft); disp
 /* ANIMATIONS */
 @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 
+/* DOC TYPE TABS */
+.doc-tabs { display: flex; gap: 0; margin-bottom: 0; border-bottom: 1px solid var(--border); }
+.doc-tab { padding: 10px 28px; background: transparent; border: none; color: var(--text-muted); font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.doc-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+.doc-tab:hover:not(.active) { color: var(--cream); }
+
+/* PAYMENT MODAL */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.25s; backdrop-filter: blur(4px); }
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal { background: var(--navy-2); border: 1px solid var(--border); width: 100%; max-width: 420px; padding: 48px 44px; position: relative; transform: translateY(16px); transition: transform 0.25s; }
+.modal-overlay.open .modal { transform: translateY(0); }
+.modal-close { position: absolute; top: 16px; right: 20px; background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; transition: color 0.2s; line-height: 1; }
+.modal-close:hover { color: var(--cream); }
+.modal-eyebrow { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+.modal h2 { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 300; color: var(--cream); margin-bottom: 8px; line-height: 1.1; }
+.modal-price { font-family: 'Cormorant Garamond', serif; font-size: 3.2rem; font-weight: 300; color: var(--cream); line-height: 1; margin: 20px 0 4px; }
+.modal-price sup { font-size: 1.4rem; vertical-align: super; }
+.modal-once { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 24px; }
+.modal-perks { list-style: none; margin-bottom: 28px; }
+.modal-perks li { font-size: 0.84rem; color: var(--text-muted); padding: 7px 0; border-bottom: 1px solid var(--border-soft); display: flex; gap: 10px; align-items: center; }
+.modal-perks li::before { content: '—'; color: var(--gold); font-size: 0.7rem; }
+.modal-pay-btn { width: 100%; background: var(--gold); color: var(--navy); border: none; padding: 15px; font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; border-radius: 3px; transition: background 0.2s; }
+.modal-pay-btn:hover { background: var(--gold-light); }
+.modal-note { font-size: 0.72rem; color: var(--text-muted); text-align: center; margin-top: 12px; }
+
 @media (max-width: 900px) {
   nav { padding: 16px 20px; }
   .nav-links { display: none; }
@@ -464,7 +489,11 @@ footer { padding: 56px 48px 36px; border-top: 1px solid var(--border-soft); disp
   <div class="tool-inner">
     <div class="tool-header">
       <div class="section-label">Live Builder</div>
-      <h2 class="section-title" style="font-size:2.4rem;margin-bottom:0">Build your invoice now</h2>
+      <h2 class="section-title" style="font-size:2.4rem;margin-bottom:24px">Build your document now</h2>
+      <div class="doc-tabs">
+        <button class="doc-tab active" id="tab-invoice" onclick="setDocType('invoice')">Invoice</button>
+        <button class="doc-tab" id="tab-quote" onclick="setDocType('quote')">Quote</button>
+      </div>
     </div>
     <div class="invoice-builder">
       <!-- FORM -->
@@ -514,10 +543,10 @@ footer { padding: 56px 48px 36px; border-top: 1px solid var(--border-soft); disp
         </div>
 
         <div class="form-section">
-          <div class="form-section-title">Invoice Details</div>
+          <div class="form-section-title" id="docDetailsTitle">Invoice Details</div>
           <div class="form-row">
             <div class="form-group">
-              <label>Invoice #</label>
+              <label id="docNumLabel">Invoice #</label>
               <input type="text" id="invNumber" oninput="updatePreview()">
             </div>
             <div class="form-group">
@@ -526,14 +555,27 @@ footer { padding: 56px 48px 36px; border-top: 1px solid var(--border-soft); disp
             </div>
           </div>
           <div class="form-row">
-            <div class="form-group">
+            <div class="form-group" id="dueDateGroup">
               <label>Due Date</label>
               <input type="date" id="dueDate" oninput="updatePreview()">
+            </div>
+            <div class="form-group" id="validUntilGroup" style="display:none">
+              <label>Valid Until</label>
+              <input type="date" id="validUntil" oninput="updatePreview()">
             </div>
             <div class="form-group">
               <label>Tax Rate (%)</label>
               <input type="number" id="taxRate" placeholder="0" min="0" max="100" step="0.1" oninput="updatePreview()">
             </div>
+          </div>
+        </div>
+
+        <!-- Quote intro - hidden by default -->
+        <div class="form-section" id="quoteIntroSection" style="display:none">
+          <div class="form-section-title">Opening Message</div>
+          <div class="form-group">
+            <label>Message to Client</label>
+            <textarea id="quoteIntro" placeholder="Thank you for your interest. Please find our quote below." oninput="updatePreview()"></textarea>
           </div>
         </div>
 
@@ -555,16 +597,16 @@ footer { padding: 56px 48px 36px; border-top: 1px solid var(--border-soft); disp
         </div>
 
         <div class="form-section">
-          <div class="form-section-title">Notes</div>
+          <div class="form-section-title" id="notesTitle">Notes</div>
           <div class="form-group">
-            <label>Payment Terms / Notes</label>
+            <label id="notesLabel">Payment Terms / Notes</label>
             <textarea id="notes" placeholder="Payment due within 14 days. Bank transfer preferred." oninput="updatePreview()"></textarea>
           </div>
         </div>
 
         <div class="action-row">
-          <button class="generate-btn" onclick="downloadPDF()">Download PDF</button>
-          <button class="print-btn" onclick="window.print()">Print</button>
+          <button class="generate-btn" onclick="handleDownload()">Download PDF</button>
+          <button class="print-btn" onclick="handlePrint()">Print</button>
         </div>
       </div>
 
@@ -648,13 +690,85 @@ footer { padding: 56px 48px 36px; border-top: 1px solid var(--border-soft); disp
   <div class="footer-links"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Support</a></div>
 </footer>
 
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="payModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div class="modal-eyebrow">Unlock Invoicely</div>
+    <h2>One payment.<br>Yours forever.</h2>
+    <div class="modal-price"><sup>$</sup>4.99</div>
+    <div class="modal-once">One-time payment — no subscription</div>
+    <ul class="modal-perks">
+      <li>Unlimited invoice downloads</li>
+      <li>Unlimited quote downloads</li>
+      <li>All three premium templates</li>
+      <li>PDF export, forever</li>
+      <li>All future updates included</li>
+    </ul>
+    <button class="modal-pay-btn" onclick="goToStripe()">Pay $4.99 — Unlock Forever</button>
+    <p class="modal-note">Secure payment via Stripe. Receipt sent to your email.</p>
+  </div>
+</div>
+
 <script>
 let currentTemplate = 'classic';
+let currentDocType = 'invoice';
+
+// STRIPE PAYMENT LINK — replace this with your real Stripe link
+const STRIPE_LINK = 'https://buy.stripe.com/YOUR_LINK_HERE';
+
+// Check if already unlocked (paid) — set via Stripe redirect ?unlocked=true
+const params = new URLSearchParams(window.location.search);
+if (params.get('unlocked') === 'true') {
+  localStorage.setItem('invoicely_unlocked', 'true');
+}
+function isUnlocked() { return localStorage.getItem('invoicely_unlocked') === 'true'; }
+
+function handleDownload() {
+  if (isUnlocked()) { downloadPDF(); } else { openModal(); }
+}
+function handlePrint() {
+  if (isUnlocked()) { window.print(); } else { openModal(); }
+}
+function openModal() { document.getElementById('payModal').classList.add('open'); }
+function closeModal() { document.getElementById('payModal').classList.remove('open'); }
+function goToStripe() { window.location.href = STRIPE_LINK + '?success_url=' + encodeURIComponent(window.location.href + '?unlocked=true'); }
+
+// Close modal on overlay click
+document.getElementById('payModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+function setDocType(type) {
+  currentDocType = type;
+  document.getElementById('tab-invoice').classList.toggle('active', type === 'invoice');
+  document.getElementById('tab-quote').classList.toggle('active', type === 'quote');
+
+  const isQuote = type === 'quote';
+  document.getElementById('docDetailsTitle').textContent = isQuote ? 'Quote Details' : 'Invoice Details';
+  document.getElementById('docNumLabel').textContent = isQuote ? 'Quote #' : 'Invoice #';
+  document.getElementById('dueDateGroup').style.display = isQuote ? 'none' : 'block';
+  document.getElementById('validUntilGroup').style.display = isQuote ? 'block' : 'none';
+  document.getElementById('quoteIntroSection').style.display = isQuote ? 'block' : 'none';
+  document.getElementById('notesTitle').textContent = isQuote ? 'Terms' : 'Notes';
+  document.getElementById('notesLabel').textContent = isQuote ? 'Terms & Conditions' : 'Payment Terms / Notes';
+  document.getElementById('notes').placeholder = isQuote
+    ? 'This quote is valid for 30 days. All prices subject to change after expiry.'
+    : 'Payment due within 14 days. Bank transfer preferred.';
+
+  const num = document.getElementById('invNumber').value;
+  if (isQuote && num.startsWith('INV-')) document.getElementById('invNumber').value = 'QUO-' + num.slice(4);
+  if (!isQuote && num.startsWith('QUO-')) document.getElementById('invNumber').value = 'INV-' + num.slice(4);
+
+  updatePreview();
+}
 
 const today = new Date();
 const due = new Date(); due.setDate(due.getDate() + 14);
+const valid = new Date(); valid.setDate(valid.getDate() + 30);
 document.getElementById('invDate').value = today.toISOString().split('T')[0];
 document.getElementById('dueDate').value = due.toISOString().split('T')[0];
+document.getElementById('validUntil').value = valid.toISOString().split('T')[0];
 document.getElementById('invNumber').value = 'INV-' + String(Math.floor(Math.random()*9000)+1000);
 
 function fmt(n) {
@@ -704,14 +818,17 @@ function getFormData() {
   const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
   const tax = subtotal * taxRate / 100;
   return {
+    isQuote: currentDocType === 'quote',
     biz: document.getElementById('bizName').value || 'Your Business',
     contact: document.getElementById('bizContact').value,
     email: document.getElementById('bizEmail').value,
     client: document.getElementById('clientName').value || 'Client Name',
     clientEmail: document.getElementById('clientEmail').value,
-    invNum: document.getElementById('invNumber').value || 'INV-0001',
+    invNum: document.getElementById('invNumber').value || (currentDocType==='quote'?'QUO-0001':'INV-0001'),
     invDate: fmtDate(document.getElementById('invDate').value),
     dueDate: fmtDate(document.getElementById('dueDate').value),
+    validUntil: fmtDate(document.getElementById('validUntil').value),
+    quoteIntro: document.getElementById('quoteIntro') ? document.getElementById('quoteIntro').value : '',
     taxRate, items, subtotal, tax, total: subtotal + tax,
     notes: document.getElementById('notes').value
   };
@@ -723,67 +840,112 @@ function buildLineRows(d, tpl) {
 }
 
 function renderClassic(d) {
+  const docLabel = d.isQuote ? 'Quote' : 'Invoice';
+  const statusHtml = d.isQuote
+    ? `<div class="inv-status" style="background:#d4edda;color:#155724">Quote</div>`
+    : `<div class="inv-status">Unpaid</div>`;
+  const dateHtml = d.isQuote
+    ? `Issue: ${d.invDate}<br>Valid until: ${d.validUntil}`
+    : `Issue: ${d.invDate}<br>Due: ${d.dueDate}`;
+  const totalLabel = d.isQuote ? 'Estimate Total' : 'Total Due';
+  const introHtml = d.isQuote && d.quoteIntro
+    ? `<div style="margin-bottom:24px;padding:12px 16px;background:#f0ebe0;border-left:3px solid #c9a84c;font-family:'Outfit',sans-serif;font-size:0.84rem;color:#555;line-height:1.7">${d.quoteIntro}</div>` : '';
+  const sigHtml = d.isQuote
+    ? `<div style="margin-top:28px;padding:16px;border:1px solid #ddd;display:flex;justify-content:space-between;align-items:flex-end"><div><div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#aaa;margin-bottom:28px">Client Signature</div><div style="width:160px;border-bottom:1px solid #aaa"></div></div><div style="text-align:right"><div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#aaa;margin-bottom:28px">Date Accepted</div><div style="width:100px;border-bottom:1px solid #aaa"></div></div></div>` : '';
+  const validityHtml = d.isQuote
+    ? `<div style="margin-top:12px;font-family:'DM Mono',monospace;font-size:0.62rem;color:#c9a84c;letter-spacing:0.12em;text-transform:uppercase">Quote valid until ${d.validUntil}</div>` : '';
   return `<div class="tpl-classic">
     <div class="inv-header">
       <div><div class="inv-biz-name">${d.biz}</div><div class="inv-biz-sub">${[d.contact,d.email].filter(Boolean).join(' · ')||'&nbsp;'}</div></div>
-      <div class="inv-number-block"><span class="inv-number-label">Invoice</span><div class="inv-number">${d.invNum}</div><div class="inv-status">Unpaid</div></div>
+      <div class="inv-number-block"><span class="inv-number-label">${docLabel}</span><div class="inv-number">${d.invNum}</div>${statusHtml}</div>
     </div>
+    ${introHtml}
     <div class="inv-meta">
-      <div class="inv-meta-block"><h4>Billed To</h4><p>${d.client}${d.clientEmail?'<br><span style="color:#888">'+d.clientEmail+'</span>':''}</p></div>
-      <div class="inv-meta-block" style="text-align:right"><h4>Dates</h4><p style="color:#888;font-size:0.78rem">Issue: ${d.invDate}<br>Due: ${d.dueDate}</p></div>
+      <div class="inv-meta-block"><h4>${d.isQuote?'Prepared For':'Billed To'}</h4><p>${d.client}${d.clientEmail?'<br><span style="color:#888">'+d.clientEmail+'</span>':''}</p></div>
+      <div class="inv-meta-block" style="text-align:right"><h4>Dates</h4><p style="color:#888;font-size:0.78rem">${dateHtml}</p></div>
     </div>
     <table class="inv-table"><thead><tr><th>Description</th><th style="text-align:right">Qty</th><th style="text-align:right">Rate</th><th style="text-align:right">Amount</th></tr></thead><tbody>${buildLineRows(d,'classic')}</tbody></table>
     <div class="inv-totals">
       <div class="inv-total-row"><span>Subtotal</span><span>${fmt(d.subtotal)}</span></div>
       <div class="inv-total-row"><span>Tax (${d.taxRate}%)</span><span>${fmt(d.tax)}</span></div>
-      <div class="inv-total-row grand"><span>Total Due</span><span>${fmt(d.total)}</span></div>
+      <div class="inv-total-row grand"><span>${totalLabel}</span><span>${fmt(d.total)}</span></div>
     </div>
-    ${d.notes?`<div class="inv-notes"><strong>Notes</strong>${d.notes}</div>`:''}
+    ${validityHtml}
+    ${d.notes?`<div class="inv-notes"><strong>${d.isQuote?'Terms':'Notes'}</strong>${d.notes}</div>`:''}
+    ${sigHtml}
     <div class="inv-footer">Generated with Invoicely &nbsp;·&nbsp; invoicely.co</div>
   </div>`;
 }
 
 function renderModern(d) {
+  const docLabel = d.isQuote ? 'Quote' : 'Invoice';
+  const statusHtml = d.isQuote
+    ? `<div class="inv-status" style="background:rgba(74,222,128,0.1);color:#4ade80;border:1px solid rgba(74,222,128,0.2)">Quote</div>`
+    : `<div class="inv-status">Unpaid</div>`;
+  const dateHtml = d.isQuote ? `Issue: ${d.invDate}<br>Valid until: ${d.validUntil}` : `Issue: ${d.invDate}<br>Due: ${d.dueDate}`;
+  const totalLabel = d.isQuote ? 'Estimate Total' : 'Total Due';
+  const introHtml = d.isQuote && d.quoteIntro
+    ? `<div style="margin-bottom:24px;padding:14px;background:#1e293b;border-left:2px solid #c9a84c;font-size:0.82rem;color:#64748b;line-height:1.75">${d.quoteIntro}</div>` : '';
+  const sigHtml = d.isQuote
+    ? `<div style="margin-top:24px;padding:16px;border:1px solid #1e293b;display:flex;justify-content:space-between;align-items:flex-end"><div><div style="font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#475569;margin-bottom:28px">Client Signature</div><div style="width:160px;border-bottom:1px solid #334155"></div></div><div style="text-align:right"><div style="font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#475569;margin-bottom:28px">Date Accepted</div><div style="width:100px;border-bottom:1px solid #334155"></div></div></div>` : '';
+  const validityHtml = d.isQuote ? `<div style="margin-top:12px;font-size:0.62rem;color:#c9a84c;letter-spacing:0.12em;text-transform:uppercase">Quote valid until ${d.validUntil}</div>` : '';
   return `<div class="tpl-modern">
     <div class="inv-header">
       <div><div class="inv-biz-name">${d.biz}</div><div class="inv-biz-sub">${[d.contact,d.email].filter(Boolean).join(' · ')||'&nbsp;'}</div></div>
-      <div class="inv-number-block"><span class="inv-number-label">Invoice</span><div class="inv-number">${d.invNum}</div><div class="inv-status">Unpaid</div></div>
+      <div class="inv-number-block"><span class="inv-number-label">${docLabel}</span><div class="inv-number">${d.invNum}</div>${statusHtml}</div>
     </div>
     <div class="inv-body">
+      ${introHtml}
       <div class="inv-meta">
-        <div class="inv-meta-block"><h4>Billed To</h4><p>${d.client}${d.clientEmail?'<br>'+d.clientEmail:''}</p></div>
-        <div class="inv-meta-block" style="text-align:right"><h4>Dates</h4><p>Issue: ${d.invDate}<br>Due: ${d.dueDate}</p></div>
+        <div class="inv-meta-block"><h4>${d.isQuote?'Prepared For':'Billed To'}</h4><p>${d.client}${d.clientEmail?'<br>'+d.clientEmail:''}</p></div>
+        <div class="inv-meta-block" style="text-align:right"><h4>Dates</h4><p>${dateHtml}</p></div>
       </div>
       <table class="inv-table"><thead><tr><th>Description</th><th style="text-align:right">Qty</th><th style="text-align:right">Rate</th><th style="text-align:right">Amount</th></tr></thead><tbody>${buildLineRows(d,'modern')}</tbody></table>
       <div class="inv-totals">
         <div class="inv-total-row"><span>Subtotal</span><span>${fmt(d.subtotal)}</span></div>
         <div class="inv-total-row"><span>Tax (${d.taxRate}%)</span><span>${fmt(d.tax)}</span></div>
-        <div class="inv-total-row grand"><span>Total Due</span><span>${fmt(d.total)}</span></div>
+        <div class="inv-total-row grand"><span>${totalLabel}</span><span>${fmt(d.total)}</span></div>
       </div>
-      ${d.notes?`<div class="inv-notes"><strong>Notes</strong>${d.notes}</div>`:''}
+      ${validityHtml}
+      ${d.notes?`<div class="inv-notes"><strong>${d.isQuote?'Terms':'Notes'}</strong>${d.notes}</div>`:''}
+      ${sigHtml}
     </div>
     <div class="inv-footer">Generated with Invoicely &nbsp;·&nbsp; invoicely.co</div>
   </div>`;
 }
 
 function renderMinimal(d) {
+  const docLabel = d.isQuote ? 'Quote' : 'Invoice';
+  const statusHtml = d.isQuote
+    ? `<div class="inv-status" style="background:#f0faf0;color:#2d7a2d">Quote</div>`
+    : `<div class="inv-status">Unpaid</div>`;
+  const dateHtml = d.isQuote ? `Issue: ${d.invDate}<br>Valid until: ${d.validUntil}` : `Issue: ${d.invDate}<br>Due: ${d.dueDate}`;
+  const totalLabel = d.isQuote ? 'Estimate Total' : 'Total Due';
+  const introHtml = d.isQuote && d.quoteIntro
+    ? `<div style="margin-bottom:28px;padding-left:12px;border-left:2px solid #111;font-size:0.82rem;color:#666;line-height:1.75">${d.quoteIntro}</div>` : '';
+  const sigHtml = d.isQuote
+    ? `<div style="margin-top:32px;padding-top:20px;border-top:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:flex-end"><div><div style="font-size:0.58rem;letter-spacing:0.16em;text-transform:uppercase;color:#bbb;margin-bottom:28px">Client Signature</div><div style="width:160px;border-bottom:1px solid #ddd"></div></div><div style="text-align:right"><div style="font-size:0.58rem;letter-spacing:0.16em;text-transform:uppercase;color:#bbb;margin-bottom:28px">Date Accepted</div><div style="width:100px;border-bottom:1px solid #ddd"></div></div></div>` : '';
+  const validityHtml = d.isQuote ? `<div style="margin-top:12px;font-size:0.62rem;color:#999;letter-spacing:0.14em;text-transform:uppercase">Quote valid until ${d.validUntil}</div>` : '';
   return `<div class="tpl-minimal">
     <div class="inv-header">
       <div><div class="inv-biz-name">${d.biz}</div><div class="inv-biz-sub">${[d.contact,d.email].filter(Boolean).join(' · ')||'&nbsp;'}</div></div>
-      <div class="inv-number-block"><span class="inv-number-label">Invoice</span><div class="inv-number">${d.invNum}</div><div class="inv-status">Unpaid</div></div>
+      <div class="inv-number-block"><span class="inv-number-label">${docLabel}</span><div class="inv-number">${d.invNum}</div>${statusHtml}</div>
     </div>
     <div class="inv-divider"></div>
+    ${introHtml}
     <div class="inv-meta">
-      <div class="inv-meta-block"><h4>Billed To</h4><p>${d.client}${d.clientEmail?'<br>'+d.clientEmail:''}</p></div>
-      <div class="inv-meta-block" style="text-align:right"><h4>Dates</h4><p>Issue: ${d.invDate}<br>Due: ${d.dueDate}</p></div>
+      <div class="inv-meta-block"><h4>${d.isQuote?'Prepared For':'Billed To'}</h4><p>${d.client}${d.clientEmail?'<br>'+d.clientEmail:''}</p></div>
+      <div class="inv-meta-block" style="text-align:right"><h4>Dates</h4><p>${dateHtml}</p></div>
     </div>
     <table class="inv-table"><thead><tr><th>Description</th><th style="text-align:right">Qty</th><th style="text-align:right">Rate</th><th style="text-align:right">Amount</th></tr></thead><tbody>${buildLineRows(d,'minimal')}</tbody></table>
     <div class="inv-totals">
       <div class="inv-total-row"><span>Subtotal</span><span>${fmt(d.subtotal)}</span></div>
       <div class="inv-total-row"><span>Tax (${d.taxRate}%)</span><span>${fmt(d.tax)}</span></div>
-      <div class="inv-total-row grand"><span>Total Due</span><span>${fmt(d.total)}</span></div>
+      <div class="inv-total-row grand"><span>${totalLabel}</span><span>${fmt(d.total)}</span></div>
     </div>
-    ${d.notes?`<div class="inv-notes"><strong>Notes</strong>${d.notes}</div>`:''}
+    ${validityHtml}
+    ${d.notes?`<div class="inv-notes"><strong>${d.isQuote?'Terms':'Notes'}</strong>${d.notes}</div>`:''}
+    ${sigHtml}
     <div class="inv-footer">Generated with Invoicely &nbsp;·&nbsp; invoicely.co</div>
   </div>`;
 }
@@ -869,4 +1031,3 @@ updatePreview();
 </script>
 </body>
 </html>
-
