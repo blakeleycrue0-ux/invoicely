@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoicely — Beautiful Invoices for Freelancers</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=Fraunces:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy: #0d1117;
+  --navy-2: #161b24;
+  --navy-3: #1e2533;
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --cream: #f5f0e8;
+  --text: #e8e0d0;
+  --text-muted: #8a8070;
+  --border: rgba(201,168,76,0.18);
+  --border-soft: rgba(255,255,255,0.06);
+}
+
+html { scroll-behavior: smooth; }
+body { font-family: 'Outfit', sans-serif; background: var(--navy); color: var(--text); overflow-x: hidden; }
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 20px 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(13,17,23,0.9); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-soft);
+}
+.nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 600; color: var(--cream); }
+.nav-logo span { color: var(--gold); }
+.nav-links { display: flex; gap: 32px; align-items: center; }
+.nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.82rem; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s; }
+.nav-links a:hover { color: var(--cream); }
+.nav-cta { background: var(--gold); color: var(--navy) !important; padding: 9px 22px; border-radius: 3px; font-weight: 600 !important; transition: background 0.2s !important; }
+.nav-cta:hover { background: var(--gold-light) !important; }
+
+/* HERO */
+.hero {
+  min-height: 100vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center;
+  padding: 120px 24px 80px; position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 20%, rgba(201,168,76,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 28px;
+  opacity: 0; animation: fadeUp 0.6s 0.1s forwards;
+}
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3.4rem, 8vw, 7.2rem); font-weight: 300; line-height: 1.04;
+  color: var(--cream); margin-bottom: 16px;
+  opacity: 0; animation: fadeUp 0.7s 0.2s forwards;
+}
+.hero h1 em { font-style: italic; color: var(--gold); }
+.hero-sub {
+  font-size: 1rem; color: var(--text-muted); max-width: 460px;
+  line-height: 1.75; margin-bottom: 52px; font-weight: 300;
+  opacity: 0; animation: fadeUp 0.7s 0.35s forwards;
+}
+.hero-btns { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; opacity: 0; animation: fadeUp 0.7s 0.5s forwards; }
+.btn-primary { background: var(--gold); color: var(--navy); padding: 14px 36px; border-radius: 3px; text-decoration: none; font-weight: 600; font-size: 0.88rem; letter-spacing: 0.05em; transition: background 0.2s, transform 0.15s; border: none; cursor: pointer; font-family: 'Outfit', sans-serif; }
+.btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+.btn-secondary { background: transparent; color: var(--cream); padding: 14px 36px; border-radius: 3px; text-decoration: none; font-weight: 400; font-size: 0.88rem; letter-spacing: 0.05em; border: 1px solid var(--border); transition: border-color 0.2s, transform 0.15s; cursor: pointer; font-family: 'Outfit', sans-serif; }
+.btn-secondary:hover { border-color: var(--gold); transform: translateY(-1px); }
+
+/* FEATURES */
+.features { padding: 100px 48px; max-width: 1200px; margin: 0 auto; }
+.section-label { font-family: 'DM Mono', monospace; font-size: 0.67rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+.section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 300; color: var(--cream); margin-bottom: 64px; line-height: 1.18; }
+.features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+.feature-card { background: var(--navy-2); padding: 40px 36px; border: 1px solid var(--border-soft); transition: border-color 0.3s, background 0.3s; position: relative; overflow: hidden; }
+.feature-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--gold); transform: scaleX(0); transform-origin: left; transition: transform 0.3s; }
+.feature-card:hover { background: var(--navy-3); border-color: var(--border); }
+.feature-card:hover::after { transform: scaleX(1); }
+.feature-mark { width: 28px; height: 2px; background: var(--gold); margin-bottom: 24px; }
+.feature-card h3 { font-size: 0.95rem; font-weight: 600; color: var(--cream); margin-bottom: 10px; letter-spacing: 0.02em; }
+.feature-card p { font-size: 0.855rem; color: var(--text-muted); line-height: 1.72; font-weight: 300; }
+
+/* TEMPLATES SECTION */
+.templates-section { padding: 100px 48px; background: var(--navy-2); }
+.templates-inner { max-width: 1200px; margin: 0 auto; }
+.templates-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 56px; }
+.template-card {
+  cursor: pointer; border: 2px solid transparent;
+  transition: border-color 0.25s, transform 0.2s;
+  border-radius: 4px; overflow: hidden;
+}
+.template-card:hover { transform: translateY(-4px); }
+.template-card.active { border-color: var(--gold); }
+.template-thumb { height: 200px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+
+/* Template thumb previews */
+.thumb-classic { background: #f8f4ed; }
+.thumb-modern { background: #0f172a; }
+.thumb-minimal { background: #ffffff; }
+
+.thumb-label {
+  position: absolute; bottom: 12px; left: 12px;
+  font-family: 'DM Mono', monospace; font-size: 0.6rem;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 2px;
+}
+.thumb-classic .thumb-label { background: #c9a84c; color: #1a1206; }
+.thumb-modern .thumb-label { background: rgba(201,168,76,0.2); color: #c9a84c; border: 1px solid rgba(201,168,76,0.3); }
+.thumb-minimal .thumb-label { background: #1a1a1a; color: #fff; }
+
+.template-info { padding: 18px 20px; background: var(--navy); border-top: 1px solid var(--border-soft); }
+.template-name { font-size: 0.88rem; font-weight: 600; color: var(--cream); margin-bottom: 4px; }
+.template-desc { font-size: 0.78rem; color: var(--text-muted); }
+
+/* Mini preview inside thumbs */
+.mini-doc { width: 140px; transform: scale(0.85); }
+.mini-classic { font-family: 'Cormorant Garamond', serif; }
+.mini-modern { font-family: 'IBM Plex Sans', sans-serif; }
+.mini-minimal { font-family: 'Outfit', sans-serif; }
+
+/* TOOL SECTION */
+#tool { padding: 100px 24px; }
+.tool-inner { max-width: 1200px; margin: 0 auto; }
+.tool-header { text-align: center; margin-bottom: 56px; }
+
+.invoice-builder { display: grid; grid-template-columns: 420px 1fr; gap: 2px; background: var(--border-soft); border: 1px solid var(--border-soft); }
+.builder-form { background: var(--navy-2); padding: 40px; overflow-y: auto; max-height: 820px; }
+.builder-preview { background: #f5f0e8; padding: 40px; overflow-y: auto; max-height: 820px; min-height: 600px; }
+
+.form-section { margin-bottom: 30px; }
+.form-section-title { font-family: 'DM Mono', monospace; font-size: 0.63rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-group { margin-bottom: 12px; }
+.form-group label { display: block; font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.08em; margin-bottom: 5px; text-transform: uppercase; font-family: 'DM Mono', monospace; }
+.form-group input, .form-group textarea, .form-group select { width: 100%; background: var(--navy); border: 1px solid var(--border-soft); border-radius: 3px; padding: 9px 13px; color: var(--text); font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 300; transition: border-color 0.2s; outline: none; }
+.form-group input:focus, .form-group textarea:focus { border-color: var(--gold); }
+.form-group textarea { resize: vertical; min-height: 68px; }
+.form-group select option { background: var(--navy-2); }
+
+.line-items-header { display: grid; grid-template-columns: 2fr 0.7fr 0.9fr 0.9fr 24px; gap: 6px; margin-bottom: 6px; }
+.line-items-header span { font-size: 0.6rem; color: var(--text-muted); letter-spacing: 0.12em; text-transform: uppercase; font-family: 'DM Mono', monospace; }
+.line-item { display: grid; grid-template-columns: 2fr 0.7fr 0.9fr 0.9fr 24px; gap: 6px; margin-bottom: 6px; align-items: center; }
+.line-item input { width: 100%; background: var(--navy); border: 1px solid var(--border-soft); border-radius: 3px; padding: 8px 9px; color: var(--text); font-family: 'Outfit', sans-serif; font-size: 0.8rem; outline: none; transition: border-color 0.2s; }
+.line-item input:focus { border-color: var(--gold); }
+.remove-item { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.9rem; padding: 4px; transition: color 0.2s; display: flex; align-items: center; justify-content: center; line-height: 1; }
+.remove-item:hover { color: #e05c5c; }
+.add-item-btn { background: none; border: 1px dashed var(--border); color: var(--text-muted); padding: 9px; width: 100%; border-radius: 3px; cursor: pointer; font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em; transition: border-color 0.2s, color 0.2s; margin-top: 4px; text-transform: uppercase; }
+.add-item-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+.action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.generate-btn { background: var(--gold); color: var(--navy); border: none; padding: 13px; border-radius: 3px; font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.08em; cursor: pointer; transition: background 0.2s; text-transform: uppercase; }
+.generate-btn:hover { background: var(--gold-light); }
+.print-btn { background: var(--navy); color: var(--cream); border: 1px solid var(--border); padding: 13px; border-radius: 3px; font-family: 'Outfit', sans-serif; font-size: 0.85rem; cursor: pointer; transition: border-color 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; letter-spacing: 0.06em; text-transform: uppercase; }
+.print-btn:hover { border-color: var(--gold); }
+
+/* ===================== TEMPLATE PREVIEWS ===================== */
+
+/* CLASSIC template */
+.tpl-classic {
+  font-family: 'Cormorant Garamond', serif;
+  color: #2a2218; background: #f8f4ed;
+  padding: 0; min-height: 600px;
+}
+.tpl-classic .inv-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 36px; padding-bottom: 20px; border-bottom: 2px solid #2a2218; }
+.tpl-classic .inv-biz-name { font-size: 1.8rem; font-weight: 600; line-height: 1; }
+.tpl-classic .inv-biz-sub { font-size: 0.75rem; color: #888; font-family: 'Outfit', sans-serif; margin-top: 4px; }
+.tpl-classic .inv-number-block { text-align: right; }
+.tpl-classic .inv-number-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: #c9a84c; display: block; }
+.tpl-classic .inv-number { font-size: 1.5rem; font-weight: 600; color: #2a2218; }
+.tpl-classic .inv-status { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; font-family: 'DM Mono', monospace; background: #fff3cd; color: #856404; margin-top: 4px; }
+.tpl-classic .inv-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+.tpl-classic .inv-meta-block h4 { font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.18em; text-transform: uppercase; color: #bbb; margin-bottom: 6px; }
+.tpl-classic .inv-meta-block p { font-size: 0.82rem; font-family: 'Outfit', sans-serif; color: #2a2218; line-height: 1.6; }
+.tpl-classic .inv-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+.tpl-classic .inv-table th { font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase; color: #888; padding: 8px 0; border-bottom: 1px solid #ddd; text-align: left; font-weight: 400; }
+.tpl-classic .inv-table th:not(:first-child) { text-align: right; }
+.tpl-classic .inv-table td { padding: 9px 0; font-family: 'Outfit', sans-serif; font-size: 0.82rem; color: #2a2218; border-bottom: 1px solid #eee; }
+.tpl-classic .inv-table td:not(:first-child) { text-align: right; }
+.tpl-classic .inv-totals { margin-left: auto; width: 200px; }
+.tpl-classic .inv-total-row { display: flex; justify-content: space-between; padding: 5px 0; font-family: 'Outfit', sans-serif; font-size: 0.8rem; color: #666; border-bottom: 1px solid #eee; }
+.tpl-classic .inv-total-row.grand { border-top: 2px solid #2a2218; border-bottom: none; margin-top: 4px; padding-top: 8px; font-weight: 700; font-size: 0.95rem; color: #2a2218; }
+.tpl-classic .inv-notes { margin-top: 24px; padding: 12px 16px; background: #f0ebe0; font-family: 'Outfit', sans-serif; font-size: 0.77rem; color: #666; line-height: 1.6; }
+.tpl-classic .inv-notes strong { font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; color: #444; display: block; margin-bottom: 4px; }
+.tpl-classic .inv-footer { margin-top: 28px; padding-top: 16px; border-top: 1px solid #ddd; font-family: 'DM Mono', monospace; font-size: 0.6rem; color: #bbb; text-align: center; letter-spacing: 0.12em; text-transform: uppercase; }
+
+/* MODERN template */
+.tpl-modern {
+  font-family: 'IBM Plex Sans', sans-serif;
+  color: #e2e8f0; background: #0f172a;
+  min-height: 600px;
+}
+.tpl-modern .inv-header { display: grid; grid-template-columns: 1fr auto; align-items: start; margin-bottom: 40px; padding: 28px; background: #1e293b; }
+.tpl-modern .inv-biz-name { font-size: 1.1rem; font-weight: 600; letter-spacing: 0.04em; color: #f8fafc; }
+.tpl-modern .inv-biz-sub { font-size: 0.72rem; color: #64748b; margin-top: 4px; }
+.tpl-modern .inv-number-block { text-align: right; }
+.tpl-modern .inv-number-label { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: #64748b; display: block; margin-bottom: 2px; }
+.tpl-modern .inv-number { font-size: 1.1rem; font-weight: 600; color: #c9a84c; }
+.tpl-modern .inv-status { display: inline-block; padding: 2px 9px; border-radius: 2px; font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; background: rgba(201,168,76,0.12); color: #c9a84c; border: 1px solid rgba(201,168,76,0.25); margin-top: 6px; }
+.tpl-modern .inv-body { padding: 28px; }
+.tpl-modern .inv-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+.tpl-modern .inv-meta-block h4 { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: #475569; margin-bottom: 8px; font-weight: 500; }
+.tpl-modern .inv-meta-block p { font-size: 0.8rem; color: #94a3b8; line-height: 1.65; }
+.tpl-modern .inv-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+.tpl-modern .inv-table thead tr { background: #1e293b; }
+.tpl-modern .inv-table th { font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; color: #475569; padding: 10px 12px; text-align: left; font-weight: 500; }
+.tpl-modern .inv-table th:not(:first-child) { text-align: right; }
+.tpl-modern .inv-table td { padding: 10px 12px; font-size: 0.8rem; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.tpl-modern .inv-table td:not(:first-child) { text-align: right; }
+.tpl-modern .inv-totals { margin-left: auto; width: 210px; background: #1e293b; padding: 16px; }
+.tpl-modern .inv-total-row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 0.78rem; color: #64748b; }
+.tpl-modern .inv-total-row.grand { border-top: 1px solid rgba(201,168,76,0.25); margin-top: 6px; padding-top: 10px; font-weight: 600; font-size: 0.92rem; color: #c9a84c; }
+.tpl-modern .inv-notes { margin-top: 24px; padding: 14px; background: #1e293b; font-size: 0.77rem; color: #64748b; line-height: 1.65; }
+.tpl-modern .inv-notes strong { font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase; color: #475569; display: block; margin-bottom: 4px; }
+.tpl-modern .inv-footer { margin-top: 24px; padding: 14px 28px; font-size: 0.58rem; color: #334155; letter-spacing: 0.14em; text-transform: uppercase; text-align: center; border-top: 1px solid #1e293b; }
+
+/* MINIMAL template */
+.tpl-minimal {
+  font-family: 'Outfit', sans-serif;
+  color: #111; background: #ffffff;
+  min-height: 600px;
+}
+.tpl-minimal .inv-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 48px; }
+.tpl-minimal .inv-biz-name { font-size: 1rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #111; }
+.tpl-minimal .inv-biz-sub { font-size: 0.72rem; color: #999; margin-top: 3px; letter-spacing: 0.04em; }
+.tpl-minimal .inv-number-block { text-align: right; }
+.tpl-minimal .inv-number-label { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: #bbb; display: block; }
+.tpl-minimal .inv-number { font-size: 0.95rem; font-weight: 600; color: #111; letter-spacing: 0.04em; }
+.tpl-minimal .inv-status { display: inline-block; padding: 2px 8px; font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; background: #f5f5f5; color: #888; margin-top: 4px; }
+.tpl-minimal .inv-divider { height: 1px; background: #111; margin-bottom: 36px; }
+.tpl-minimal .inv-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 40px; }
+.tpl-minimal .inv-meta-block h4 { font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: #bbb; margin-bottom: 8px; font-weight: 400; }
+.tpl-minimal .inv-meta-block p { font-size: 0.8rem; color: #444; line-height: 1.65; }
+.tpl-minimal .inv-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+.tpl-minimal .inv-table th { font-size: 0.58rem; letter-spacing: 0.18em; text-transform: uppercase; color: #bbb; padding: 0 0 10px; text-align: left; font-weight: 400; border-bottom: 1px solid #111; }
+.tpl-minimal .inv-table th:not(:first-child) { text-align: right; }
+.tpl-minimal .inv-table td { padding: 11px 0; font-size: 0.82rem; color: #333; border-bottom: 1px solid #f0f0f0; }
+.tpl-minimal .inv-table td:not(:first-child) { text-align: right; }
+.tpl-minimal .inv-totals { margin-left: auto; width: 200px; }
+.tpl-minimal .inv-total-row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 0.8rem; color: #999; }
+.tpl-minimal .inv-total-row.grand { border-top: 1px solid #111; margin-top: 6px; padding-top: 10px; font-weight: 600; font-size: 0.95rem; color: #111; }
+.tpl-minimal .inv-notes { margin-top: 28px; padding-top: 16px; border-top: 1px solid #f0f0f0; font-size: 0.75rem; color: #888; line-height: 1.7; }
+.tpl-minimal .inv-notes strong { font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: #aaa; display: block; margin-bottom: 4px; }
+.tpl-minimal .inv-footer { margin-top: 32px; padding-top: 16px; font-size: 0.58rem; color: #ccc; text-align: center; letter-spacing: 0.14em; text-transform: uppercase; border-top: 1px solid #f0f0f0; }
+
+/* PRICING */
+.pricing { padding: 100px 48px; }
+.pricing-inner { max-width: 900px; margin: 0 auto; text-align: center; }
+.pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 56px; text-align: left; }
+.pricing-card { background: var(--navy-2); padding: 48px 40px; border: 1px solid var(--border-soft); position: relative; }
+.pricing-card.featured { border-color: var(--gold); background: linear-gradient(160deg, rgba(201,168,76,0.05) 0%, var(--navy-2) 60%); }
+.pricing-badge { position: absolute; top: -11px; left: 40px; background: var(--gold); color: var(--navy); font-family: 'DM Mono', monospace; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; padding: 4px 12px; border-radius: 2px; }
+.pricing-plan { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; }
+.pricing-price { font-family: 'Cormorant Garamond', serif; font-size: 3rem; font-weight: 300; color: var(--cream); line-height: 1; margin-bottom: 4px; }
+.pricing-price sup { font-size: 1.3rem; vertical-align: super; }
+.pricing-period { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 32px; }
+.pricing-features { list-style: none; margin-bottom: 36px; }
+.pricing-features li { font-size: 0.855rem; color: var(--text-muted); padding: 8px 0; border-bottom: 1px solid var(--border-soft); display: flex; gap: 10px; align-items: center; }
+.pricing-features li::before { content: '—'; color: var(--gold); font-size: 0.7rem; flex-shrink: 0; }
+.pricing-features li.active { color: var(--text); }
+
+/* TESTIMONIALS */
+.testimonials { padding: 100px 48px; background: var(--navy-2); }
+.testimonials-inner { max-width: 1100px; margin: 0 auto; }
+.testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 56px; }
+.testi-card { background: var(--navy); padding: 36px; border: 1px solid var(--border-soft); transition: border-color 0.3s; }
+.testi-card:hover { border-color: var(--border); }
+.testi-rule { width: 24px; height: 2px; background: var(--gold); margin-bottom: 20px; }
+.testi-quote { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 300; font-style: italic; color: var(--cream); line-height: 1.68; margin-bottom: 24px; }
+.testi-author { font-size: 0.78rem; color: var(--text-muted); }
+.testi-author strong { color: var(--cream); display: block; margin-bottom: 2px; font-size: 0.84rem; }
+
+/* FOOTER */
+footer { padding: 56px 48px 36px; border-top: 1px solid var(--border-soft); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+.footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 600; color: var(--cream); }
+.footer-logo span { color: var(--gold); }
+.footer-text { font-size: 0.75rem; color: var(--text-muted); }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a { font-size: 0.75rem; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+.footer-links a:hover { color: var(--gold); }
+
+/* ANIMATIONS */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 900px) {
+  nav { padding: 16px 20px; }
+  .nav-links { display: none; }
+  .features { padding: 60px 20px; }
+  .features-grid, .templates-grid, .pricing-grid, .testi-grid { grid-template-columns: 1fr; }
+  .invoice-builder { grid-template-columns: 1fr; }
+  .builder-form, .builder-preview { max-height: none; }
+  .form-row { grid-template-columns: 1fr; }
+  .templates-section, #tool, .pricing, .testimonials { padding: 60px 20px; }
+  footer { flex-direction: column; text-align: center; }
+}
+
+@media print {
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  nav, .builder-form, .hero, .features, .templates-section, .pricing, .testimonials, footer, .tool-header, .action-row, .add-item-btn, .remove-item { display: none !important; }
+  #tool { padding: 0 !important; }
+  .invoice-builder { grid-template-columns: 1fr !important; border: none !important; background: none !important; }
+  .builder-preview { max-height: none !important; padding: 32px !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Invoice<span>ly</span></div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#templates">Templates</a>
+    <a href="#tool">Try It</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#tool" class="nav-cta">Create Invoice</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <p class="hero-eyebrow">For freelancers &amp; small businesses</p>
+  <h1>Invoices that<br><em>get you paid.</em></h1>
+  <p class="hero-sub">Beautiful, professional invoices and proposals in under 60 seconds. Three distinct designs. Zero design skills needed.</p>
+  <div class="hero-btns">
+    <a href="#tool" class="btn-primary">Create Your First Invoice</a>
+    <a href="#templates" class="btn-secondary">Browse Templates</a>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="section-label">Why Invoicely</div>
+  <h2 class="section-title">Everything you need.<br>Nothing you don't.</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-mark"></div>
+      <h3>Done in 60 seconds</h3>
+      <p>Fill in your details, add line items, hit generate. Your invoice is ready to send before your coffee gets cold.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-mark"></div>
+      <h3>Three distinct designs</h3>
+      <p>Classic, Modern, or Minimal — pick the aesthetic that fits your brand and switch instantly between them.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-mark"></div>
+      <h3>Proposals included</h3>
+      <p>Win more clients with beautiful project proposals. Outline scope, timeline, and pricing in one elegant document.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-mark"></div>
+      <h3>Download as PDF</h3>
+      <p>One-click PDF download. Pixel-perfect output ready to email your client directly, no extra tools needed.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-mark"></div>
+      <h3>Auto-calculations</h3>
+      <p>Tax, subtotals, and grand totals recalculate as you type. Zero math required on your end.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-mark"></div>
+      <h3>Custom branding</h3>
+      <p>Add your logo, custom colors, and business details so every invoice feels unmistakably yours. <span style="color:var(--gold);font-size:0.72rem;font-family:'DM Mono',monospace;letter-spacing:0.08em;">PRO</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- TEMPLATES -->
+<section class="templates-section" id="templates">
+  <div class="templates-inner">
+    <div class="section-label">Templates</div>
+    <h2 class="section-title">Three designs.<br>One impression.</h2>
+    <div class="templates-grid">
+      <div class="template-card active" id="tcard-classic" onclick="setTemplate('classic')">
+        <div class="template-thumb thumb-classic">
+          <svg width="140" height="110" viewBox="0 0 140 110">
+            <rect width="140" height="110" fill="#f8f4ed"/>
+            <line x1="10" y1="28" x2="130" y2="28" stroke="#2a2218" stroke-width="1.5"/>
+            <rect x="10" y="10" width="60" height="8" rx="1" fill="#2a2218" opacity="0.8"/>
+            <rect x="90" y="10" width="40" height="6" rx="1" fill="#c9a84c" opacity="0.6"/>
+            <rect x="10" y="34" width="50" height="4" rx="1" fill="#aaa" opacity="0.5"/>
+            <rect x="90" y="34" width="40" height="3" rx="1" fill="#ccc" opacity="0.4"/>
+            <line x1="10" y1="50" x2="130" y2="50" stroke="#ddd" stroke-width="0.5"/>
+            <rect x="10" y="54" width="70" height="3" rx="1" fill="#888" opacity="0.4"/>
+            <line x1="10" y1="62" x2="130" y2="62" stroke="#eee" stroke-width="0.5"/>
+            <rect x="10" y="66" width="70" height="3" rx="1" fill="#888" opacity="0.3"/>
+            <line x1="10" y1="74" x2="130" y2="74" stroke="#eee" stroke-width="0.5"/>
+            <rect x="80" y="80" width="50" height="3" rx="1" fill="#c9a84c" opacity="0.5"/>
+            <line x1="80" y1="78" x2="130" y2="78" stroke="#2a2218" stroke-width="1.2"/>
+            <rect x="10" y="90" width="90" height="2" rx="1" fill="#ddd" opacity="0.4"/>
+          </svg>
+          <div class="thumb-label">Classic</div>
+        </div>
+        <div class="template-info">
+          <div class="template-name">Classic</div>
+          <div class="template-desc">Warm, editorial. Serif typography on cream.</div>
+        </div>
+      </div>
+      <div class="template-card" id="tcard-modern" onclick="setTemplate('modern')">
+        <div class="template-thumb thumb-modern">
+          <svg width="140" height="110" viewBox="0 0 140 110">
+            <rect width="140" height="110" fill="#0f172a"/>
+            <rect x="0" y="0" width="140" height="26" fill="#1e293b"/>
+            <rect x="8" y="8" width="50" height="6" rx="1" fill="#f8fafc" opacity="0.8"/>
+            <rect x="90" y="8" width="42" height="5" rx="1" fill="#c9a84c" opacity="0.7"/>
+            <rect x="8" y="30" width="40" height="3" rx="1" fill="#475569" opacity="0.6"/>
+            <rect x="80" y="30" width="52" height="3" rx="1" fill="#334155" opacity="0.5"/>
+            <rect x="0" y="44" width="140" height="10" fill="#1e293b"/>
+            <rect x="8" y="47" width="55" height="3" rx="1" fill="#475569" opacity="0.5"/>
+            <rect x="8" y="58" width="65" height="3" rx="1" fill="#334155" opacity="0.4"/>
+            <rect x="8" y="65" width="55" height="3" rx="1" fill="#334155" opacity="0.3"/>
+            <rect x="90" y="76" width="42" height="12" fill="#1e293b"/>
+            <rect x="94" y="79" width="34" height="2" rx="1" fill="#475569" opacity="0.5"/>
+            <rect x="94" y="83" width="34" height="2" rx="1" fill="#c9a84c" opacity="0.6"/>
+            <rect x="8" y="94" width="120" height="1" rx="0.5" fill="#1e293b"/>
+          </svg>
+          <div class="thumb-label">Modern</div>
+        </div>
+        <div class="template-info">
+          <div class="template-name">Modern</div>
+          <div class="template-desc">Dark, refined. For tech and creative studios.</div>
+        </div>
+      </div>
+      <div class="template-card" id="tcard-minimal" onclick="setTemplate('minimal')">
+        <div class="template-thumb thumb-minimal">
+          <svg width="140" height="110" viewBox="0 0 140 110">
+            <rect width="140" height="110" fill="#fff"/>
+            <rect x="10" y="10" width="48" height="5" rx="0.5" fill="#111" opacity="0.85"/>
+            <rect x="90" y="10" width="40" height="4" rx="0.5" fill="#111" opacity="0.6"/>
+            <line x1="10" y1="24" x2="130" y2="24" stroke="#111" stroke-width="1.2"/>
+            <rect x="10" y="30" width="35" height="3" rx="0.5" fill="#ccc" opacity="0.6"/>
+            <rect x="10" y="38" width="55" height="2.5" rx="0.5" fill="#ddd" opacity="0.5"/>
+            <line x1="10" y1="50" x2="130" y2="50" stroke="#111" stroke-width="0.8"/>
+            <rect x="10" y="54" width="65" height="2.5" rx="0.5" fill="#aaa" opacity="0.4"/>
+            <line x1="10" y1="62" x2="130" y2="62" stroke="#f0f0f0" stroke-width="0.5"/>
+            <rect x="10" y="66" width="65" height="2.5" rx="0.5" fill="#aaa" opacity="0.35"/>
+            <line x1="10" y1="74" x2="130" y2="74" stroke="#f0f0f0" stroke-width="0.5"/>
+            <rect x="90" y="80" width="40" height="2.5" rx="0.5" fill="#aaa" opacity="0.4"/>
+            <line x1="90" y1="78" x2="130" y2="78" stroke="#111" stroke-width="0.8"/>
+            <rect x="90" y="86" width="40" height="3.5" rx="0.5" fill="#111" opacity="0.75"/>
+            <line x1="10" y1="100" x2="130" y2="100" stroke="#f0f0f0" stroke-width="0.5"/>
+          </svg>
+          <div class="thumb-label">Minimal</div>
+        </div>
+        <div class="template-info">
+          <div class="template-name">Minimal</div>
+          <div class="template-desc">Stark white. Maximum clarity, zero noise.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOOL -->
+<section id="tool">
+  <div class="tool-inner">
+    <div class="tool-header">
+      <div class="section-label">Live Builder</div>
+      <h2 class="section-title" style="font-size:2.4rem;margin-bottom:0">Build your invoice now</h2>
+    </div>
+    <div class="invoice-builder">
+      <!-- FORM -->
+      <div class="builder-form">
+        <div class="form-section">
+          <div class="form-section-title">Template</div>
+          <div class="form-group">
+            <label>Choose Design</label>
+            <select id="tplSelect" onchange="setTemplate(this.value)">
+              <option value="classic">Classic — Warm serif on cream</option>
+              <option value="modern">Modern — Dark professional</option>
+              <option value="minimal">Minimal — Clean white</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">Your Business</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Business Name</label>
+              <input type="text" id="bizName" placeholder="Studio North" oninput="updatePreview()">
+            </div>
+            <div class="form-group">
+              <label>Your Name</label>
+              <input type="text" id="bizContact" placeholder="Alex Morgan" oninput="updatePreview()">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="bizEmail" placeholder="alex@studionorth.co" oninput="updatePreview()">
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">Client Details</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Client Name</label>
+              <input type="text" id="clientName" placeholder="Acme Corp" oninput="updatePreview()">
+            </div>
+            <div class="form-group">
+              <label>Client Email</label>
+              <input type="email" id="clientEmail" placeholder="billing@acme.com" oninput="updatePreview()">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">Invoice Details</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Invoice #</label>
+              <input type="text" id="invNumber" oninput="updatePreview()">
+            </div>
+            <div class="form-group">
+              <label>Issue Date</label>
+              <input type="date" id="invDate" oninput="updatePreview()">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Due Date</label>
+              <input type="date" id="dueDate" oninput="updatePreview()">
+            </div>
+            <div class="form-group">
+              <label>Tax Rate (%)</label>
+              <input type="number" id="taxRate" placeholder="0" min="0" max="100" step="0.1" oninput="updatePreview()">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">Line Items</div>
+          <div class="line-items-header">
+            <span>Description</span><span>Qty</span><span>Rate</span><span>Amount</span><span></span>
+          </div>
+          <div id="lineItems">
+            <div class="line-item">
+              <input type="text" placeholder="Web Design" oninput="updatePreview()">
+              <input type="number" placeholder="1" min="0" oninput="updatePreview()">
+              <input type="number" placeholder="1500" min="0" step="0.01" oninput="updatePreview()">
+              <input type="number" readonly style="background:var(--navy-3);color:var(--gold)" placeholder="—">
+              <button class="remove-item" onclick="removeItem(this)">×</button>
+            </div>
+          </div>
+          <button class="add-item-btn" onclick="addItem()">+ Add line item</button>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">Notes</div>
+          <div class="form-group">
+            <label>Payment Terms / Notes</label>
+            <textarea id="notes" placeholder="Payment due within 14 days. Bank transfer preferred." oninput="updatePreview()"></textarea>
+          </div>
+        </div>
+
+        <div class="action-row">
+          <button class="generate-btn" onclick="downloadPDF()">Download PDF</button>
+          <button class="print-btn" onclick="window.print()">Print</button>
+        </div>
+      </div>
+
+      <!-- PREVIEW -->
+      <div class="builder-preview" id="builderPreview">
+        <div id="previewDoc"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="pricing-inner">
+    <div class="section-label">Pricing</div>
+    <h2 class="section-title">Start free. Scale when ready.</h2>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="pricing-plan">Free</div>
+        <div class="pricing-price"><sup>$</sup>0</div>
+        <div class="pricing-period">forever, no credit card</div>
+        <ul class="pricing-features">
+          <li class="active">Unlimited invoices</li>
+          <li class="active">All three templates</li>
+          <li class="active">PDF download</li>
+          <li class="active">Auto-calculations</li>
+          <li>Custom branding + logo</li>
+          <li>Client portal</li>
+          <li>Payment tracking</li>
+        </ul>
+        <button class="btn-primary" style="width:100%;border:none;cursor:pointer">Get Started Free</button>
+      </div>
+      <div class="pricing-card featured">
+        <div class="pricing-badge">Most Popular</div>
+        <div class="pricing-plan">Pro</div>
+        <div class="pricing-price"><sup>$</sup>12</div>
+        <div class="pricing-period">per month, cancel anytime</div>
+        <ul class="pricing-features">
+          <li class="active">Everything in Free</li>
+          <li class="active">Custom branding + logo</li>
+          <li class="active">Client portal</li>
+          <li class="active">Payment tracking</li>
+          <li class="active">Proposal templates</li>
+          <li class="active">Priority support</li>
+          <li class="active">Remove Invoicely footer</li>
+        </ul>
+        <button class="btn-primary" style="width:100%;border:none;cursor:pointer">Start 14-day Trial</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="testimonials-inner">
+    <div class="section-label">Testimonials</div>
+    <h2 class="section-title">Trusted by freelancers<br>who value their time.</h2>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-rule"></div>
+        <p class="testi-quote">"I used to spend an hour on invoices in Photoshop. Now it takes two minutes and looks considerably more professional."</p>
+        <div class="testi-author"><strong>Marcus T.</strong>Brand Designer, Berlin</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-rule"></div>
+        <p class="testi-quote">"My clients comment on how polished my invoices look. It has made a real difference to how they perceive my business."</p>
+        <div class="testi-author"><strong>Priya S.</strong>Copywriter &amp; Consultant</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-rule"></div>
+        <p class="testi-quote">"Finally an invoice tool that does not look like it was designed in 2003. Clean, fast, and I get paid faster because of it."</p>
+        <div class="testi-author"><strong>James O.</strong>Freelance Developer</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">Invoice<span>ly</span></div>
+  <div class="footer-text">© 2026 Invoicely. Built for freelancers.</div>
+  <div class="footer-links"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Support</a></div>
+</footer>
+
+<script>
+let currentTemplate = 'classic';
+
+const today = new Date();
+const due = new Date(); due.setDate(due.getDate() + 14);
+document.getElementById('invDate').value = today.toISOString().split('T')[0];
+document.getElementById('dueDate').value = due.toISOString().split('T')[0];
+document.getElementById('invNumber').value = 'INV-' + String(Math.floor(Math.random()*9000)+1000);
+
+function fmt(n) {
+  return '$' + (parseFloat(n)||0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+function fmtDate(d) {
+  return d ? new Date(d + 'T00:00:00').toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) : '—';
+}
+
+function setTemplate(tpl) {
+  currentTemplate = tpl;
+  document.getElementById('tplSelect').value = tpl;
+  ['classic','modern','minimal'].forEach(t => {
+    document.getElementById('tcard-' + t).classList.toggle('active', t === tpl);
+  });
+  updatePreview();
+}
+
+function addItem() {
+  const c = document.getElementById('lineItems');
+  const div = document.createElement('div');
+  div.className = 'line-item';
+  div.innerHTML = `
+    <input type="text" placeholder="Description" oninput="updatePreview()">
+    <input type="number" placeholder="1" min="0" oninput="updatePreview()">
+    <input type="number" placeholder="0.00" min="0" step="0.01" oninput="updatePreview()">
+    <input type="number" readonly style="background:var(--navy-3);color:var(--gold)" placeholder="—">
+    <button class="remove-item" onclick="removeItem(this)">×</button>`;
+  c.appendChild(div);
+  div.querySelector('input').focus();
+}
+
+function removeItem(btn) { btn.closest('.line-item').remove(); updatePreview(); }
+
+function getFormData() {
+  const items = [];
+  let subtotal = 0;
+  document.querySelectorAll('.line-item').forEach(item => {
+    const inputs = item.querySelectorAll('input');
+    const desc = inputs[0].value;
+    const qty = parseFloat(inputs[1].value) || 0;
+    const rate = parseFloat(inputs[2].value) || 0;
+    const amount = qty * rate;
+    inputs[3].value = amount ? amount.toFixed(2) : '';
+    if (desc || qty || rate) { items.push({desc, qty, rate, amount}); subtotal += amount; }
+  });
+  const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+  const tax = subtotal * taxRate / 100;
+  return {
+    biz: document.getElementById('bizName').value || 'Your Business',
+    contact: document.getElementById('bizContact').value,
+    email: document.getElementById('bizEmail').value,
+    client: document.getElementById('clientName').value || 'Client Name',
+    clientEmail: document.getElementById('clientEmail').value,
+    invNum: document.getElementById('invNumber').value || 'INV-0001',
+    invDate: fmtDate(document.getElementById('invDate').value),
+    dueDate: fmtDate(document.getElementById('dueDate').value),
+    taxRate, items, subtotal, tax, total: subtotal + tax,
+    notes: document.getElementById('notes').value
+  };
+}
+
+function buildLineRows(d, tpl) {
+  if (!d.items.length) return `<tr><td colspan="4" style="color:#aaa;font-style:italic;padding:12px 0">Add line items above...</td></tr>`;
+  return d.items.map(i => `<tr><td>${i.desc||'—'}</td><td>${i.qty||'—'}</td><td>${i.rate?fmt(i.rate):'—'}</td><td>${fmt(i.amount)}</td></tr>`).join('');
+}
+
+function renderClassic(d) {
+  return `<div class="tpl-classic">
+    <div class="inv-header">
+      <div><div class="inv-biz-name">${d.biz}</div><div class="inv-biz-sub">${[d.contact,d.email].filter(Boolean).join(' · ')||'&nbsp;'}</div></div>
+      <div class="inv-number-block"><span class="inv-number-label">Invoice</span><div class="inv-number">${d.invNum}</div><div class="inv-status">Unpaid</div></div>
+    </div>
+    <div class="inv-meta">
+      <div class="inv-meta-block"><h4>Billed To</h4><p>${d.client}${d.clientEmail?'<br><span style="color:#888">'+d.clientEmail+'</span>':''}</p></div>
+      <div class="inv-meta-block" style="text-align:right"><h4>Dates</h4><p style="color:#888;font-size:0.78rem">Issue: ${d.invDate}<br>Due: ${d.dueDate}</p></div>
+    </div>
+    <table class="inv-table"><thead><tr><th>Description</th><th style="text-align:right">Qty</th><th style="text-align:right">Rate</th><th style="text-align:right">Amount</th></tr></thead><tbody>${buildLineRows(d,'classic')}</tbody></table>
+    <div class="inv-totals">
+      <div class="inv-total-row"><span>Subtotal</span><span>${fmt(d.subtotal)}</span></div>
+      <div class="inv-total-row"><span>Tax (${d.taxRate}%)</span><span>${fmt(d.tax)}</span></div>
+      <div class="inv-total-row grand"><span>Total Due</span><span>${fmt(d.total)}</span></div>
+    </div>
+    ${d.notes?`<div class="inv-notes"><strong>Notes</strong>${d.notes}</div>`:''}
+    <div class="inv-footer">Generated with Invoicely &nbsp;·&nbsp; invoicely.co</div>
+  </div>`;
+}
+
+function renderModern(d) {
+  return `<div class="tpl-modern">
+    <div class="inv-header">
+      <div><div class="inv-biz-name">${d.biz}</div><div class="inv-biz-sub">${[d.contact,d.email].filter(Boolean).join(' · ')||'&nbsp;'}</div></div>
+      <div class="inv-number-block"><span class="inv-number-label">Invoice</span><div class="inv-number">${d.invNum}</div><div class="inv-status">Unpaid</div></div>
+    </div>
+    <div class="inv-body">
+      <div class="inv-meta">
+        <div class="inv-meta-block"><h4>Billed To</h4><p>${d.client}${d.clientEmail?'<br>'+d.clientEmail:''}</p></div>
+        <div class="inv-meta-block" style="text-align:right"><h4>Dates</h4><p>Issue: ${d.invDate}<br>Due: ${d.dueDate}</p></div>
+      </div>
+      <table class="inv-table"><thead><tr><th>Description</th><th style="text-align:right">Qty</th><th style="text-align:right">Rate</th><th style="text-align:right">Amount</th></tr></thead><tbody>${buildLineRows(d,'modern')}</tbody></table>
+      <div class="inv-totals">
+        <div class="inv-total-row"><span>Subtotal</span><span>${fmt(d.subtotal)}</span></div>
+        <div class="inv-total-row"><span>Tax (${d.taxRate}%)</span><span>${fmt(d.tax)}</span></div>
+        <div class="inv-total-row grand"><span>Total Due</span><span>${fmt(d.total)}</span></div>
+      </div>
+      ${d.notes?`<div class="inv-notes"><strong>Notes</strong>${d.notes}</div>`:''}
+    </div>
+    <div class="inv-footer">Generated with Invoicely &nbsp;·&nbsp; invoicely.co</div>
+  </div>`;
+}
+
+function renderMinimal(d) {
+  return `<div class="tpl-minimal">
+    <div class="inv-header">
+      <div><div class="inv-biz-name">${d.biz}</div><div class="inv-biz-sub">${[d.contact,d.email].filter(Boolean).join(' · ')||'&nbsp;'}</div></div>
+      <div class="inv-number-block"><span class="inv-number-label">Invoice</span><div class="inv-number">${d.invNum}</div><div class="inv-status">Unpaid</div></div>
+    </div>
+    <div class="inv-divider"></div>
+    <div class="inv-meta">
+      <div class="inv-meta-block"><h4>Billed To</h4><p>${d.client}${d.clientEmail?'<br>'+d.clientEmail:''}</p></div>
+      <div class="inv-meta-block" style="text-align:right"><h4>Dates</h4><p>Issue: ${d.invDate}<br>Due: ${d.dueDate}</p></div>
+    </div>
+    <table class="inv-table"><thead><tr><th>Description</th><th style="text-align:right">Qty</th><th style="text-align:right">Rate</th><th style="text-align:right">Amount</th></tr></thead><tbody>${buildLineRows(d,'minimal')}</tbody></table>
+    <div class="inv-totals">
+      <div class="inv-total-row"><span>Subtotal</span><span>${fmt(d.subtotal)}</span></div>
+      <div class="inv-total-row"><span>Tax (${d.taxRate}%)</span><span>${fmt(d.tax)}</span></div>
+      <div class="inv-total-row grand"><span>Total Due</span><span>${fmt(d.total)}</span></div>
+    </div>
+    ${d.notes?`<div class="inv-notes"><strong>Notes</strong>${d.notes}</div>`:''}
+    <div class="inv-footer">Generated with Invoicely &nbsp;·&nbsp; invoicely.co</div>
+  </div>`;
+}
+
+function updatePreview() {
+  const d = getFormData();
+  const preview = document.getElementById('previewDoc');
+  if (currentTemplate === 'modern') {
+    document.getElementById('builderPreview').style.background = '#0f172a';
+    document.getElementById('builderPreview').style.padding = '0';
+    preview.innerHTML = renderModern(d);
+  } else if (currentTemplate === 'minimal') {
+    document.getElementById('builderPreview').style.background = '#ffffff';
+    document.getElementById('builderPreview').style.padding = '40px';
+    preview.innerHTML = renderMinimal(d);
+  } else {
+    document.getElementById('builderPreview').style.background = '#f8f4ed';
+    document.getElementById('builderPreview').style.padding = '40px';
+    preview.innerHTML = renderClassic(d);
+  }
+}
+
+function downloadPDF() {
+  const btn = document.querySelector('.generate-btn');
+  btn.textContent = 'Generating...';
+  btn.disabled = true;
+
+  const d = getFormData();
+  let html = '';
+  const fonts = '<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">';
+
+  if (currentTemplate === 'modern') {
+    html = `<html><head>${fonts}<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'IBM Plex Sans',sans-serif;background:#0f172a;color:#e2e8f0;padding:0}</style></head><body>${renderModern(d)}</body></html>`;
+  } else if (currentTemplate === 'minimal') {
+    html = `<html><head>${fonts}<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Outfit',sans-serif;background:#fff;color:#111;padding:40px}</style></head><body>${renderMinimal(d)}</body></html>`;
+  } else {
+    html = `<html><head>${fonts}<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Cormorant Garamond',serif;background:#f8f4ed;color:#2a2218;padding:40px}</style></head><body>${renderClassic(d)}</body></html>`;
+  }
+
+  // Inject template styles into a container
+  const container = document.createElement('div');
+  container.style.cssText = 'position:fixed;left:-9999px;top:0;width:794px;background:transparent';
+
+  // Use the live preview directly for PDF
+  const liveDoc = document.getElementById('previewDoc').cloneNode(true);
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = currentTemplate === 'modern' ? 'background:#0f172a;padding:0' : currentTemplate === 'minimal' ? 'background:#fff;padding:40px' : 'background:#f8f4ed;padding:40px';
+  wrapper.appendChild(liveDoc);
+  container.appendChild(wrapper);
+  document.body.appendChild(container);
+
+  // Copy all relevant styles
+  const styleSheets = Array.from(document.styleSheets);
+  let cssText = '';
+  styleSheets.forEach(sheet => {
+    try { Array.from(sheet.cssRules).forEach(rule => { cssText += rule.cssText + '\n'; }); } catch(e) {}
+  });
+  const styleEl = document.createElement('style');
+  styleEl.textContent = cssText;
+  container.prepend(styleEl);
+
+  const filename = (document.getElementById('bizName').value || 'Invoice').replace(/\s+/g,'-') + '-' + (document.getElementById('invNumber').value || 'INV') + '.pdf';
+
+  html2pdf().set({
+    margin: 0,
+    filename: filename,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true, backgroundColor: currentTemplate === 'modern' ? '#0f172a' : currentTemplate === 'minimal' ? '#ffffff' : '#f8f4ed' },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  }).from(wrapper).save().then(() => {
+    document.body.removeChild(container);
+    btn.textContent = 'Download PDF';
+    btn.disabled = false;
+  }).catch(() => {
+    document.body.removeChild(container);
+    btn.textContent = 'Download PDF';
+    btn.disabled = false;
+  });
+}
+
+// Init
+updatePreview();
+</script>
+</body>
+</html>
