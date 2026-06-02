@@ -314,6 +314,14 @@ footer { padding: 56px 48px 36px; border-top: 1px solid var(--border-soft); disp
 .modal-pay-btn:hover { background: var(--gold-light); }
 .modal-note { font-size: 0.72rem; color: var(--text-muted); text-align: center; margin-top: 12px; }
 
+/* FREE COUNTER & NUDGE */
+.free-counter { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); text-align: center; padding: 8px; border: 1px solid var(--border); border-radius: 3px; margin-bottom: 10px; }
+.free-counter span { color: var(--cream); font-weight: 600; }
+.free-nudge { display: none; position: fixed; bottom: 24px; right: 24px; z-index: 500; background: var(--navy-2); border: 1px solid var(--gold); padding: 16px 20px; border-radius: 4px; max-width: 280px; flex-direction: column; gap: 10px; }
+.free-nudge p { font-size: 0.82rem; color: var(--text); line-height: 1.5; }
+.free-nudge strong { color: var(--gold); }
+.free-nudge button { background: var(--gold); color: var(--navy); border: none; padding: 8px 14px; border-radius: 3px; font-size: 0.78rem; font-weight: 700; cursor: pointer; font-family: 'Outfit', sans-serif; }
+
 @media (max-width: 900px) {
   nav { padding: 16px 20px; }
   .nav-links { display: none; }
@@ -604,6 +612,7 @@ footer { padding: 56px 48px 36px; border-top: 1px solid var(--border-soft); disp
           </div>
         </div>
 
+        <div class="free-counter" id="freeCounter">Free downloads remaining: <span id="freeCountNum">2</span></div>
         <div class="action-row">
           <button class="generate-btn" onclick="handleDownload()">Download PDF</button>
           <button class="print-btn" onclick="handlePrint()">Print</button>
@@ -622,38 +631,36 @@ footer { padding: 56px 48px 36px; border-top: 1px solid var(--border-soft); disp
 <section class="pricing" id="pricing">
   <div class="pricing-inner">
     <div class="section-label">Pricing</div>
-    <h2 class="section-title">Start free. Scale when ready.</h2>
+    <h2 class="section-title">Try it free.<br>Own it forever.</h2>
     <div class="pricing-grid">
       <div class="pricing-card">
-        <div class="pricing-plan">Free</div>
+        <div class="pricing-plan">Free Trial</div>
         <div class="pricing-price"><sup>$</sup>0</div>
-        <div class="pricing-period">forever, no credit card</div>
+        <div class="pricing-period">2 free downloads, no credit card</div>
         <ul class="pricing-features">
-          <li class="active">Unlimited invoices</li>
+          <li class="active">2 free PDF downloads</li>
           <li class="active">All three templates</li>
-          <li class="active">PDF download</li>
+          <li class="active">Invoices &amp; quotes</li>
           <li class="active">Auto-calculations</li>
-          <li>Custom branding + logo</li>
-          <li>Client portal</li>
-          <li>Payment tracking</li>
+          <li class="active">Custom logo &amp; branding</li>
+          <li class="active">All features included</li>
         </ul>
-        <button class="btn-primary" style="width:100%;border:none;cursor:pointer">Get Started Free</button>
+        <a href="#tool" class="btn-primary" style="width:100%;border:none;cursor:pointer;display:block;text-align:center;text-decoration:none;box-sizing:border-box">Try It Free</a>
       </div>
       <div class="pricing-card featured">
-        <div class="pricing-badge">Most Popular</div>
-        <div class="pricing-plan">Pro</div>
-        <div class="pricing-price"><sup>$</sup>4<span style="font-size:1.6rem">.99</span></div>
-        <div class="pricing-period">per month, cancel anytime</div>
+        <div class="pricing-badge">Best Value</div>
+        <div class="pricing-plan">Lifetime</div>
+        <div class="pricing-price"><sup>$</sup>2<span style="font-size:1.6rem">.99</span></div>
+        <div class="pricing-period">one-time payment — yours forever</div>
         <ul class="pricing-features">
-          <li class="active">Everything in Free</li>
-          <li class="active">Custom branding + logo</li>
-          <li class="active">Client portal</li>
-          <li class="active">Payment tracking</li>
-          <li class="active">Proposal templates</li>
-          <li class="active">Priority support</li>
-          <li class="active">Remove Invoicely footer</li>
+          <li class="active">Unlimited downloads</li>
+          <li class="active">All three templates</li>
+          <li class="active">Invoices &amp; quotes</li>
+          <li class="active">Custom logo &amp; branding</li>
+          <li class="active">All future updates</li>
+          <li class="active">No subscription, ever</li>
         </ul>
-        <button class="btn-primary" style="width:100%;border:none;cursor:pointer">Start 14-day Trial</button>
+        <button class="btn-primary" style="width:100%;border:none;cursor:pointer" onclick="openModal()">Unlock Forever — $2.99</button>
       </div>
     </div>
   </div>
@@ -690,14 +697,20 @@ footer { padding: 56px 48px 36px; border-top: 1px solid var(--border-soft); disp
   <div class="footer-links"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Support</a></div>
 </footer>
 
+<!-- NUDGE TOAST -->
+<div class="free-nudge" id="freeNudge">
+  <p><strong>1 free download left.</strong><br>Unlock forever for just $2.99 — no subscription.</p>
+  <button onclick="openModal()">Unlock for $2.99</button>
+</div>
+
 <!-- PAYMENT MODAL -->
 <div class="modal-overlay" id="payModal">
   <div class="modal">
     <button class="modal-close" onclick="closeModal()">×</button>
     <div class="modal-eyebrow">Unlock Invoicely</div>
     <h2>One payment.<br>Yours forever.</h2>
-    <div class="modal-price"><sup>$</sup>4.99</div>
-    <div class="modal-once">One-time payment — no subscription</div>
+    <div class="modal-price"><sup>$</sup>2.99</div>
+    <div class="modal-once">One-time payment — no subscription, ever</div>
     <ul class="modal-perks">
       <li>Unlimited invoice downloads</li>
       <li>Unlimited quote downloads</li>
@@ -705,7 +718,7 @@ footer { padding: 56px 48px 36px; border-top: 1px solid var(--border-soft); disp
       <li>PDF export, forever</li>
       <li>All future updates included</li>
     </ul>
-    <button class="modal-pay-btn" onclick="goToStripe()">Pay $4.99 — Unlock Forever</button>
+    <button class="modal-pay-btn" onclick="goToStripe()">Pay $2.99 — Unlock Forever</button>
     <p class="modal-note">Secure payment via Stripe. Receipt sent to your email.</p>
   </div>
 </div>
@@ -723,12 +736,34 @@ if (params.get('unlocked') === 'true') {
   localStorage.setItem('invoicely_unlocked', 'true');
 }
 function isUnlocked() { return localStorage.getItem('invoicely_unlocked') === 'true'; }
+function getFreeCount() { return parseInt(localStorage.getItem('invoicely_free') || '0'); }
+function incrementFree() { localStorage.setItem('invoicely_free', getFreeCount() + 1); }
+function canDownloadFree() { return getFreeCount() < 2; }
 
 function handleDownload() {
-  if (isUnlocked()) { downloadPDF(); } else { openModal(); }
+  if (isUnlocked()) {
+    downloadPDF();
+  } else if (canDownloadFree()) {
+    incrementFree();
+    updateFreeCounter();
+    downloadPDF();
+    if (getFreeCount() === 1) {
+      setTimeout(() => {
+        const nudge = document.getElementById('freeNudge');
+        if (nudge) { nudge.style.display = 'flex'; setTimeout(() => nudge.style.display = 'none', 6000); }
+      }, 1500);
+    }
+  } else {
+    openModal();
+  }
 }
 function handlePrint() {
-  if (isUnlocked()) { window.print(); } else { openModal(); }
+  if (isUnlocked() || canDownloadFree()) {
+    if (!isUnlocked()) incrementFree();
+    window.print();
+  } else {
+    openModal();
+  }
 }
 function openModal() { document.getElementById('payModal').classList.add('open'); }
 function closeModal() { document.getElementById('payModal').classList.remove('open'); }
@@ -1028,6 +1063,20 @@ function downloadPDF() {
 
 // Init
 updatePreview();
+// Update free counter display
+function updateFreeCounter() {
+  if (isUnlocked()) {
+    document.getElementById('freeCounter').style.display = 'none';
+  } else {
+    const left = Math.max(0, 2 - getFreeCount());
+    document.getElementById('freeCountNum').textContent = left;
+    if (left === 0) {
+      document.getElementById('freeCounter').style.color = '#e05c5c';
+      document.getElementById('freeCounter').innerHTML = 'No free downloads left — <strong style="color:var(--gold);cursor:pointer" onclick="openModal()">Unlock for $2.99</strong>';
+    }
+  }
+}
+updateFreeCounter();
 </script>
 </body>
 </html>
