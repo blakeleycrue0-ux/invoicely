@@ -1,20 +1,20 @@
 [build]
-functions = "netlify/functions"
+  functions = "netlify/functions"
 
 [functions]
-node_bundler = "esbuild"
+  node_bundler = "esbuild"
 
 [[redirects]]
-from = "/dashboard"
-to = "/dashboard.html"
-status = 200
+  from = "/dashboard"
+  to = "/dashboard.html"
+  status = 200
 
 [[redirects]]
-from = "/login"
-to = "/login.html"
-status = 200
+  from = "/login"
+  to = "/login.html"
+  status = 200
 
 [[redirects]]
-from = "/builder"
-to = "/builder.html"
-status = 200
+  from = "/builder"
+  to = "/builder.html"
+  status = 200
