@@ -1,23 +1,20 @@
 [build]
-  functions = "netlify/functions"
+functions = "netlify/functions"
+
+[functions]
+node_bundler = "esbuild"
 
 [[redirects]]
-  from = "/dashboard"
-  to = "/dashboard.html"
-  status = 200
+from = "/dashboard"
+to = "/dashboard.html"
+status = 200
 
 [[redirects]]
-  from = "/login"
-  to = "/login.html"
-  status = 200
+from = "/login"
+to = "/login.html"
+status = 200
 
 [[redirects]]
-  from = "/builder"
-  to = "/builder.html"
-  status = 200
-
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-XSS-Protection = "1; mode=block"
+from = "/builder"
+to = "/builder.html"
+status = 200
