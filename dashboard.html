@@ -298,19 +298,19 @@ function initDashboard(user){
 }
 
 function loadDocs(user){
-  var token = user.token && user.token.access_token;
-  if(!token){ renderDocs([]); hideLoading(); return; }
-  fetch('/.netlify/functions/get-docs', {
-    headers:{ 'Authorization': 'Bearer '+token }
-  }).then(function(r){ return r.json(); })
-  .then(function(data){
-    allDocs = data.docs || [];
-    renderDashboard(allDocs);
-    hideLoading();
-  }).catch(function(){
-    renderDocs([]);
-    hideLoading();
-  });
+  user.jwt(true).then(function(token){
+    fetch('/.netlify/functions/get-docs', {
+      headers:{ 'Authorization': 'Bearer '+token }
+    }).then(function(r){ return r.json(); })
+    .then(function(data){
+      allDocs = data.docs || [];
+      renderDashboard(allDocs);
+      hideLoading();
+    }).catch(function(){
+      renderDocs([]);
+      hideLoading();
+    });
+  }).catch(function(){ renderDocs([]); hideLoading(); });
 }
 
 function hideLoading(){
