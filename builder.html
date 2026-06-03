@@ -476,14 +476,18 @@ function initBuilder(){
   if(params.get('unlocked')==='true') localStorage.setItem('inv_unlocked','true');
 }
 
+var SUPA_URL = 'https://xpdcrfwslfxuwwjrctct.supabase.co';
+var SUPA_KEY = 'sb_publishable_tFpkqLdLE5Let5lFy_2XNw_K_1xVVKk';
+
+function supaHeaders(){
+  return {'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
+}
+
 function loadDoc(id){
-  if(!currentUser) return;
-  currentUser.jwt(true).then(function(token){
-    fetch('/.netlify/functions/get-docs',{headers:{'Authorization':'Bearer '+token}})
-    .then(function(r){return r.json();}).then(function(data){
-      var doc = (data.docs||[]).find(function(d){return d.id===id;});
-      if(doc && doc.data) populateForm(doc);
-    }).catch(function(){});
+  if(!id||!currentUser) return;
+  fetch(SUPA_URL+'/rest/v1/documents?id=eq.'+id+'&user_id=eq.'+currentUser.id,{headers:supaHeaders()})
+  .then(function(r){return r.json();}).then(function(data){
+    if(data&&data[0]) populateForm(data[0]);
   }).catch(function(){});
 }
 
@@ -541,28 +545,37 @@ function saveDoc(){
   if(!currentUser){ showToast('Sign in to save documents','error'); return; }
   setSaveStatus('saving');
   var d = collectFormData();
-  currentUser.jwt(true).then(function(token){
-    if(!token){ showToast('Authentication error','error'); setSaveStatus('unsaved'); return; }
-    var payload = {
-      id: currentDocId||null,
-      type: currentDocType,
-      title: d.bizName||'Untitled',
-      doc_number: d.invNumber,
-      client_name: d.clientName,
-      total: d.total,
-      status: currentStatus,
-      due_date: d.dueDate||null,
-      data: Object.assign({},d,{type:currentDocType,template:currentTemplate,logoDataUrl:logoDataUrl})
-    };
-    fetch('/.netlify/functions/save-doc',{
-      method:'POST',
-      headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+  var userId = currentUser.id;
+  var payload = {
+    user_id: userId,
+    type: currentDocType,
+    title: d.bizName||'Untitled',
+    doc_number: d.invNumber,
+    client_name: d.clientName,
+    total: d.total,
+    status: currentStatus,
+    due_date: null,
+    data: Object.assign({},d,{type:currentDocType,template:currentTemplate,logoDataUrl:logoDataUrl})
+  };
+  if(currentDocId){
+    fetch(SUPA_URL+'/rest/v1/documents?id=eq.'+currentDocId+'&user_id=eq.'+userId,{
+      method:'PATCH',
+      headers:supaHeaders(),
       body:JSON.stringify(payload)
     }).then(function(r){return r.json();}).then(function(res){
-      if(res.doc){ currentDocId=res.doc.id; setSaveStatus('saved'); showToast('Saved!','success'); document.getElementById('docTitleBar').textContent=(currentDocType==='quote'?'Quote ':'Invoice ')+d.invNumber; }
+      if(res&&res[0]){ setSaveStatus('saved'); showToast('Saved!','success'); document.getElementById('docTitleBar').textContent=(currentDocType==='quote'?'Quote ':'Invoice ')+d.invNumber; }
       else{ setSaveStatus('unsaved'); showToast('Save failed','error'); }
     }).catch(function(){ setSaveStatus('unsaved'); showToast('Save failed','error'); });
-  }).catch(function(){ showToast('Session expired — please log in again','error'); setSaveStatus('unsaved'); });
+  } else {
+    fetch(SUPA_URL+'/rest/v1/documents',{
+      method:'POST',
+      headers:supaHeaders(),
+      body:JSON.stringify(payload)
+    }).then(function(r){return r.json();}).then(function(res){
+      if(res&&res[0]){ currentDocId=res[0].id; setSaveStatus('saved'); showToast('Saved!','success'); document.getElementById('docTitleBar').textContent=(currentDocType==='quote'?'Quote ':'Invoice ')+d.invNumber; }
+      else{ setSaveStatus('unsaved'); showToast('Save failed — '+JSON.stringify(res),'error'); }
+    }).catch(function(e){ setSaveStatus('unsaved'); showToast('Save failed','error'); });
+  }
 }
 
 // STATUS
