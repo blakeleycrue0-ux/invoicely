@@ -297,20 +297,21 @@ function initDashboard(user){
   loadDocs(user);
 }
 
+var SUPA_URL = 'https://xpdcrfwslfxuwwjrctct.supabase.co';
+var SUPA_KEY = 'sb_publishable_tFpkqLdLE5Let5lFy_2XNw_K_1xVVKk';
+
 function loadDocs(user){
-  user.jwt(true).then(function(token){
-    fetch('/.netlify/functions/get-docs', {
-      headers:{ 'Authorization': 'Bearer '+token }
-    }).then(function(r){ return r.json(); })
-    .then(function(data){
-      allDocs = data.docs || [];
-      renderDashboard(allDocs);
-      hideLoading();
-    }).catch(function(){
-      renderDocs([]);
-      hideLoading();
-    });
-  }).catch(function(){ renderDocs([]); hideLoading(); });
+  fetch(SUPA_URL+'/rest/v1/documents?user_id=eq.'+user.id+'&order=created_at.desc',{
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+  }).then(function(r){ return r.json(); })
+  .then(function(data){
+    allDocs = Array.isArray(data) ? data : [];
+    renderDashboard(allDocs);
+    hideLoading();
+  }).catch(function(){
+    renderDocs([]);
+    hideLoading();
+  });
 }
 
 function hideLoading(){
