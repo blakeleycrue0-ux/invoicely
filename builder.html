@@ -478,10 +478,12 @@ function initBuilder(){
 
 function loadDoc(id){
   if(!currentUser) return;
-  fetch('/.netlify/functions/get-docs',{headers:{'Authorization':'Bearer '+currentUser.token.access_token}})
-  .then(function(r){return r.json();}).then(function(data){
-    var doc = (data.docs||[]).find(function(d){return d.id===id;});
-    if(doc && doc.data) populateForm(doc);
+  currentUser.jwt(true).then(function(token){
+    fetch('/.netlify/functions/get-docs',{headers:{'Authorization':'Bearer '+token}})
+    .then(function(r){return r.json();}).then(function(data){
+      var doc = (data.docs||[]).find(function(d){return d.id===id;});
+      if(doc && doc.data) populateForm(doc);
+    }).catch(function(){});
   }).catch(function(){});
 }
 
@@ -539,27 +541,28 @@ function saveDoc(){
   if(!currentUser){ showToast('Sign in to save documents','error'); return; }
   setSaveStatus('saving');
   var d = collectFormData();
-  var token = currentUser.token&&currentUser.token.access_token;
-  if(!token){ showToast('Authentication error','error'); return; }
-  var payload = {
-    id: currentDocId||null,
-    type: currentDocType,
-    title: d.bizName||'Untitled',
-    doc_number: d.invNumber,
-    client_name: d.clientName,
-    total: d.total,
-    status: currentStatus,
-    due_date: d.dueDate||null,
-    data: Object.assign({},d,{type:currentDocType,template:currentTemplate,logoDataUrl:logoDataUrl})
-  };
-  fetch('/.netlify/functions/save-doc',{
-    method:'POST',
-    headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
-    body:JSON.stringify(payload)
-  }).then(function(r){return r.json();}).then(function(res){
-    if(res.doc){ currentDocId=res.doc.id; setSaveStatus('saved'); showToast('Saved!','success'); document.getElementById('docTitleBar').textContent=(currentDocType==='quote'?'Quote ':'Invoice ')+d.invNumber; }
-    else{ setSaveStatus('unsaved'); showToast('Save failed','error'); }
-  }).catch(function(){ setSaveStatus('unsaved'); showToast('Save failed','error'); });
+  currentUser.jwt(true).then(function(token){
+    if(!token){ showToast('Authentication error','error'); setSaveStatus('unsaved'); return; }
+    var payload = {
+      id: currentDocId||null,
+      type: currentDocType,
+      title: d.bizName||'Untitled',
+      doc_number: d.invNumber,
+      client_name: d.clientName,
+      total: d.total,
+      status: currentStatus,
+      due_date: d.dueDate||null,
+      data: Object.assign({},d,{type:currentDocType,template:currentTemplate,logoDataUrl:logoDataUrl})
+    };
+    fetch('/.netlify/functions/save-doc',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+      body:JSON.stringify(payload)
+    }).then(function(r){return r.json();}).then(function(res){
+      if(res.doc){ currentDocId=res.doc.id; setSaveStatus('saved'); showToast('Saved!','success'); document.getElementById('docTitleBar').textContent=(currentDocType==='quote'?'Quote ':'Invoice ')+d.invNumber; }
+      else{ setSaveStatus('unsaved'); showToast('Save failed','error'); }
+    }).catch(function(){ setSaveStatus('unsaved'); showToast('Save failed','error'); });
+  }).catch(function(){ showToast('Session expired — please log in again','error'); setSaveStatus('unsaved'); });
 }
 
 // STATUS
