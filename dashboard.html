@@ -666,10 +666,20 @@ function initDash(user){
   document.getElementById('greeting').textContent=h<12?'morning':h<17?'afternoon':'evening';
   var now=new Date();
   document.getElementById('dateStr').textContent=now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  var unlocked=localStorage.getItem('inv_unlocked')==='true';
   var freeLeft=Math.max(0,2-parseInt(localStorage.getItem('inv_free')||'0'));
-  document.getElementById('sbPlan').textContent=unlocked?'Pro':'Free';
-  document.getElementById('settingPlan').textContent=unlocked?'Unlocked — Unlimited downloads':'Free — '+freeLeft+' download'+(freeLeft!==1?'s':'')+' remaining';
+  // Check unlock from Supabase
+  fetch(SUPA_URL+'/rest/v1/unlocked_users?user_id=eq.'+user.id,{
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+  }).then(function(r){return r.json();}).then(function(data){
+    var unlocked=data&&data.length>0;
+    if(unlocked) localStorage.setItem('inv_unlocked','true');
+    document.getElementById('sbPlan').textContent=unlocked?'Pro ✦':'Free';
+    document.getElementById('settingPlan').textContent=unlocked?'Unlocked Pro — Unlimited downloads forever':'Free — '+freeLeft+' download'+(freeLeft!==1?'s':'')+' remaining';
+  }).catch(function(){
+    var unlocked=localStorage.getItem('inv_unlocked')==='true';
+    document.getElementById('sbPlan').textContent=unlocked?'Pro ✦':'Free';
+    document.getElementById('settingPlan').textContent=unlocked?'Unlocked Pro — Unlimited downloads forever':'Free — '+freeLeft+' download'+(freeLeft!==1?'s':'')+' remaining';
+  });
   loadSettings();
   loadDocs(user);
 }
