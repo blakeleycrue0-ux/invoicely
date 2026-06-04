@@ -1107,37 +1107,13 @@ function goToStripe(){window.location.href=STRIPE;}
 document.getElementById('payModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
 
 function checkUnlocked(callback){
-// Always check Supabase — never trust localStorage alone
-// This prevents new accounts on same browser appearing as unlocked
-var uid=currentUser&&currentUser.id;
-if(!uid){_unlocked=false;localStorage.removeItem('inv_unlocked');if(callback)callback(false);return;}
-fetch(SUPA_URL+'/rest/v1/unlocked_users?user_id=eq.'+uid,{
-headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
-}).then(function(r){return r.json();}).then(function(data){
-if(data&&data.length>0){
-_unlocked=true;
-localStorage.setItem('inv_unlocked_'+uid,'true');
-} else {
-_unlocked=false;
-localStorage.removeItem('inv_unlocked_'+uid);
-localStorage.removeItem('inv_unlocked');
-}
-if(callback)callback(_unlocked);
-}).catch(function(){
-// Offline fallback - use user-specific key
-_unlocked=localStorage.getItem('inv_unlocked_'+uid)==='true';
-if(callback)callback(_unlocked);
-});
+var unlocked=localStorage.getItem('inv_unlocked')==='true';
+_unlocked=unlocked;
+if(callback)callback(unlocked);
 }
 
 function saveUnlockToSupabase(){
-var uid=currentUser&&currentUser.id;if(!uid) return;
-localStorage.setItem('inv_unlocked_'+uid,'true');
-fetch(SUPA_URL+'/rest/v1/unlocked_users',{
-method:'POST',
-headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'resolution=ignore-duplicates'},
-body:JSON.stringify({user_id:uid})
-}).catch(function(){});
+localStorage.setItem('inv_unlocked','true');
 }
 
 function getFreeCount(){return parseInt(localStorage.getItem('inv_free')||'0');}
