@@ -130,13 +130,18 @@ if(hash && hash.includes('access_token')){
 }
 
 function switchTab(tab){
-  document.getElementById('tab-login').classList.toggle('active',tab==='login');
-  document.getElementById('tab-signup').classList.toggle('active',tab==='signup');
-  document.getElementById('form-login').style.display=tab==='login'?'block':'none';
-  document.getElementById('form-signup').style.display=tab==='signup'?'block':'none';
-  document.getElementById('form-reset').style.display='none';
-  document.getElementById('divider').style.display=tab==='reset'?'none':'flex';
-  document.getElementById('google-btn').style.display=tab==='reset'?'none':'flex';
+  var tl=document.getElementById('tab-login');
+  var ts=document.getElementById('tab-signup');
+  var fl=document.getElementById('form-login');
+  var fs=document.getElementById('form-signup');
+  var fr=document.getElementById('form-reset');
+  var div=document.getElementById('divider');
+  if(tl) tl.classList.toggle('active',tab==='login');
+  if(ts) ts.classList.toggle('active',tab==='signup');
+  if(fl) fl.style.display=tab==='login'?'block':'none';
+  if(fs) fs.style.display=tab==='signup'?'block':'none';
+  if(fr) fr.style.display='none';
+  if(div) div.style.display='flex';
   clearMsg();
 }
 
