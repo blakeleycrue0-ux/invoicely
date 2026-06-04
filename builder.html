@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Invoicely — Builder</title>
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Instrument+Serif:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -637,23 +636,24 @@ var currentBg='default', currentLogoPos='left', logoDataUrl=null, lineMode='simp
 var saveTimer=null;
 var bgColors={default:'#faf9f6',white:'#ffffff',cream:'#fffbf0',blue:'#f0f4ff',green:'#f0faf4',rose:'#fff1f2',dark:'#0f172a'};
 
-// AUTH
-if(window.netlifyIdentity){
-  window.netlifyIdentity.on('init',function(user){
-    currentUser=user;
-    if(user){
-      var email=user.email||'';
-      var name=(user.user_metadata&&user.user_metadata.full_name)?user.user_metadata.full_name:email.split('@')[0];
-      document.getElementById('userAv').textContent=name.charAt(0).toUpperCase();
-      document.getElementById('userName').textContent=name;
-      document.getElementById('userEmail').textContent=email;
-    }
-    initBuilder();
-  });
-  window.netlifyIdentity.on('logout',function(){window.location.href='login.html';});
-} else { initBuilder(); }
+// SUPABASE AUTH
+function getSession(){try{return JSON.parse(localStorage.getItem('sb_session'));}catch(e){return null;}}
+function getToken(){var s=getSession();return s?s.access_token:null;}
+function getUserId(){var s=getSession();if(!s)return null;if(s.user&&s.user.id)return s.user.id;try{var p=JSON.parse(atob(s.access_token.split('.')[1]));return p.sub;}catch(e){return null;}}
+function getUserName(){var s=getSession();if(!s)return 'User';if(s.user&&s.user.user_metadata&&s.user.user_metadata.full_name)return s.user.user_metadata.full_name;if(s.user&&s.user.email)return s.user.email.split('@')[0];return 'User';}
+function getUserEmail(){var s=getSession();return s&&s.user?s.user.email:'';}
+function logout(){localStorage.removeItem('sb_session');window.location.href='login.html';}
 
-function logout(){ if(window.netlifyIdentity) window.netlifyIdentity.logout(); else window.location.href='login.html'; }
+var _sess=getSession();
+if(!_sess||!_sess.access_token){window.location.href='login.html';}
+else{
+  currentUser={id:getUserId(),email:getUserEmail(),name:getUserName()};
+  var _name=getUserName();
+  document.getElementById('userAv').textContent=_name.charAt(0).toUpperCase();
+  document.getElementById('userName').textContent=_name;
+  document.getElementById('userEmail').textContent=getUserEmail();
+  window.addEventListener('load',function(){initBuilder();});
+}
 
 function initBuilder(){
   var params=new URLSearchParams(window.location.search);
@@ -1041,7 +1041,7 @@ function saveDoc(){
   if(!currentUser){showToast('Sign in to save','error');return;}
   setSaveStatus('saving');
   var d=collectData();
-  var userId=currentUser.id;
+  var userId=getUserId();
   var payload={user_id:userId,type:currentDocType,title:d.bizName||'Untitled',doc_number:d.docNum,client_name:d.clientName,total:d.type==='receipt'?(parseFloat(d.receiptAmount)||0):d.total,status:currentStatus,due_date:null,data:Object.assign({},d,{logoDataUrl:logoDataUrl,template:currentDocType,bg:d.bg,logoPos:d.logoPos})};
   var url=SUPA_URL+'/rest/v1/documents';
   var method='POST';
@@ -1055,7 +1055,7 @@ function saveDoc(){
 
 function loadDoc(id){
   if(!currentUser) return;
-  fetch(SUPA_URL+'/rest/v1/documents?id=eq.'+id+'&user_id=eq.'+currentUser.id,{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}})
+  fetch(SUPA_URL+'/rest/v1/documents?id=eq.'+id+'&user_id=eq.'+getUserId(),{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}})
   .then(function(r){return r.json();}).then(function(data){
     if(data&&data[0]) populateForm(data[0]);
   }).catch(function(){});
@@ -1104,8 +1104,8 @@ function checkUnlocked(callback){
   // Check localStorage first (fast)
   if(localStorage.getItem('inv_unlocked')==='true'){_unlocked=true;if(callback)callback(true);return;}
   // Then check Supabase (persistent across devices)
-  if(!currentUser){if(callback)callback(false);return;}
-  fetch(SUPA_URL+'/rest/v1/unlocked_users?user_id=eq.'+currentUser.id,{
+  var uid=getUserId();if(!uid){if(callback)callback(false);return;}
+  fetch(SUPA_URL+'/rest/v1/unlocked_users?user_id=eq.'+uid,{
     headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
   }).then(function(r){return r.json();}).then(function(data){
     if(data&&data.length>0){
@@ -1117,11 +1117,11 @@ function checkUnlocked(callback){
 }
 
 function saveUnlockToSupabase(){
-  if(!currentUser) return;
+  var uid=getUserId();if(!uid) return;
   fetch(SUPA_URL+'/rest/v1/unlocked_users',{
     method:'POST',
     headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'resolution=ignore-duplicates'},
-    body:JSON.stringify({user_id:currentUser.id})
+    body:JSON.stringify({user_id:uid})
   }).catch(function(){});
 }
 
