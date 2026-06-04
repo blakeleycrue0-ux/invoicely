@@ -1149,40 +1149,21 @@ function downloadPDF(){
   var btn=document.getElementById('dlBtn');btn.textContent='Generating...';btn.disabled=true;
   var d=collectData();
   var bg=d.type==='receipt'?'#ffffff':d.bg||'#faf9f6';
-  var html=d.type==='quote'?renderQuote(d):d.type==='receipt'?renderReceipt(d):d.type==='proforma'?renderProforma(d):renderInvoice(d);
   var fname=(d.bizName||'Document').replace(/[^a-zA-Z0-9]/g,'-')+'-'+d.docNum+'.pdf';
-  // Build a completely standalone page
-  var fullHtml='<!DOCTYPE html><html><head><meta charset="UTF-8">'
-    +'<style>*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}body{background:'+bg+'}</style>'
-    +'</head><body>'+html+'</body></html>';
-  var blob=new Blob([fullHtml],{type:'text/html'});
-  var url=URL.createObjectURL(blob);
-  // Use iframe approach
-  var iframe=document.createElement('iframe');
-  iframe.style.cssText='position:fixed;left:-9999px;top:0;width:794px;height:1123px;border:none;visibility:hidden';
-  document.body.appendChild(iframe);
-  iframe.onload=function(){
-    setTimeout(function(){
-      var el=iframe.contentDocument.body;
-      html2pdf().set({
-        margin:0,
-        filename:fname,
-        image:{type:'jpeg',quality:0.98},
-        html2canvas:{scale:2,useCORS:true,allowTaint:true,backgroundColor:bg,logging:false},
-        jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
-      }).from(el).save().then(function(){
-        document.body.removeChild(iframe);
-        URL.revokeObjectURL(url);
-        btn.textContent='Download PDF';btn.disabled=false;
-      }).catch(function(e){
-        document.body.removeChild(iframe);
-        URL.revokeObjectURL(url);
-        btn.textContent='Download PDF';btn.disabled=false;
-        console.error(e);
-      });
-    },800);
-  };
-  iframe.src=url;
+  // Use the live preview element directly
+  var src=document.getElementById('previewDoc');
+  html2pdf().set({
+    margin:0,
+    filename:fname,
+    image:{type:'jpeg',quality:0.98},
+    html2canvas:{scale:2,useCORS:true,allowTaint:true,backgroundColor:bg,logging:false,scrollX:0,scrollY:0},
+    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
+  }).from(src).save().then(function(){
+    btn.textContent='Download PDF';btn.disabled=false;
+  }).catch(function(e){
+    btn.textContent='Download PDF';btn.disabled=false;
+    console.error(e);
+  });
 }
 
 function showToast(msg,type){
