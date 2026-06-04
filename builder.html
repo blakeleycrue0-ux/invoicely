@@ -10,11 +10,11 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --ink:#0f1729;--ink-2:#374151;--ink-3:#6b7280;--ink-4:#9ca3af;
-  --bg:#f8f9fc;--white:#fff;--border:#e5e7eb;--border-2:#d1d5db;
-  --accent:#4f46e5;--accent-2:#6366f1;--accent-light:#eef2ff;--accent-mid:#c7d2fe;
-  --green:#16a34a;--green-bg:#dcfce7;--yellow:#d97706;--yellow-bg:#fef3c7;
-  --red:#dc2626;--red-bg:#fee2e2;--sidebar:220px
+--ink:#0f1729;--ink-2:#374151;--ink-3:#6b7280;--ink-4:#9ca3af;
+--bg:#f8f9fc;--white:#fff;--border:#e5e7eb;--border-2:#d1d5db;
+--accent:#4f46e5;--accent-2:#6366f1;--accent-light:#eef2ff;--accent-mid:#c7d2fe;
+--green:#16a34a;--green-bg:#dcfce7;--yellow:#d97706;--yellow-bg:#fef3c7;
+--red:#dc2626;--red-bg:#fee2e2;--sidebar:220px
 }
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--ink);display:flex;min-height:100vh}
 
@@ -193,7 +193,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .toast.info{background:var(--ink);color:white}
 
 /* ═══════════════════════════════════════════
-   DOCUMENT DESIGNS
+DOCUMENT DESIGNS
 ═══════════════════════════════════════════ */
 
 /* INVOICE — Classic warm serif */
@@ -310,319 +310,319 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 <body>
 
 <aside class="sidebar">
-  <div class="sb-logo">
-    <div class="sb-logo-icon"><svg fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-    <div class="sb-logo-text">Invoicely</div>
-  </div>
-  <nav class="sb-nav">
-    <div class="sb-label">Overview</div>
-    <a class="sb-item" href="dashboard.html">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      Dashboard
-    </a>
-    <div class="sb-label">Create</div>
-    <a class="sb-item active" href="builder.html">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      New Invoice
-    </a>
-    <a class="sb-item" href="builder.html?type=quote">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-      New Quote
-    </a>
-    <a class="sb-item" href="builder.html?type=receipt">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
-      New Receipt
-    </a>
-    <a class="sb-item" href="builder.html?type=proforma">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/></svg>
-      New Proforma
-    </a>
-  </nav>
-  <div class="sb-bottom">
-    <div class="sb-user">
-      <div class="sb-av" id="userAv">?</div>
-      <div><div class="sb-name" id="userName">Loading...</div><div class="sb-email" id="userEmail"></div></div>
-    </div>
-    <button class="sb-logout" onclick="logout()">Sign out</button>
-  </div>
+<div class="sb-logo">
+<div class="sb-logo-icon"><svg fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+<div class="sb-logo-text">Invoicely</div>
+</div>
+<nav class="sb-nav">
+<div class="sb-label">Overview</div>
+<a class="sb-item" href="dashboard.html">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+Dashboard
+</a>
+<div class="sb-label">Create</div>
+<a class="sb-item active" href="builder.html">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+New Invoice
+</a>
+<a class="sb-item" href="builder.html?type=quote">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+New Quote
+</a>
+<a class="sb-item" href="builder.html?type=receipt">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+New Receipt
+</a>
+<a class="sb-item" href="builder.html?type=proforma">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/></svg>
+New Proforma
+</a>
+</nav>
+<div class="sb-bottom">
+<div class="sb-user">
+<div class="sb-av" id="userAv">?</div>
+<div><div class="sb-name" id="userName">Loading...</div><div class="sb-email" id="userEmail"></div></div>
+</div>
+<button class="sb-logout" onclick="logout()">Sign out</button>
+</div>
 </aside>
 
 <main class="main">
-  <div class="topbar">
-    <div class="topbar-title" id="docTitleBar">New Invoice</div>
-    <div class="save-status"><div class="save-dot unsaved" id="saveDot"></div><span id="saveStatusText">Unsaved</span></div>
-    <button class="tb-btn secondary" onclick="window.location.href='dashboard.html'">← Dashboard</button>
-    <button class="tb-btn success" onclick="saveDoc()">
-      <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-      Save
-    </button>
-    <button class="tb-btn primary" onclick="handleDownload()">
-      <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-      Download PDF
-    </button>
-  </div>
+<div class="topbar">
+<div class="topbar-title" id="docTitleBar">New Invoice</div>
+<div class="save-status"><div class="save-dot unsaved" id="saveDot"></div><span id="saveStatusText">Unsaved</span></div>
+<button class="tb-btn secondary" onclick="window.location.href='dashboard.html'">← Dashboard</button>
+<button class="tb-btn success" onclick="saveDoc()">
+<svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+Save
+</button>
+<button class="tb-btn primary" onclick="handleDownload()">
+<svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+Download PDF
+</button>
+</div>
 
-  <div class="status-bar" id="statusBar">
-    <span class="status-label">Status:</span>
-    <button class="status-btn active" id="status-draft" onclick="setStatus('draft')">Draft</button>
-    <button class="status-btn" id="status-sent" onclick="setStatus('sent')">Sent</button>
-    <button class="status-btn" id="status-paid" onclick="setStatus('paid')">Paid ✓</button>
-    <button class="status-btn" id="status-unpaid" onclick="setStatus('unpaid')">Unpaid</button>
-  </div>
+<div class="status-bar" id="statusBar">
+<span class="status-label">Status:</span>
+<button class="status-btn active" id="status-draft" onclick="setStatus('draft')">Draft</button>
+<button class="status-btn" id="status-sent" onclick="setStatus('sent')">Sent</button>
+<button class="status-btn" id="status-paid" onclick="setStatus('paid')">Paid ✓</button>
+<button class="status-btn" id="status-unpaid" onclick="setStatus('unpaid')">Unpaid</button>
+</div>
 
-  <div class="doc-type-bar">
-    <button class="doc-type-btn active" id="btn-invoice" onclick="setDocType('invoice')">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      Invoice
-    </button>
-    <button class="doc-type-btn" id="btn-quote" onclick="setDocType('quote')">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-      Quote
-    </button>
-    <button class="doc-type-btn" id="btn-receipt" onclick="setDocType('receipt')">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/></svg>
-      Receipt
-    </button>
-    <button class="doc-type-btn" id="btn-proforma" onclick="setDocType('proforma')">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      Proforma
-    </button>
-  </div>
+<div class="doc-type-bar">
+<button class="doc-type-btn active" id="btn-invoice" onclick="setDocType('invoice')">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+Invoice
+</button>
+<button class="doc-type-btn" id="btn-quote" onclick="setDocType('quote')">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+Quote
+</button>
+<button class="doc-type-btn" id="btn-receipt" onclick="setDocType('receipt')">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/></svg>
+Receipt
+</button>
+<button class="doc-type-btn" id="btn-proforma" onclick="setDocType('proforma')">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+Proforma
+</button>
+</div>
 
-  <div class="builder-layout">
-    <div class="form-panel">
+<div class="builder-layout">
+<div class="form-panel">
 
-      <!-- BRANDING -->
-      <div class="form-section">
-        <div class="form-section-header">
-          <div class="form-section-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg></div>
-          <div class="form-section-title">Your Business</div>
-        </div>
-        <div class="form-group">
-          <label>Logo</label>
-          <div class="logo-upload-area" id="logoUploadArea">
-            <input type="file" id="logoUpload" accept="image/*" onchange="handleLogo(this)">
-            <div class="logo-upload-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
-            <div class="logo-upload-text">Upload your logo</div>
-            <div class="logo-upload-sub">PNG, JPG, SVG · Max 2MB</div>
-          </div>
-          <div class="logo-preview-box" id="logoPreviewBox">
-            <img id="logoThumb" src="" alt="logo">
-            <div style="flex:1">
-              <div style="font-size:0.82rem;font-weight:600;color:var(--ink);margin-bottom:2px">Logo uploaded</div>
-              <div style="font-size:0.72rem;color:var(--ink-4)">Appears on your document</div>
-            </div>
-            <button onclick="removeLogo()">Remove</button>
-          </div>
-        </div>
-        <div style="margin-top:8px;margin-bottom:12px" id="logoPosSection" style="display:none">
-          <label class="form-group" style="display:block;font-size:0.72rem;font-weight:600;color:var(--ink-3);margin-bottom:5px">Logo Position</label>
-          <div class="logo-pos-grid">
-            <button class="logo-pos-btn active" id="lpos-left" onclick="setLogoPos('left')">◀ Left</button>
-            <button class="logo-pos-btn" id="lpos-center" onclick="setLogoPos('center')">● Center</button>
-            <button class="logo-pos-btn" id="lpos-right" onclick="setLogoPos('right')">Right ▶</button>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Business Name</label><input type="text" id="bizName" placeholder="Studio Norte" oninput="updatePreview()"></div>
-          <div class="form-group"><label>Your Name</label><input type="text" id="bizContact" placeholder="Alex Morgan" oninput="updatePreview()"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Email</label><input type="email" id="bizEmail" placeholder="alex@studio.co" oninput="updatePreview()"></div>
-          <div class="form-group"><label>Phone</label><input type="tel" id="bizPhone" placeholder="+34 600 000 000" oninput="updatePreview()"></div>
-        </div>
-        <div class="form-group"><label>Address</label><textarea id="bizAddress" placeholder="123 Main Street&#10;Madrid, 28001, Spain" rows="2" oninput="updatePreview()"></textarea></div>
-      </div>
+<!-- BRANDING -->
+<div class="form-section">
+<div class="form-section-header">
+<div class="form-section-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg></div>
+<div class="form-section-title">Your Business</div>
+</div>
+<div class="form-group">
+<label>Logo</label>
+<div class="logo-upload-area" id="logoUploadArea">
+<input type="file" id="logoUpload" accept="image/*" onchange="handleLogo(this)">
+<div class="logo-upload-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+<div class="logo-upload-text">Upload your logo</div>
+<div class="logo-upload-sub">PNG, JPG, SVG · Max 2MB</div>
+</div>
+<div class="logo-preview-box" id="logoPreviewBox">
+<img id="logoThumb" src="" alt="logo">
+<div style="flex:1">
+<div style="font-size:0.82rem;font-weight:600;color:var(--ink);margin-bottom:2px">Logo uploaded</div>
+<div style="font-size:0.72rem;color:var(--ink-4)">Appears on your document</div>
+</div>
+<button onclick="removeLogo()">Remove</button>
+</div>
+</div>
+<div style="margin-top:8px;margin-bottom:12px" id="logoPosSection" style="display:none">
+<label class="form-group" style="display:block;font-size:0.72rem;font-weight:600;color:var(--ink-3);margin-bottom:5px">Logo Position</label>
+<div class="logo-pos-grid">
+<button class="logo-pos-btn active" id="lpos-left" onclick="setLogoPos('left')">◀ Left</button>
+<button class="logo-pos-btn" id="lpos-center" onclick="setLogoPos('center')">● Center</button>
+<button class="logo-pos-btn" id="lpos-right" onclick="setLogoPos('right')">Right ▶</button>
+</div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>Business Name</label><input type="text" id="bizName" placeholder="Studio Norte" oninput="updatePreview()"></div>
+<div class="form-group"><label>Your Name</label><input type="text" id="bizContact" placeholder="Alex Morgan" oninput="updatePreview()"></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>Email</label><input type="email" id="bizEmail" placeholder="alex@studio.co" oninput="updatePreview()"></div>
+<div class="form-group"><label>Phone</label><input type="tel" id="bizPhone" placeholder="+34 600 000 000" oninput="updatePreview()"></div>
+</div>
+<div class="form-group"><label>Address</label><textarea id="bizAddress" placeholder="123 Main Street&#10;Madrid, 28001, Spain" rows="2" oninput="updatePreview()"></textarea></div>
+</div>
 
-      <!-- CLIENT -->
-      <div class="form-section">
-        <div class="form-section-header">
-          <div class="form-section-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
-          <div class="form-section-title" id="clientSectionTitle">Client Details</div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label id="clientNameLabel">Client Name</label><input type="text" id="clientName" placeholder="Acme Corp" oninput="updatePreview()"></div>
-          <div class="form-group"><label>Email</label><input type="email" id="clientEmail" placeholder="billing@acme.com" oninput="updatePreview()"></div>
-        </div>
-        <div class="form-group"><label>Address</label><textarea id="clientAddress" placeholder="456 Business Street&#10;Barcelona, 08001, Spain" rows="2" oninput="updatePreview()"></textarea></div>
-      </div>
+<!-- CLIENT -->
+<div class="form-section">
+<div class="form-section-header">
+<div class="form-section-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+<div class="form-section-title" id="clientSectionTitle">Client Details</div>
+</div>
+<div class="form-row">
+<div class="form-group"><label id="clientNameLabel">Client Name</label><input type="text" id="clientName" placeholder="Acme Corp" oninput="updatePreview()"></div>
+<div class="form-group"><label>Email</label><input type="email" id="clientEmail" placeholder="billing@acme.com" oninput="updatePreview()"></div>
+</div>
+<div class="form-group"><label>Address</label><textarea id="clientAddress" placeholder="456 Business Street&#10;Barcelona, 08001, Spain" rows="2" oninput="updatePreview()"></textarea></div>
+</div>
 
-      <!-- DOCUMENT DETAILS -->
-      <div class="form-section">
-        <div class="form-section-header">
-          <div class="form-section-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-          <div class="form-section-title" id="docDetailsTitle">Invoice Details</div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label id="docNumLabel">Invoice #</label><input type="text" id="invNumber" oninput="updatePreview()"></div>
-          <div class="form-group"><label>Issue Date</label><input type="date" id="invDate" oninput="updatePreview()"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group" id="dueDateGroup"><label>Due Date</label><input type="date" id="dueDate" oninput="updatePreview()"></div>
-          <div class="form-group" id="validGroup" style="display:none"><label>Valid Until</label><input type="date" id="validUntil" oninput="updatePreview()"></div>
-          <div class="form-group"><label>Currency</label>
-            <select id="currencySelect" onchange="updatePreview()">
-              <option value="€">€ Euro</option>
-              <option value="$">$ US Dollar</option>
-              <option value="£">£ British Pound</option>
-              <option value="¥">¥ Japanese Yen</option>
-              <option value="CHF">CHF Swiss Franc</option>
-              <option value="CAD $">CAD $ Canadian</option>
-              <option value="AUD $">AUD $ Australian</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Tax Rate (%)</label><input type="number" id="taxRate" placeholder="0" min="0" max="100" step="0.1" oninput="updatePreview()"></div>
-          <div class="form-group" id="payMethodGroup" style="display:none"><label>Payment Method</label>
-            <select id="payMethod" onchange="updatePreview()">
-              <option>Bank Transfer</option>
-              <option>Cash</option>
-              <option>Card</option>
-              <option>PayPal</option>
-              <option>Stripe</option>
-              <option>Bizum</option>
-              <option>Other</option>
-            </select>
-          </div>
-        </div>
+<!-- DOCUMENT DETAILS -->
+<div class="form-section">
+<div class="form-section-header">
+<div class="form-section-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+<div class="form-section-title" id="docDetailsTitle">Invoice Details</div>
+</div>
+<div class="form-row">
+<div class="form-group"><label id="docNumLabel">Invoice #</label><input type="text" id="invNumber" oninput="updatePreview()"></div>
+<div class="form-group"><label>Issue Date</label><input type="date" id="invDate" oninput="updatePreview()"></div>
+</div>
+<div class="form-row">
+<div class="form-group" id="dueDateGroup"><label>Due Date</label><input type="date" id="dueDate" oninput="updatePreview()"></div>
+<div class="form-group" id="validGroup" style="display:none"><label>Valid Until</label><input type="date" id="validUntil" oninput="updatePreview()"></div>
+<div class="form-group"><label>Currency</label>
+<select id="currencySelect" onchange="updatePreview()">
+<option value="€">€ Euro</option>
+<option value="$">$ US Dollar</option>
+<option value="£">£ British Pound</option>
+<option value="¥">¥ Japanese Yen</option>
+<option value="CHF">CHF Swiss Franc</option>
+<option value="CAD $">CAD $ Canadian</option>
+<option value="AUD $">AUD $ Australian</option>
+</select>
+</div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>Tax Rate (%)</label><input type="number" id="taxRate" placeholder="0" min="0" max="100" step="0.1" oninput="updatePreview()"></div>
+<div class="form-group" id="payMethodGroup" style="display:none"><label>Payment Method</label>
+<select id="payMethod" onchange="updatePreview()">
+<option>Bank Transfer</option>
+<option>Cash</option>
+<option>Card</option>
+<option>PayPal</option>
+<option>Stripe</option>
+<option>Bizum</option>
+<option>Other</option>
+</select>
+</div>
+</div>
 
-        <!-- Quote intro -->
-        <div class="form-group" id="quoteIntroGroup" style="display:none">
-          <label>Opening Message</label>
-          <textarea id="quoteIntro" placeholder="Thank you for your interest. Please find our proposal below." oninput="updatePreview()"></textarea>
-        </div>
-      </div>
+<!-- Quote intro -->
+<div class="form-group" id="quoteIntroGroup" style="display:none">
+<label>Opening Message</label>
+<textarea id="quoteIntro" placeholder="Thank you for your interest. Please find our proposal below." oninput="updatePreview()"></textarea>
+</div>
+</div>
 
-      <!-- LINE ITEMS — hidden for receipt -->
-      <div class="form-section" id="lineItemsSection">
-        <div class="form-section-header">
-          <div class="form-section-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
-          <div class="form-section-title">Line Items</div>
-        </div>
-        <div class="line-mode-toggle">
-          <button class="line-mode-btn active" id="modeSimple" onclick="setLineMode('simple')">Simple (price only)</button>
-          <button class="line-mode-btn" id="modeCalc" onclick="setLineMode('calc')">Calculated (qty × rate)</button>
-        </div>
-        <div id="lineItems">
-          <div class="line-item">
-            <div class="line-item-top">
-              <input type="text" class="line-item-desc" placeholder="e.g. Web design — homepage" oninput="updatePreview()">
-              <button class="line-item-remove" onclick="removeItem(this)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-            </div>
-            <div class="line-item-nums simple">
-              <div><div class="num-label">Price</div><input type="text" class="num-input price-input" placeholder="1200" oninput="updatePreview()"></div>
-            </div>
-          </div>
-        </div>
-        <button class="add-line-btn" onclick="addItem()">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Add line item
-        </button>
-      </div>
+<!-- LINE ITEMS — hidden for receipt -->
+<div class="form-section" id="lineItemsSection">
+<div class="form-section-header">
+<div class="form-section-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+<div class="form-section-title">Line Items</div>
+</div>
+<div class="line-mode-toggle">
+<button class="line-mode-btn active" id="modeSimple" onclick="setLineMode('simple')">Simple (price only)</button>
+<button class="line-mode-btn" id="modeCalc" onclick="setLineMode('calc')">Calculated (qty × rate)</button>
+</div>
+<div id="lineItems">
+<div class="line-item">
+<div class="line-item-top">
+<input type="text" class="line-item-desc" placeholder="e.g. Web design — homepage" oninput="updatePreview()">
+<button class="line-item-remove" onclick="removeItem(this)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+</div>
+<div class="line-item-nums simple">
+<div><div class="num-label">Price</div><input type="text" class="num-input price-input" placeholder="1200" oninput="updatePreview()"></div>
+</div>
+</div>
+</div>
+<button class="add-line-btn" onclick="addItem()">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+Add line item
+</button>
+</div>
 
-      <!-- RECEIPT AMOUNT — shown only for receipt -->
-      <div class="form-section" id="receiptSection" style="display:none">
-        <div class="form-section-header">
-          <div class="form-section-icon" style="background:var(--green-bg)"><svg fill="none" stroke="var(--green)" viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg></div>
-          <div class="form-section-title">Payment Details</div>
-        </div>
-        <div class="form-group"><label>Amount Received</label><input type="text" id="receiptAmount" placeholder="1500" oninput="updatePreview()"></div>
-        <div class="form-group"><label>For (description)</label><input type="text" id="receiptDesc" placeholder="e.g. Web design services — Invoice INV-0042" oninput="updatePreview()"></div>
-        <div class="form-group"><label>Payment Method</label>
-          <select id="receiptPayMethod" onchange="updatePreview()">
-            <option>Bank Transfer</option><option>Cash</option><option>Card</option><option>PayPal</option><option>Stripe</option><option>Bizum</option><option>Other</option>
-          </select>
-        </div>
-      </div>
+<!-- RECEIPT AMOUNT — shown only for receipt -->
+<div class="form-section" id="receiptSection" style="display:none">
+<div class="form-section-header">
+<div class="form-section-icon" style="background:var(--green-bg)"><svg fill="none" stroke="var(--green)" viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg></div>
+<div class="form-section-title">Payment Details</div>
+</div>
+<div class="form-group"><label>Amount Received</label><input type="text" id="receiptAmount" placeholder="1500" oninput="updatePreview()"></div>
+<div class="form-group"><label>For (description)</label><input type="text" id="receiptDesc" placeholder="e.g. Web design services — Invoice INV-0042" oninput="updatePreview()"></div>
+<div class="form-group"><label>Payment Method</label>
+<select id="receiptPayMethod" onchange="updatePreview()">
+<option>Bank Transfer</option><option>Cash</option><option>Card</option><option>PayPal</option><option>Stripe</option><option>Bizum</option><option>Other</option>
+</select>
+</div>
+</div>
 
-      <!-- EXTRAS -->
-      <div class="form-section" id="extrasSection">
-        <div class="form-section-header">
-          <div class="form-section-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
-          <div class="form-section-title">Extras</div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Discount (%)</label><input type="text" id="discountPct" placeholder="e.g. 10" oninput="updatePreview()"></div>
-          <div class="form-group"><label>Discount (fixed)</label><input type="text" id="discountFixed" placeholder="e.g. 50" oninput="updatePreview()"></div>
-        </div>
-        <div class="form-group"><label>Bank / Payment Details</label><textarea id="bankDetails" placeholder="IBAN: ES91 2100 0418 4502 0005 1332&#10;Bank: CaixaBank&#10;SWIFT: CAIXESBBXXX" oninput="updatePreview()" style="min-height:72px"></textarea></div>
-        <div class="form-group"><label>Notes</label><textarea id="notes" placeholder="Payment due within 14 days. Thank you for your business." oninput="updatePreview()"></textarea></div>
-        <div class="form-group"><label>Custom Footer</label><input type="text" id="footerMsg" placeholder="Thank you for your business!" oninput="updatePreview()"></div>
-      </div>
+<!-- EXTRAS -->
+<div class="form-section" id="extrasSection">
+<div class="form-section-header">
+<div class="form-section-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
+<div class="form-section-title">Extras</div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>Discount (%)</label><input type="text" id="discountPct" placeholder="e.g. 10" oninput="updatePreview()"></div>
+<div class="form-group"><label>Discount (fixed)</label><input type="text" id="discountFixed" placeholder="e.g. 50" oninput="updatePreview()"></div>
+</div>
+<div class="form-group"><label>Bank / Payment Details</label><textarea id="bankDetails" placeholder="IBAN: ES91 2100 0418 4502 0005 1332&#10;Bank: CaixaBank&#10;SWIFT: CAIXESBBXXX" oninput="updatePreview()" style="min-height:72px"></textarea></div>
+<div class="form-group"><label>Notes</label><textarea id="notes" placeholder="Payment due within 14 days. Thank you for your business." oninput="updatePreview()"></textarea></div>
+<div class="form-group"><label>Custom Footer</label><input type="text" id="footerMsg" placeholder="Thank you for your business!" oninput="updatePreview()"></div>
+</div>
 
-      <!-- STYLE — only for invoice/quote/proforma -->
-      <div class="form-section" id="styleSection">
-        <div class="form-section-header">
-          <div class="form-section-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="13.5" cy="6.5" r="0.5" fill="currentColor"/><circle cx="17.5" cy="10.5" r="0.5" fill="currentColor"/><circle cx="8.5" cy="7.5" r="0.5" fill="currentColor"/><circle cx="6.5" cy="12.5" r="0.5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 011.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg></div>
-          <div class="form-section-title">Document Style</div>
-        </div>
-        <div class="form-group">
-          <label>Background Color</label>
-          <div class="bg-swatch-grid">
-            <div class="bg-sw active" data-bg="default" onclick="setBg('default')" style="background:#faf9f6;border:2px solid var(--border)" title="Warm White"></div>
-            <div class="bg-sw" data-bg="white" onclick="setBg('white')" style="background:#ffffff;border:2px solid var(--border-2)" title="Pure White"></div>
-            <div class="bg-sw" data-bg="cream" onclick="setBg('cream')" style="background:#fffbf0" title="Cream"></div>
-            <div class="bg-sw" data-bg="blue" onclick="setBg('blue')" style="background:#f0f4ff" title="Soft Blue"></div>
-            <div class="bg-sw" data-bg="green" onclick="setBg('green')" style="background:#f0faf4" title="Sage"></div>
-            <div class="bg-sw" data-bg="rose" onclick="setBg('rose')" style="background:#fff1f2" title="Rose"></div>
-            <div class="bg-sw" data-bg="dark" onclick="setBg('dark')" style="background:#0f172a" title="Dark Navy"></div>
-          </div>
-          <div class="custom-color-row">
-            <label>Custom:</label>
-            <input type="color" id="bgPicker" value="#faf9f6" oninput="setBgCustom(this.value)">
-            <span id="bgHex">#faf9f6</span>
-          </div>
-        </div>
-      </div>
+<!-- STYLE — only for invoice/quote/proforma -->
+<div class="form-section" id="styleSection">
+<div class="form-section-header">
+<div class="form-section-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="13.5" cy="6.5" r="0.5" fill="currentColor"/><circle cx="17.5" cy="10.5" r="0.5" fill="currentColor"/><circle cx="8.5" cy="7.5" r="0.5" fill="currentColor"/><circle cx="6.5" cy="12.5" r="0.5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 011.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg></div>
+<div class="form-section-title">Document Style</div>
+</div>
+<div class="form-group">
+<label>Background Color</label>
+<div class="bg-swatch-grid">
+<div class="bg-sw active" data-bg="default" onclick="setBg('default')" style="background:#faf9f6;border:2px solid var(--border)" title="Warm White"></div>
+<div class="bg-sw" data-bg="white" onclick="setBg('white')" style="background:#ffffff;border:2px solid var(--border-2)" title="Pure White"></div>
+<div class="bg-sw" data-bg="cream" onclick="setBg('cream')" style="background:#fffbf0" title="Cream"></div>
+<div class="bg-sw" data-bg="blue" onclick="setBg('blue')" style="background:#f0f4ff" title="Soft Blue"></div>
+<div class="bg-sw" data-bg="green" onclick="setBg('green')" style="background:#f0faf4" title="Sage"></div>
+<div class="bg-sw" data-bg="rose" onclick="setBg('rose')" style="background:#fff1f2" title="Rose"></div>
+<div class="bg-sw" data-bg="dark" onclick="setBg('dark')" style="background:#0f172a" title="Dark Navy"></div>
+</div>
+<div class="custom-color-row">
+<label>Custom:</label>
+<input type="color" id="bgPicker" value="#faf9f6" oninput="setBgCustom(this.value)">
+<span id="bgHex">#faf9f6</span>
+</div>
+</div>
+</div>
 
-      <!-- DOWNLOAD -->
-      <div class="download-section">
-        <div class="free-counter" id="freeCounter"></div>
-        <div class="dl-btns">
-          <button class="dl-btn gold" onclick="handleDownload()" id="dlBtn">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-            Download PDF
-          </button>
-          <button class="dl-btn outline" onclick="handlePrint()">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-            Print
-          </button>
-        </div>
-        <button class="save-to-account-btn" onclick="saveDoc()">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          Save to Account
-        </button>
-      </div>
+<!-- DOWNLOAD -->
+<div class="download-section">
+<div class="free-counter" id="freeCounter"></div>
+<div class="dl-btns">
+<button class="dl-btn gold" onclick="handleDownload()" id="dlBtn">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+Download PDF
+</button>
+<button class="dl-btn outline" onclick="handlePrint()">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+Print
+</button>
+</div>
+<button class="save-to-account-btn" onclick="saveDoc()">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+Save to Account
+</button>
+</div>
 
-    </div><!-- end form-panel -->
+</div><!-- end form-panel -->
 
-    <div class="preview-panel">
-      <div class="preview-inner">
-        <div class="preview-doc" id="previewDoc"></div>
-      </div>
-    </div>
+<div class="preview-panel">
+<div class="preview-inner">
+<div class="preview-doc" id="previewDoc"></div>
+</div>
+</div>
 
-  </div><!-- end builder-layout -->
+</div><!-- end builder-layout -->
 </main>
 
 <!-- MODAL -->
 <div class="modal-overlay" id="payModal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal()">×</button>
-    <div class="modal-eyebrow">Unlock Invoicely</div>
-    <h2>One payment.<br>Yours forever.</h2>
-    <div class="modal-price"><sup>$</sup>2.99</div>
-    <div class="modal-period">One-time · No subscription · Ever</div>
-    <ul class="modal-perks">
-      <li>Unlimited PDF downloads</li>
-      <li>All document types — Invoice, Quote, Receipt, Proforma</li>
-      <li>Your logo on every document</li>
-      <li>All future updates included</li>
-    </ul>
-    <button class="modal-pay-btn" onclick="goToStripe()">Pay $2.99 — Unlock Forever</button>
-    <p class="modal-note">Secure payment via Stripe · Instant access</p>
-  </div>
+<div class="modal">
+<button class="modal-close" onclick="closeModal()">×</button>
+<div class="modal-eyebrow">Unlock Invoicely</div>
+<h2>One payment.<br>Yours forever.</h2>
+<div class="modal-price"><sup>$</sup>2.99</div>
+<div class="modal-period">One-time · No subscription · Ever</div>
+<ul class="modal-perks">
+<li>Unlimited PDF downloads</li>
+<li>All document types — Invoice, Quote, Receipt, Proforma</li>
+<li>Your logo on every document</li>
+<li>All future updates included</li>
+</ul>
+<button class="modal-pay-btn" onclick="goToStripe()">Pay $2.99 — Unlock Forever</button>
+<p class="modal-note">Secure payment via Stripe · Instant access</p>
+</div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -640,136 +640,143 @@ var bgColors={default:'#faf9f6',white:'#ffffff',cream:'#fffbf0',blue:'#f0f4ff',g
 function logout(){ if(window.netlifyIdentity) window.netlifyIdentity.logout(); else window.location.href='login.html'; }
 
 if(window.netlifyIdentity){
-  window.netlifyIdentity.on('init', function(user){
-    currentUser=user;
-    if(user){
-      var email=user.email||'';
-      var name=(user.user_metadata&&user.user_metadata.full_name)?user.user_metadata.full_name:email.split('@')[0];
-      document.getElementById('userAv').textContent=name.charAt(0).toUpperCase();
-      document.getElementById('userName').textContent=name;
-      document.getElementById('userEmail').textContent=email;
-    }
-    initBuilder();
-  });
-  window.netlifyIdentity.on('logout', function(){ window.location.href='login.html'; });
+window.netlifyIdentity.on('init', function(user){
+currentUser=user;
+if(user){
+var email=user.email||'';
+var name=(user.user_metadata&&user.user_metadata.full_name)?user.user_metadata.full_name:email.split('@')[0];
+document.getElementById('userAv').textContent=name.charAt(0).toUpperCase();
+document.getElementById('userName').textContent=name;
+document.getElementById('userEmail').textContent=email;
+// Check unlock status now that user is loaded
+checkUnlocked(function(unlocked){
+_unlocked=unlocked;
+updateFreeCounter();
+});
+}
+initBuilder();
+});
+window.netlifyIdentity.on('logout', function(){ window.location.href='login.html'; });
 } else { initBuilder(); }
 
 function initBuilder(){
-  var params=new URLSearchParams(window.location.search);
-  var type=params.get('type')||'invoice';
-  var id=params.get('id');
-  setDocType(type);
-  if(id){currentDocId=id;loadDoc(id);}
-  var today=new Date(),due=new Date(),valid=new Date();
-  due.setDate(due.getDate()+14);valid.setDate(valid.getDate()+30);
-  document.getElementById('invDate').value=today.toISOString().split('T')[0];
-  document.getElementById('dueDate').value=due.toISOString().split('T')[0];
-  document.getElementById('validUntil').value=valid.toISOString().split('T')[0];
-  var prefixes={invoice:'INV-',quote:'QUO-',receipt:'REC-',proforma:'PRO-'};
-  document.getElementById('invNumber').value=(prefixes[type]||'INV-')+String(Math.floor(Math.random()*9000)+1000);
-  updateFreeCounter();
-  updatePreview();
-  if(params.get('unlocked')==='true'){
-    localStorage.setItem('inv_unlocked','true');
-    _unlocked=true;
-    saveUnlockToSupabase();
-    showToast('🎉 Unlocked! Unlimited downloads activated.','success');
-  }
-  // Always check Supabase for unlock status
-  checkUnlocked(function(unlocked){
-    _unlocked=unlocked;
-    updateFreeCounter();
-  });
+var params=new URLSearchParams(window.location.search);
+var type=params.get('type')||'invoice';
+var id=params.get('id');
+setDocType(type);
+if(id){currentDocId=id;loadDoc(id);}
+var today=new Date(),due=new Date(),valid=new Date();
+due.setDate(due.getDate()+14);valid.setDate(valid.getDate()+30);
+document.getElementById('invDate').value=today.toISOString().split('T')[0];
+document.getElementById('dueDate').value=due.toISOString().split('T')[0];
+document.getElementById('validUntil').value=valid.toISOString().split('T')[0];
+var prefixes={invoice:'INV-',quote:'QUO-',receipt:'REC-',proforma:'PRO-'};
+document.getElementById('invNumber').value=(prefixes[type]||'INV-')+String(Math.floor(Math.random()*9000)+1000);
+updateFreeCounter();
+updatePreview();
+if(params.get('unlocked')==='true'){
+localStorage.setItem('inv_unlocked','true');
+_unlocked=true;
+saveUnlockToSupabase();
+showToast('🎉 Unlocked! Unlimited downloads activated.','success');
+}
+// Check unlock after identity loads (user is available now)
+if(currentUser && currentUser.id){
+checkUnlocked(function(unlocked){
+_unlocked=unlocked;
+updateFreeCounter();
+});
+}
 }
 
 // SAVE STATUS
 function setSaveStatus(s){
-  var dot=document.getElementById('saveDot'),text=document.getElementById('saveStatusText');
-  dot.className='save-dot '+s;
-  text.textContent=s==='saved'?'Saved':s==='saving'?'Saving...':'Unsaved';
+var dot=document.getElementById('saveDot'),text=document.getElementById('saveStatusText');
+dot.className='save-dot '+s;
+text.textContent=s==='saved'?'Saved':s==='saving'?'Saving...':'Unsaved';
 }
 function markUnsaved(){setSaveStatus('unsaved');}
 
 // DOC TYPE
 function setDocType(type){
-  currentDocType=type; markUnsaved();
-  ['invoice','quote','receipt','proforma'].forEach(function(t){
-    var el=document.getElementById('btn-'+t);
-    if(el) el.classList.toggle('active',t===type);
-  });
-  var isQ=type==='quote',isR=type==='receipt',isP=type==='proforma',isI=type==='invoice';
-  document.getElementById('docDetailsTitle').textContent={invoice:'Invoice Details',quote:'Quote Details',receipt:'Receipt Details',proforma:'Proforma Details'}[type];
-  document.getElementById('docNumLabel').textContent={invoice:'Invoice #',quote:'Quote #',receipt:'Receipt #',proforma:'Proforma #'}[type];
-  document.getElementById('clientSectionTitle').textContent=isR?'Received From':'Client Details';
-  document.getElementById('clientNameLabel').textContent=isR?'Paid By':'Client Name';
-  document.getElementById('dueDateGroup').style.display=(isQ||isR)?'none':'block';
-  document.getElementById('validGroup').style.display=isQ?'block':'none';
-  document.getElementById('quoteIntroGroup').style.display=isQ?'block':'none';
-  document.getElementById('payMethodGroup').style.display=(!isR&&!isQ&&!isP)?'block':'none';
-  document.getElementById('lineItemsSection').style.display=isR?'none':'block';
-  document.getElementById('receiptSection').style.display=isR?'block':'none';
-  document.getElementById('statusBar').style.display=isR?'none':'flex';
-  document.getElementById('styleSection').style.display=isR?'none':'block';
-  document.getElementById('docTitleBar').textContent={invoice:'New Invoice',quote:'New Quote',receipt:'New Receipt',proforma:'New Proforma Invoice'}[type];
-  if(isR){setStatus('paid');}
-  var num=document.getElementById('invNumber').value;
-  var prefixes={invoice:'INV-',quote:'QUO-',receipt:'REC-',proforma:'PRO-'};
-  var hasPrefix=Object.values(prefixes).some(function(p){return num.startsWith(p);});
-  if(hasPrefix) document.getElementById('invNumber').value=(prefixes[type]||'INV-')+num.slice(4);
-  updatePreview();
+currentDocType=type; markUnsaved();
+['invoice','quote','receipt','proforma'].forEach(function(t){
+var el=document.getElementById('btn-'+t);
+if(el) el.classList.toggle('active',t===type);
+});
+var isQ=type==='quote',isR=type==='receipt',isP=type==='proforma',isI=type==='invoice';
+document.getElementById('docDetailsTitle').textContent={invoice:'Invoice Details',quote:'Quote Details',receipt:'Receipt Details',proforma:'Proforma Details'}[type];
+document.getElementById('docNumLabel').textContent={invoice:'Invoice #',quote:'Quote #',receipt:'Receipt #',proforma:'Proforma #'}[type];
+document.getElementById('clientSectionTitle').textContent=isR?'Received From':'Client Details';
+document.getElementById('clientNameLabel').textContent=isR?'Paid By':'Client Name';
+document.getElementById('dueDateGroup').style.display=(isQ||isR)?'none':'block';
+document.getElementById('validGroup').style.display=isQ?'block':'none';
+document.getElementById('quoteIntroGroup').style.display=isQ?'block':'none';
+document.getElementById('payMethodGroup').style.display=(!isR&&!isQ&&!isP)?'block':'none';
+document.getElementById('lineItemsSection').style.display=isR?'none':'block';
+document.getElementById('receiptSection').style.display=isR?'block':'none';
+document.getElementById('statusBar').style.display=isR?'none':'flex';
+document.getElementById('styleSection').style.display=isR?'none':'block';
+document.getElementById('docTitleBar').textContent={invoice:'New Invoice',quote:'New Quote',receipt:'New Receipt',proforma:'New Proforma Invoice'}[type];
+if(isR){setStatus('paid');}
+var num=document.getElementById('invNumber').value;
+var prefixes={invoice:'INV-',quote:'QUO-',receipt:'REC-',proforma:'PRO-'};
+var hasPrefix=Object.values(prefixes).some(function(p){return num.startsWith(p);});
+if(hasPrefix) document.getElementById('invNumber').value=(prefixes[type]||'INV-')+num.slice(4);
+updatePreview();
 }
 
 // STATUS
 function setStatus(s){
-  currentStatus=s;
-  ['draft','sent','paid','unpaid'].forEach(function(st){document.getElementById('status-'+st).classList.toggle('active',st===s);});
-  markUnsaved();
+currentStatus=s;
+['draft','sent','paid','unpaid'].forEach(function(st){document.getElementById('status-'+st).classList.toggle('active',st===s);});
+markUnsaved();
 }
 
 // LOGO
 function handleLogo(input){
-  var file=input.files[0];if(!file) return;
-  var reader=new FileReader();
-  reader.onload=function(e){
-    logoDataUrl=e.target.result;
-    document.getElementById('logoThumb').src=logoDataUrl;
-    document.getElementById('logoPreviewBox').style.display='flex';
-    document.getElementById('logoUploadArea').style.display='none';
-    document.getElementById('logoPosSection').style.display='block';
-    updatePreview();
-  };
-  reader.readAsDataURL(file);
+var file=input.files[0];if(!file) return;
+var reader=new FileReader();
+reader.onload=function(e){
+logoDataUrl=e.target.result;
+document.getElementById('logoThumb').src=logoDataUrl;
+document.getElementById('logoPreviewBox').style.display='flex';
+document.getElementById('logoUploadArea').style.display='none';
+document.getElementById('logoPosSection').style.display='block';
+updatePreview();
+};
+reader.readAsDataURL(file);
 }
 function removeLogo(){
-  logoDataUrl=null;
-  document.getElementById('logoUpload').value='';
-  document.getElementById('logoPreviewBox').style.display='none';
-  document.getElementById('logoUploadArea').style.display='block';
-  document.getElementById('logoPosSection').style.display='none';
-  updatePreview();
+logoDataUrl=null;
+document.getElementById('logoUpload').value='';
+document.getElementById('logoPreviewBox').style.display='none';
+document.getElementById('logoUploadArea').style.display='block';
+document.getElementById('logoPosSection').style.display='none';
+updatePreview();
 }
 function setLogoPos(pos){
-  currentLogoPos=pos;
-  ['left','center','right'].forEach(function(p){document.getElementById('lpos-'+p).classList.toggle('active',p===pos);});
-  updatePreview();
+currentLogoPos=pos;
+['left','center','right'].forEach(function(p){document.getElementById('lpos-'+p).classList.toggle('active',p===pos);});
+updatePreview();
 }
 
 // BG
 function setBg(key){
-  currentBg=key;
-  document.querySelectorAll('.bg-sw').forEach(function(s){s.classList.remove('active');});
-  var sw=document.querySelector('[data-bg="'+key+'"]');
-  if(sw) sw.classList.add('active');
-  var hex=bgColors[key]||'#faf9f6';
-  document.getElementById('bgPicker').value=hex;
-  document.getElementById('bgHex').textContent=hex;
-  updatePreview();
+currentBg=key;
+document.querySelectorAll('.bg-sw').forEach(function(s){s.classList.remove('active');});
+var sw=document.querySelector('[data-bg="'+key+'"]');
+if(sw) sw.classList.add('active');
+var hex=bgColors[key]||'#faf9f6';
+document.getElementById('bgPicker').value=hex;
+document.getElementById('bgHex').textContent=hex;
+updatePreview();
 }
 function setBgCustom(color){
-  currentBg='custom';bgColors.custom=color;
-  document.querySelectorAll('.bg-sw').forEach(function(s){s.classList.remove('active');});
-  document.getElementById('bgHex').textContent=color;
-  updatePreview();
+currentBg='custom';bgColors.custom=color;
+document.querySelectorAll('.bg-sw').forEach(function(s){s.classList.remove('active');});
+document.getElementById('bgHex').textContent=color;
+updatePreview();
 }
 function getDocBg(){return bgColors[currentBg]||'#faf9f6';}
 function isDark(bg){var h=bg.replace('#',''),r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);return(r*.299+g*.587+b*.114)<128;}
@@ -778,317 +785,317 @@ function fmt(n){return getCur()+(parseFloat(n)||0).toFixed(2).replace(/\B(?=(\d{
 
 // LINE MODE
 function setLineMode(mode){
-  lineMode=mode;
-  document.getElementById('modeSimple').classList.toggle('active',mode==='simple');
-  document.getElementById('modeCalc').classList.toggle('active',mode==='calc');
-  document.querySelectorAll('.line-item-nums').forEach(function(el){el.className='line-item-nums '+mode;});
-  document.querySelectorAll('.price-input').forEach(function(el){el.closest('.num-input')&&(el.closest('div').parentElement.style.display=mode==='simple'?'':'none');});
-  updatePreview();
+lineMode=mode;
+document.getElementById('modeSimple').classList.toggle('active',mode==='simple');
+document.getElementById('modeCalc').classList.toggle('active',mode==='calc');
+document.querySelectorAll('.line-item-nums').forEach(function(el){el.className='line-item-nums '+mode;});
+document.querySelectorAll('.price-input').forEach(function(el){el.closest('.num-input')&&(el.closest('div').parentElement.style.display=mode==='simple'?'':'none');});
+updatePreview();
 }
 function addItem(){
-  var c=document.getElementById('lineItems');
-  var div=document.createElement('div');div.className='line-item';
-  div.innerHTML='<div class="line-item-top"><input type="text" class="line-item-desc" placeholder="e.g. Design work" oninput="updatePreview()"><button class="line-item-remove" onclick="removeItem(this)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>'
-    +'<div class="line-item-nums '+lineMode+'">'
-    +(lineMode==='simple'?'<div><div class="num-label">Price</div><input type="text" class="num-input price-input" placeholder="1200" oninput="updatePreview()"></div>'
-    :'<div><div class="num-label">Qty</div><input type="text" class="num-input qty-input" placeholder="2" oninput="calcLine(this)"></div><div><div class="num-label">Rate</div><input type="text" class="num-input rate-input" placeholder="600" oninput="calcLine(this)"></div><div><div class="num-label">Total</div><input type="text" class="num-input total" readonly placeholder="0.00"></div>')
-    +'</div>';
-  c.appendChild(div);
+var c=document.getElementById('lineItems');
+var div=document.createElement('div');div.className='line-item';
+div.innerHTML='<div class="line-item-top"><input type="text" class="line-item-desc" placeholder="e.g. Design work" oninput="updatePreview()"><button class="line-item-remove" onclick="removeItem(this)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>'
++'<div class="line-item-nums '+lineMode+'">'
++(lineMode==='simple'?'<div><div class="num-label">Price</div><input type="text" class="num-input price-input" placeholder="1200" oninput="updatePreview()"></div>'
+:'<div><div class="num-label">Qty</div><input type="text" class="num-input qty-input" placeholder="2" oninput="calcLine(this)"></div><div><div class="num-label">Rate</div><input type="text" class="num-input rate-input" placeholder="600" oninput="calcLine(this)"></div><div><div class="num-label">Total</div><input type="text" class="num-input total" readonly placeholder="0.00"></div>')
++'</div>';
+c.appendChild(div);
 }
 function calcLine(input){
-  var item=input.closest('.line-item');
-  var qty=parseFloat(item.querySelector('.qty-input')&&item.querySelector('.qty-input').value)||0;
-  var rate=parseFloat(item.querySelector('.rate-input')&&item.querySelector('.rate-input').value)||0;
-  var total=item.querySelector('.total');
-  if(total) total.value=(qty*rate).toFixed(2);
-  updatePreview();
+var item=input.closest('.line-item');
+var qty=parseFloat(item.querySelector('.qty-input')&&item.querySelector('.qty-input').value)||0;
+var rate=parseFloat(item.querySelector('.rate-input')&&item.querySelector('.rate-input').value)||0;
+var total=item.querySelector('.total');
+if(total) total.value=(qty*rate).toFixed(2);
+updatePreview();
 }
 function removeItem(btn){btn.closest('.line-item').remove();updatePreview();}
 
 function fmtDate(d){return d?new Date(d+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—';}
 
 function collectData(){
-  var items=[],subtotal=0;
-  document.querySelectorAll('#lineItems .line-item').forEach(function(item){
-    var desc=item.querySelector('.line-item-desc')?item.querySelector('.line-item-desc').value:'';
-    var price=0;
-    if(lineMode==='simple'){
-      var pi=item.querySelector('.price-input');price=parseFloat(pi?pi.value:0)||0;
-    } else {
-      var qi=item.querySelector('.qty-input'),ri=item.querySelector('.rate-input');
-      var qty=parseFloat(qi?qi.value:0)||0,rate=parseFloat(ri?ri.value:0)||0;
-      price=qty*rate;
-    }
-    if(desc||price){items.push({desc:desc,amount:price});subtotal+=price;}
-  });
-  var taxRate=parseFloat(document.getElementById('taxRate').value)||0;
-  var dp=parseFloat(document.getElementById('discountPct').value)||0;
-  var df=parseFloat(document.getElementById('discountFixed').value)||0;
-  var discAmt=(subtotal*dp/100)+df;
-  var after=subtotal-discAmt;
-  var tax=after*taxRate/100;
-  return {
-    type:currentDocType, status:currentStatus, bg:getDocBg(), dark:isDark(getDocBg()),
-    logo:logoDataUrl, logoPos:currentLogoPos,
-    bizName:document.getElementById('bizName').value||'Your Business',
-    bizContact:document.getElementById('bizContact').value,
-    bizEmail:document.getElementById('bizEmail').value,
-    bizPhone:document.getElementById('bizPhone').value,
-    bizAddress:document.getElementById('bizAddress').value,
-    clientName:document.getElementById('clientName').value||'Client',
-    clientEmail:document.getElementById('clientEmail').value,
-    clientAddress:document.getElementById('clientAddress').value,
-    docNum:document.getElementById('invNumber').value,
-    invDate:fmtDate(document.getElementById('invDate').value),
-    dueDate:fmtDate(document.getElementById('dueDate').value),
-    validUntil:fmtDate(document.getElementById('validUntil').value),
-    quoteIntro:document.getElementById('quoteIntro').value,
-    taxRate:taxRate,items:items,subtotal:subtotal,discAmt:discAmt,afterDiscount:after,tax:tax,total:after+tax,
-    notes:document.getElementById('notes').value,
-    bankDetails:document.getElementById('bankDetails').value,
-    footerMsg:document.getElementById('footerMsg').value,
-    receiptAmount:document.getElementById('receiptAmount').value,
-    receiptDesc:document.getElementById('receiptDesc').value,
-    receiptPayMethod:document.getElementById('receiptPayMethod').value,
-    payMethod:document.getElementById('payMethod').value,
-    currency:getCur(), lineItems:items,
-    discountPct:dp, discountFixed:df
-  };
+var items=[],subtotal=0;
+document.querySelectorAll('#lineItems .line-item').forEach(function(item){
+var desc=item.querySelector('.line-item-desc')?item.querySelector('.line-item-desc').value:'';
+var price=0;
+if(lineMode==='simple'){
+var pi=item.querySelector('.price-input');price=parseFloat(pi?pi.value:0)||0;
+} else {
+var qi=item.querySelector('.qty-input'),ri=item.querySelector('.rate-input');
+var qty=parseFloat(qi?qi.value:0)||0,rate=parseFloat(ri?ri.value:0)||0;
+price=qty*rate;
+}
+if(desc||price){items.push({desc:desc,amount:price});subtotal+=price;}
+});
+var taxRate=parseFloat(document.getElementById('taxRate').value)||0;
+var dp=parseFloat(document.getElementById('discountPct').value)||0;
+var df=parseFloat(document.getElementById('discountFixed').value)||0;
+var discAmt=(subtotal*dp/100)+df;
+var after=subtotal-discAmt;
+var tax=after*taxRate/100;
+return {
+type:currentDocType, status:currentStatus, bg:getDocBg(), dark:isDark(getDocBg()),
+logo:logoDataUrl, logoPos:currentLogoPos,
+bizName:document.getElementById('bizName').value||'Your Business',
+bizContact:document.getElementById('bizContact').value,
+bizEmail:document.getElementById('bizEmail').value,
+bizPhone:document.getElementById('bizPhone').value,
+bizAddress:document.getElementById('bizAddress').value,
+clientName:document.getElementById('clientName').value||'Client',
+clientEmail:document.getElementById('clientEmail').value,
+clientAddress:document.getElementById('clientAddress').value,
+docNum:document.getElementById('invNumber').value,
+invDate:fmtDate(document.getElementById('invDate').value),
+dueDate:fmtDate(document.getElementById('dueDate').value),
+validUntil:fmtDate(document.getElementById('validUntil').value),
+quoteIntro:document.getElementById('quoteIntro').value,
+taxRate:taxRate,items:items,subtotal:subtotal,discAmt:discAmt,afterDiscount:after,tax:tax,total:after+tax,
+notes:document.getElementById('notes').value,
+bankDetails:document.getElementById('bankDetails').value,
+footerMsg:document.getElementById('footerMsg').value,
+receiptAmount:document.getElementById('receiptAmount').value,
+receiptDesc:document.getElementById('receiptDesc').value,
+receiptPayMethod:document.getElementById('receiptPayMethod').value,
+payMethod:document.getElementById('payMethod').value,
+currency:getCur(), lineItems:items,
+discountPct:dp, discountFixed:df
+};
 }
 
 function logoHtml(d){
-  if(!d.logo) return '';
-  var align=d.logoPos==='center'?'margin:0 auto 10px':d.logoPos==='right'?'margin-left:auto;margin-bottom:10px':'margin-bottom:10px';
-  return '<img src="'+d.logo+'" style="max-height:60px;max-width:150px;object-fit:contain;display:block;'+align+'">';
+if(!d.logo) return '';
+var align=d.logoPos==='center'?'margin:0 auto 10px':d.logoPos==='right'?'margin-left:auto;margin-bottom:10px':'margin-bottom:10px';
+return '<img src="'+d.logo+'" style="max-height:60px;max-width:150px;object-fit:contain;display:block;'+align+'">';
 }
 
 function lineTable(d,thStyle,tdStyle,subtotalLabel){
-  if(!d.items.length) return '<p style="color:#bbb;font-style:italic;font-size:0.82rem;padding:12px 0">Add line items in the form...</p>';
-  var rows=d.items.map(function(i){return '<tr><td style="'+tdStyle+'">'+i.desc+'</td><td style="'+tdStyle+';text-align:right">'+fmt(i.amount)+'</td></tr>';}).join('');
-  var discount=d.discAmt>0?'<tr><td style="'+tdStyle+'">Discount</td><td style="'+tdStyle+';text-align:right">-'+fmt(d.discAmt)+'</td></tr>':'';
-  return rows+'</tbody></table><div style="margin-left:auto;width:220px;margin-top:4px">'
-    +'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.8rem;color:#888">'+
-    '<span>Subtotal</span><span>'+fmt(d.subtotal)+'</span></div>'
-    +discount
-    +(d.taxRate>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.8rem;color:#888"><span>Tax ('+d.taxRate+'%)</span><span>'+fmt(d.tax)+'</span></div>':'')+'</div>';
+if(!d.items.length) return '<p style="color:#bbb;font-style:italic;font-size:0.82rem;padding:12px 0">Add line items in the form...</p>';
+var rows=d.items.map(function(i){return '<tr><td style="'+tdStyle+'">'+i.desc+'</td><td style="'+tdStyle+';text-align:right">'+fmt(i.amount)+'</td></tr>';}).join('');
+var discount=d.discAmt>0?'<tr><td style="'+tdStyle+'">Discount</td><td style="'+tdStyle+';text-align:right">-'+fmt(d.discAmt)+'</td></tr>':'';
+return rows+'</tbody></table><div style="margin-left:auto;width:220px;margin-top:4px">'
++'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.8rem;color:#888">'+
+'<span>Subtotal</span><span>'+fmt(d.subtotal)+'</span></div>'
++discount
++(d.taxRate>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.8rem;color:#888"><span>Tax ('+d.taxRate+'%)</span><span>'+fmt(d.tax)+'</span></div>':'')+'</div>';
 }
 
 function renderInvoice(d){
-  var bg=d.bg||'#faf9f6';
-  var tc=d.dark?'#e8e0d0':'#1a1a1a';
-  var mc=d.dark?'#9a9080':'#888';
-  var bc=d.dark?'rgba(255,255,255,0.15)':'#2a2218';
-  var rb=d.dark?'rgba(255,255,255,0.08)':'#f0ece4';
-  var bgLight=d.dark?'rgba(255,255,255,0.06)':'#f0ece4';
-  var status=d.status==='paid'?'background:#d4edda;color:#155724':d.status==='sent'?'background:#dbeafe;color:#2563eb':'background:#fff3cd;color:#856404';
-  var statusText=d.status==='paid'?'✓ Paid':d.status==='sent'?'Sent':'Unpaid';
-  var F="font-family:'Plus Jakarta Sans',Arial,sans-serif";
-  var FI="font-family:'Instrument Serif',Georgia,serif";
-  var FM="font-family:'DM Mono',Courier,monospace";
-  var bankBlock=d.bankDetails?'<div style="margin-top:16px;padding:12px 16px;background:'+bgLight+';font-size:0.78rem;color:'+mc+';line-height:1.6;'+F+'"><strong style="display:block;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:'+tc+';margin-bottom:3px;'+FM+'">Payment Details</strong>'+d.bankDetails.replace(/\n/g,'<br>')+'</div>':'';
-  var notesBlock=d.notes?'<div style="margin-top:16px;padding:12px 16px;background:'+bgLight+';font-size:0.78rem;color:'+mc+';line-height:1.6;'+F+'"><strong style="display:block;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:'+tc+';margin-bottom:3px;'+FM+'">Notes</strong>'+d.notes+'</div>':'';
-  var footer=d.footerMsg||'Generated with Invoicely';
-  var items=d.items.length?d.items.map(function(i){return '<tr><td style="padding:9px 0;font-size:0.85rem;color:'+tc+';border-bottom:1px solid '+rb+';'+F+'">'+i.desc+'</td><td style="padding:9px 0;font-size:0.85rem;color:'+tc+';border-bottom:1px solid '+rb+';text-align:right;'+F+'">'+fmt(i.amount)+'</td></tr>';}).join(''):'<tr><td colspan="2" style="padding:12px 0;color:#bbb;font-style:italic;font-size:0.82rem">Add line items...</td></tr>';
-  var discount=d.discAmt>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:'+mc+';'+F+'"><span>Discount</span><span>-'+fmt(d.discAmt)+'</span></div>':'';
-  var tax=d.taxRate>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:'+mc+';'+F+'"><span>Tax ('+d.taxRate+'%)</span><span>'+fmt(d.tax)+'</span></div>':'';
-  return '<div style="background:'+bg+';padding:48px;font-size:14px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
-    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;padding-bottom:20px;border-bottom:2px solid '+bc+'">'
-    +'<div>'+logoHtml(d)+'<div style="'+FI+';font-size:2rem;color:'+tc+';line-height:1">'+d.bizName+'</div>'
-    +(d.bizContact||d.bizEmail||d.bizPhone?'<div style="'+F+';font-size:0.78rem;color:'+mc+';margin-top:4px">'+[d.bizContact,d.bizEmail,d.bizPhone].filter(Boolean).join(' · ')+'</div>':'')+'</div>'
-    +'<div style="text-align:right"><span style="'+FM+';font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:#c9a84c;display:block;margin-bottom:3px">Invoice</span>'
-    +'<div style="'+FI+';font-size:1.4rem;color:'+tc+'">'+d.docNum+'</div>'
-    +'<div style="margin-top:6px"><span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:0.62rem;'+FM+';letter-spacing:0.1em;text-transform:uppercase;'+status+'">'+statusText+'</span></div></div></div>'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:32px">'
-    +'<div><div style="'+FM+';font-size:0.62rem;letter-spacing:0.16em;text-transform:uppercase;color:#bbb;margin-bottom:6px">Billed To</div>'
-    +'<div style="'+F+';font-size:0.92rem;font-weight:700;color:'+tc+';margin-bottom:3px">'+d.clientName+'</div>'
-    +(d.clientEmail?'<div style="'+F+';font-size:0.8rem;color:'+mc+'">'+d.clientEmail+'</div>':'')
-    +(d.clientAddress?'<div style="'+F+';font-size:0.8rem;color:'+mc+';line-height:1.55">'+d.clientAddress.replace(/\n/g,'<br>')+'</div>':'')+'</div>'
-    +'<div style="text-align:right"><div style="'+FM+';font-size:0.62rem;letter-spacing:0.16em;text-transform:uppercase;color:#bbb;margin-bottom:6px">Dates</div>'
-    +'<div style="'+F+';font-size:0.8rem;color:'+mc+'">Issue: '+d.invDate+'<br>Due: '+d.dueDate+'</div></div></div>'
-    +'<table style="width:100%;border-collapse:collapse;margin-bottom:16px">'
-    +'<thead><tr><th style="'+FM+';font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:'+mc+';padding:0 0 8px;border-bottom:1.5px solid '+bc+';font-weight:400;text-align:left">Description</th>'
-    +'<th style="'+FM+';font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:'+mc+';padding:0 0 8px;border-bottom:1.5px solid '+bc+';font-weight:400;text-align:right">Amount</th></tr></thead>'
-    +'<tbody>'+items+'</tbody></table>'
-    +'<div style="margin-left:auto;width:220px">'+discount
-    +'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:'+mc+';'+F+'"><span>Subtotal</span><span>'+fmt(d.subtotal)+'</span></div>'+tax
-    +'<div style="display:flex;justify-content:space-between;padding:10px 0 4px;font-size:1rem;font-weight:700;color:'+tc+';'+F+';border-top:2px solid '+bc+';margin-top:4px"><span>Total Due</span><span>'+fmt(d.total)+'</span></div></div>'
-    +notesBlock+bankBlock
-    +'<div style="margin-top:24px;padding-top:14px;border-top:1px solid '+rb+';'+FM+';font-size:0.6rem;color:'+mc+';text-align:center;letter-spacing:0.1em;text-transform:uppercase">'+footer+'</div>'
-    +'</div>';
+var bg=d.bg||'#faf9f6';
+var tc=d.dark?'#e8e0d0':'#1a1a1a';
+var mc=d.dark?'#9a9080':'#888';
+var bc=d.dark?'rgba(255,255,255,0.15)':'#2a2218';
+var rb=d.dark?'rgba(255,255,255,0.08)':'#f0ece4';
+var bgLight=d.dark?'rgba(255,255,255,0.06)':'#f0ece4';
+var status=d.status==='paid'?'background:#d4edda;color:#155724':d.status==='sent'?'background:#dbeafe;color:#2563eb':'background:#fff3cd;color:#856404';
+var statusText=d.status==='paid'?'✓ Paid':d.status==='sent'?'Sent':'Unpaid';
+var F="font-family:'Plus Jakarta Sans',Arial,sans-serif";
+var FI="font-family:'Instrument Serif',Georgia,serif";
+var FM="font-family:'DM Mono',Courier,monospace";
+var bankBlock=d.bankDetails?'<div style="margin-top:16px;padding:12px 16px;background:'+bgLight+';font-size:0.78rem;color:'+mc+';line-height:1.6;'+F+'"><strong style="display:block;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:'+tc+';margin-bottom:3px;'+FM+'">Payment Details</strong>'+d.bankDetails.replace(/\n/g,'<br>')+'</div>':'';
+var notesBlock=d.notes?'<div style="margin-top:16px;padding:12px 16px;background:'+bgLight+';font-size:0.78rem;color:'+mc+';line-height:1.6;'+F+'"><strong style="display:block;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:'+tc+';margin-bottom:3px;'+FM+'">Notes</strong>'+d.notes+'</div>':'';
+var footer=d.footerMsg||'Generated with Invoicely';
+var items=d.items.length?d.items.map(function(i){return '<tr><td style="padding:9px 0;font-size:0.85rem;color:'+tc+';border-bottom:1px solid '+rb+';'+F+'">'+i.desc+'</td><td style="padding:9px 0;font-size:0.85rem;color:'+tc+';border-bottom:1px solid '+rb+';text-align:right;'+F+'">'+fmt(i.amount)+'</td></tr>';}).join(''):'<tr><td colspan="2" style="padding:12px 0;color:#bbb;font-style:italic;font-size:0.82rem">Add line items...</td></tr>';
+var discount=d.discAmt>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:'+mc+';'+F+'"><span>Discount</span><span>-'+fmt(d.discAmt)+'</span></div>':'';
+var tax=d.taxRate>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:'+mc+';'+F+'"><span>Tax ('+d.taxRate+'%)</span><span>'+fmt(d.tax)+'</span></div>':'';
+return '<div style="background:'+bg+';padding:48px;font-size:14px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
++'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;padding-bottom:20px;border-bottom:2px solid '+bc+'">'
++'<div>'+logoHtml(d)+'<div style="'+FI+';font-size:2rem;color:'+tc+';line-height:1">'+d.bizName+'</div>'
++(d.bizContact||d.bizEmail||d.bizPhone?'<div style="'+F+';font-size:0.78rem;color:'+mc+';margin-top:4px">'+[d.bizContact,d.bizEmail,d.bizPhone].filter(Boolean).join(' · ')+'</div>':'')+'</div>'
++'<div style="text-align:right"><span style="'+FM+';font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:#c9a84c;display:block;margin-bottom:3px">Invoice</span>'
++'<div style="'+FI+';font-size:1.4rem;color:'+tc+'">'+d.docNum+'</div>'
++'<div style="margin-top:6px"><span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:0.62rem;'+FM+';letter-spacing:0.1em;text-transform:uppercase;'+status+'">'+statusText+'</span></div></div></div>'
++'<div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:32px">'
++'<div><div style="'+FM+';font-size:0.62rem;letter-spacing:0.16em;text-transform:uppercase;color:#bbb;margin-bottom:6px">Billed To</div>'
++'<div style="'+F+';font-size:0.92rem;font-weight:700;color:'+tc+';margin-bottom:3px">'+d.clientName+'</div>'
++(d.clientEmail?'<div style="'+F+';font-size:0.8rem;color:'+mc+'">'+d.clientEmail+'</div>':'')
++(d.clientAddress?'<div style="'+F+';font-size:0.8rem;color:'+mc+';line-height:1.55">'+d.clientAddress.replace(/\n/g,'<br>')+'</div>':'')+'</div>'
++'<div style="text-align:right"><div style="'+FM+';font-size:0.62rem;letter-spacing:0.16em;text-transform:uppercase;color:#bbb;margin-bottom:6px">Dates</div>'
++'<div style="'+F+';font-size:0.8rem;color:'+mc+'">Issue: '+d.invDate+'<br>Due: '+d.dueDate+'</div></div></div>'
++'<table style="width:100%;border-collapse:collapse;margin-bottom:16px">'
++'<thead><tr><th style="'+FM+';font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:'+mc+';padding:0 0 8px;border-bottom:1.5px solid '+bc+';font-weight:400;text-align:left">Description</th>'
++'<th style="'+FM+';font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:'+mc+';padding:0 0 8px;border-bottom:1.5px solid '+bc+';font-weight:400;text-align:right">Amount</th></tr></thead>'
++'<tbody>'+items+'</tbody></table>'
++'<div style="margin-left:auto;width:220px">'+discount
++'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:'+mc+';'+F+'"><span>Subtotal</span><span>'+fmt(d.subtotal)+'</span></div>'+tax
++'<div style="display:flex;justify-content:space-between;padding:10px 0 4px;font-size:1rem;font-weight:700;color:'+tc+';'+F+';border-top:2px solid '+bc+';margin-top:4px"><span>Total Due</span><span>'+fmt(d.total)+'</span></div></div>'
++notesBlock+bankBlock
++'<div style="margin-top:24px;padding-top:14px;border-top:1px solid '+rb+';'+FM+';font-size:0.6rem;color:'+mc+';text-align:center;letter-spacing:0.1em;text-transform:uppercase">'+footer+'</div>'
++'</div>';
 }
 
 function renderQuote(d){
-  var F="font-family:'Plus Jakarta Sans',Arial,sans-serif";
-  var FI="font-family:'Instrument Serif',Georgia,serif";
-  var FM="font-family:'DM Mono',Courier,monospace";
-  var footer=d.footerMsg||'Generated with Invoicely';
-  var items=d.items.length?d.items.map(function(i){return '<tr><td style="'+F+';padding:11px 12px;font-size:0.84rem;color:#374151;border-bottom:1px solid #e5e7eb">'+i.desc+'</td><td style="'+F+';padding:11px 12px;font-size:0.84rem;color:#374151;border-bottom:1px solid #e5e7eb;text-align:right">'+fmt(i.amount)+'</td></tr>';}).join(''):'<tr><td colspan="2" style="padding:12px;color:#bbb;font-style:italic;font-size:0.82rem">Add line items...</td></tr>';
-  var discount=d.discAmt>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:#6b7280;'+F+'"><span>Discount</span><span>-'+fmt(d.discAmt)+'</span></div>':'';
-  var tax=d.taxRate>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:#6b7280;'+F+'"><span>Tax ('+d.taxRate+'%)</span><span>'+fmt(d.tax)+'</span></div>':'';
-  return '<div style="font-size:14px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
-    +'<div style="background:linear-gradient(135deg,#4f46e5 0%,#6366f1 100%);padding:36px 48px;color:white">'
-    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px">'
-    +'<div>'+logoHtml(d)+'<div style="'+FI+';font-size:1.8rem;color:white;line-height:1">'+d.bizName+'</div>'
-    +(d.bizEmail||d.bizPhone?'<div style="'+F+';font-size:0.78rem;color:rgba(255,255,255,0.7);margin-top:4px">'+[d.bizEmail,d.bizPhone].filter(Boolean).join(' · ')+'</div>':'')+'</div>'
-    +'<div style="text-align:right"><span style="'+FM+';font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.6);display:block;margin-bottom:3px">Quote</span>'
-    +'<div style="'+F+';font-size:1.4rem;font-weight:700;color:white">'+d.docNum+'</div>'
-    +'<div style="margin-top:5px"><span style="display:inline-block;padding:3px 10px;border-radius:4px;font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;background:rgba(255,255,255,0.2);color:white;'+F+'">Proposal</span></div></div></div>'
-    +(d.quoteIntro?'<div style="'+F+';font-size:0.88rem;color:rgba(255,255,255,0.85);line-height:1.7;padding-top:16px;border-top:1px solid rgba(255,255,255,0.2)">'+d.quoteIntro+'</div>':'')+'</div>'
-    +'<div style="padding:36px 48px;background:#fff">'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:32px">'
-    +'<div><div style="'+FM+';font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:#9ca3af;margin-bottom:6px">Prepared For</div>'
-    +'<div style="'+F+';font-size:0.92rem;font-weight:700;color:#0f1729;margin-bottom:3px">'+d.clientName+'</div>'
-    +(d.clientEmail?'<div style="'+F+';font-size:0.8rem;color:#6b7280">'+d.clientEmail+'</div>':'')
-    +(d.clientAddress?'<div style="'+F+';font-size:0.8rem;color:#6b7280;line-height:1.55">'+d.clientAddress.replace(/\n/g,'<br>')+'</div>':'')+'</div>'
-    +'<div style="text-align:right"><div style="'+FM+';font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:#9ca3af;margin-bottom:6px">Dates</div>'
-    +'<div style="'+F+';font-size:0.8rem;color:#6b7280">Issue: '+d.invDate+'<br>Valid until: '+d.validUntil+'</div></div></div>'
-    +'<table style="width:100%;border-collapse:collapse;margin-bottom:16px">'
-    +'<thead><tr style="background:#eef2ff"><th style="'+FM+';font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:#4f46e5;padding:10px 12px;font-weight:600;text-align:left">Description</th>'
-    +'<th style="'+FM+';font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:#4f46e5;padding:10px 12px;font-weight:600;text-align:right">Amount</th></tr></thead>'
-    +'<tbody>'+items+'</tbody></table>'
-    +'<div style="margin-left:auto;width:220px">'+discount
-    +'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:#6b7280;'+F+'"><span>Subtotal</span><span>'+fmt(d.subtotal)+'</span></div>'+tax
-    +'<div style="display:flex;justify-content:space-between;padding:10px 0 4px;font-size:1rem;font-weight:700;color:#4f46e5;'+F+';border-top:2px solid #4f46e5;margin-top:4px"><span>Estimate Total</span><span>'+fmt(d.total)+'</span></div></div>'
-    +(d.notes?'<div style="margin-top:20px;padding:14px 18px;background:#eef2ff;border-left:3px solid #4f46e5;'+F+';font-size:0.78rem;color:#374151;line-height:1.65"><strong style="display:block;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#4f46e5;margin-bottom:3px;'+FM+'">Terms</strong>'+d.notes+'</div>':'')
-    +'<div style="margin-top:16px;text-align:center;'+FM+';font-size:0.72rem;color:#9ca3af;letter-spacing:0.08em;text-transform:uppercase">This quote is valid until '+d.validUntil+'</div>'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:28px;padding-top:20px;border-top:1px solid #e5e7eb">'
-    +'<div><div style="height:40px;border-bottom:1.5px solid #e5e7eb;margin-bottom:6px"></div><div style="'+FM+';font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af">Client Signature</div></div>'
-    +'<div><div style="height:40px;border-bottom:1.5px solid #e5e7eb;margin-bottom:6px"></div><div style="'+FM+';font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af">Date Accepted</div></div></div>'
-    +'<div style="margin-top:20px;padding-top:14px;border-top:1px solid #e5e7eb;'+FM+';font-size:0.6rem;color:#9ca3af;text-align:center;letter-spacing:0.1em;text-transform:uppercase">'+footer+'</div>'
-    +'</div></div>';
+var F="font-family:'Plus Jakarta Sans',Arial,sans-serif";
+var FI="font-family:'Instrument Serif',Georgia,serif";
+var FM="font-family:'DM Mono',Courier,monospace";
+var footer=d.footerMsg||'Generated with Invoicely';
+var items=d.items.length?d.items.map(function(i){return '<tr><td style="'+F+';padding:11px 12px;font-size:0.84rem;color:#374151;border-bottom:1px solid #e5e7eb">'+i.desc+'</td><td style="'+F+';padding:11px 12px;font-size:0.84rem;color:#374151;border-bottom:1px solid #e5e7eb;text-align:right">'+fmt(i.amount)+'</td></tr>';}).join(''):'<tr><td colspan="2" style="padding:12px;color:#bbb;font-style:italic;font-size:0.82rem">Add line items...</td></tr>';
+var discount=d.discAmt>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:#6b7280;'+F+'"><span>Discount</span><span>-'+fmt(d.discAmt)+'</span></div>':'';
+var tax=d.taxRate>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:#6b7280;'+F+'"><span>Tax ('+d.taxRate+'%)</span><span>'+fmt(d.tax)+'</span></div>':'';
+return '<div style="font-size:14px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
++'<div style="background:linear-gradient(135deg,#4f46e5 0%,#6366f1 100%);padding:36px 48px;color:white">'
++'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px">'
++'<div>'+logoHtml(d)+'<div style="'+FI+';font-size:1.8rem;color:white;line-height:1">'+d.bizName+'</div>'
++(d.bizEmail||d.bizPhone?'<div style="'+F+';font-size:0.78rem;color:rgba(255,255,255,0.7);margin-top:4px">'+[d.bizEmail,d.bizPhone].filter(Boolean).join(' · ')+'</div>':'')+'</div>'
++'<div style="text-align:right"><span style="'+FM+';font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.6);display:block;margin-bottom:3px">Quote</span>'
++'<div style="'+F+';font-size:1.4rem;font-weight:700;color:white">'+d.docNum+'</div>'
++'<div style="margin-top:5px"><span style="display:inline-block;padding:3px 10px;border-radius:4px;font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;background:rgba(255,255,255,0.2);color:white;'+F+'">Proposal</span></div></div></div>'
++(d.quoteIntro?'<div style="'+F+';font-size:0.88rem;color:rgba(255,255,255,0.85);line-height:1.7;padding-top:16px;border-top:1px solid rgba(255,255,255,0.2)">'+d.quoteIntro+'</div>':'')+'</div>'
++'<div style="padding:36px 48px;background:#fff">'
++'<div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:32px">'
++'<div><div style="'+FM+';font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:#9ca3af;margin-bottom:6px">Prepared For</div>'
++'<div style="'+F+';font-size:0.92rem;font-weight:700;color:#0f1729;margin-bottom:3px">'+d.clientName+'</div>'
++(d.clientEmail?'<div style="'+F+';font-size:0.8rem;color:#6b7280">'+d.clientEmail+'</div>':'')
++(d.clientAddress?'<div style="'+F+';font-size:0.8rem;color:#6b7280;line-height:1.55">'+d.clientAddress.replace(/\n/g,'<br>')+'</div>':'')+'</div>'
++'<div style="text-align:right"><div style="'+FM+';font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:#9ca3af;margin-bottom:6px">Dates</div>'
++'<div style="'+F+';font-size:0.8rem;color:#6b7280">Issue: '+d.invDate+'<br>Valid until: '+d.validUntil+'</div></div></div>'
++'<table style="width:100%;border-collapse:collapse;margin-bottom:16px">'
++'<thead><tr style="background:#eef2ff"><th style="'+FM+';font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:#4f46e5;padding:10px 12px;font-weight:600;text-align:left">Description</th>'
++'<th style="'+FM+';font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:#4f46e5;padding:10px 12px;font-weight:600;text-align:right">Amount</th></tr></thead>'
++'<tbody>'+items+'</tbody></table>'
++'<div style="margin-left:auto;width:220px">'+discount
++'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:#6b7280;'+F+'"><span>Subtotal</span><span>'+fmt(d.subtotal)+'</span></div>'+tax
++'<div style="display:flex;justify-content:space-between;padding:10px 0 4px;font-size:1rem;font-weight:700;color:#4f46e5;'+F+';border-top:2px solid #4f46e5;margin-top:4px"><span>Estimate Total</span><span>'+fmt(d.total)+'</span></div></div>'
++(d.notes?'<div style="margin-top:20px;padding:14px 18px;background:#eef2ff;border-left:3px solid #4f46e5;'+F+';font-size:0.78rem;color:#374151;line-height:1.65"><strong style="display:block;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#4f46e5;margin-bottom:3px;'+FM+'">Terms</strong>'+d.notes+'</div>':'')
++'<div style="margin-top:16px;text-align:center;'+FM+';font-size:0.72rem;color:#9ca3af;letter-spacing:0.08em;text-transform:uppercase">This quote is valid until '+d.validUntil+'</div>'
++'<div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:28px;padding-top:20px;border-top:1px solid #e5e7eb">'
++'<div><div style="height:40px;border-bottom:1.5px solid #e5e7eb;margin-bottom:6px"></div><div style="'+FM+';font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af">Client Signature</div></div>'
++'<div><div style="height:40px;border-bottom:1.5px solid #e5e7eb;margin-bottom:6px"></div><div style="'+FM+';font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af">Date Accepted</div></div></div>'
++'<div style="margin-top:20px;padding-top:14px;border-top:1px solid #e5e7eb;'+FM+';font-size:0.6rem;color:#9ca3af;text-align:center;letter-spacing:0.1em;text-transform:uppercase">'+footer+'</div>'
++'</div></div>';
 }
 function renderReceipt(d){
-  var F="font-family:'Plus Jakarta Sans',Arial,sans-serif";
-  var FI="font-family:'Instrument Serif',Georgia,serif";
-  var FM="font-family:'DM Mono',Courier,monospace";
-  var amount=parseFloat(d.receiptAmount)||0;
-  var footer=d.footerMsg||'Generated with Invoicely';
-  return '<div style="font-size:14px;max-width:520px;margin:0 auto;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
-    +'<div style="background:#16a34a;padding:32px 40px;color:white;text-align:center">'
-    +'<div style="width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:1.5rem;line-height:56px">✓</div>'
-    +'<div style="'+FI+';font-size:1.6rem;color:white;margin-bottom:4px">Payment Receipt</div>'
-    +'<div style="'+F+';font-size:0.85rem;color:rgba(255,255,255,0.8)">'+d.bizName+'</div>'
-    +'</div>'
-    +'<div style="padding:32px 40px;background:#fff">'
-    +'<div style="background:#f0faf4;border:2px solid #bbf7d0;border-radius:12px;padding:20px;text-align:center;margin-bottom:24px">'
-    +'<div style="'+FM+';font-size:0.72rem;color:#15803d;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px">Amount Received</div>'
-    +'<div style="'+F+';font-size:2.5rem;font-weight:800;color:#15803d;line-height:1">'+getCur()+(amount).toFixed(2)+'</div>'
-    +'</div>'
-    +'<div style="border-top:1px solid #f0f0f0">'
-    +'<div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f0f0f0"><span style="'+F+';font-size:0.8rem;color:#666">Receipt #</span><span style="'+F+';font-size:0.85rem;font-weight:600;color:#1a1a1a">'+d.docNum+'</span></div>'
-    +'<div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f0f0f0"><span style="'+F+';font-size:0.8rem;color:#666">Date</span><span style="'+F+';font-size:0.85rem;font-weight:600;color:#1a1a1a">'+d.invDate+'</span></div>'
-    +'<div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f0f0f0"><span style="'+F+';font-size:0.8rem;color:#666">Received From</span><span style="'+F+';font-size:0.85rem;font-weight:600;color:#1a1a1a">'+d.clientName+'</span></div>'
-    +(d.receiptDesc?'<div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f0f0f0"><span style="'+F+';font-size:0.8rem;color:#666">For</span><span style="'+F+';font-size:0.85rem;font-weight:600;color:#1a1a1a;text-align:right;max-width:60%">'+d.receiptDesc+'</span></div>':'')
-    +'<div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f0f0f0"><span style="'+F+';font-size:0.8rem;color:#666">Payment Method</span><span style="'+F+';font-size:0.85rem;font-weight:600;color:#1a1a1a">'+d.receiptPayMethod+'</span></div>'
-    +'<div style="display:flex;justify-content:space-between;padding:12px 0"><span style="'+F+';font-size:0.8rem;color:#666">Received By</span><span style="'+F+';font-size:0.85rem;font-weight:600;color:#1a1a1a">'+d.bizName+'</span></div>'
-    +'</div>'
-    +'<div style="text-align:center;margin-top:24px;padding-top:20px;border-top:2px dashed #bbf7d0">'
-    +'<div style="display:inline-flex;align-items:center;gap:8px;background:#16a34a;color:white;padding:10px 24px;border-radius:50px;'+F+';font-size:0.9rem;font-weight:700">✓ Payment Confirmed</div>'
-    +'</div>'
-    +'<div style="margin-top:20px;'+FM+';font-size:0.68rem;color:#bbb;text-align:center;letter-spacing:0.08em;text-transform:uppercase">'+footer+'</div>'
-    +'</div></div>';
+var F="font-family:'Plus Jakarta Sans',Arial,sans-serif";
+var FI="font-family:'Instrument Serif',Georgia,serif";
+var FM="font-family:'DM Mono',Courier,monospace";
+var amount=parseFloat(d.receiptAmount)||0;
+var footer=d.footerMsg||'Generated with Invoicely';
+return '<div style="font-size:14px;max-width:520px;margin:0 auto;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
++'<div style="background:#16a34a;padding:32px 40px;color:white;text-align:center">'
++'<div style="width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:1.5rem;line-height:56px">✓</div>'
++'<div style="'+FI+';font-size:1.6rem;color:white;margin-bottom:4px">Payment Receipt</div>'
++'<div style="'+F+';font-size:0.85rem;color:rgba(255,255,255,0.8)">'+d.bizName+'</div>'
++'</div>'
++'<div style="padding:32px 40px;background:#fff">'
++'<div style="background:#f0faf4;border:2px solid #bbf7d0;border-radius:12px;padding:20px;text-align:center;margin-bottom:24px">'
++'<div style="'+FM+';font-size:0.72rem;color:#15803d;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px">Amount Received</div>'
++'<div style="'+F+';font-size:2.5rem;font-weight:800;color:#15803d;line-height:1">'+getCur()+(amount).toFixed(2)+'</div>'
++'</div>'
++'<div style="border-top:1px solid #f0f0f0">'
++'<div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f0f0f0"><span style="'+F+';font-size:0.8rem;color:#666">Receipt #</span><span style="'+F+';font-size:0.85rem;font-weight:600;color:#1a1a1a">'+d.docNum+'</span></div>'
++'<div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f0f0f0"><span style="'+F+';font-size:0.8rem;color:#666">Date</span><span style="'+F+';font-size:0.85rem;font-weight:600;color:#1a1a1a">'+d.invDate+'</span></div>'
++'<div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f0f0f0"><span style="'+F+';font-size:0.8rem;color:#666">Received From</span><span style="'+F+';font-size:0.85rem;font-weight:600;color:#1a1a1a">'+d.clientName+'</span></div>'
++(d.receiptDesc?'<div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f0f0f0"><span style="'+F+';font-size:0.8rem;color:#666">For</span><span style="'+F+';font-size:0.85rem;font-weight:600;color:#1a1a1a;text-align:right;max-width:60%">'+d.receiptDesc+'</span></div>':'')
++'<div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f0f0f0"><span style="'+F+';font-size:0.8rem;color:#666">Payment Method</span><span style="'+F+';font-size:0.85rem;font-weight:600;color:#1a1a1a">'+d.receiptPayMethod+'</span></div>'
++'<div style="display:flex;justify-content:space-between;padding:12px 0"><span style="'+F+';font-size:0.8rem;color:#666">Received By</span><span style="'+F+';font-size:0.85rem;font-weight:600;color:#1a1a1a">'+d.bizName+'</span></div>'
++'</div>'
++'<div style="text-align:center;margin-top:24px;padding-top:20px;border-top:2px dashed #bbf7d0">'
++'<div style="display:inline-flex;align-items:center;gap:8px;background:#16a34a;color:white;padding:10px 24px;border-radius:50px;'+F+';font-size:0.9rem;font-weight:700">✓ Payment Confirmed</div>'
++'</div>'
++'<div style="margin-top:20px;'+FM+';font-size:0.68rem;color:#bbb;text-align:center;letter-spacing:0.08em;text-transform:uppercase">'+footer+'</div>'
++'</div></div>';
 }
 function renderProforma(d){
-  var bg=d.bg||'#fffbf0';
-  var F="font-family:'Plus Jakarta Sans',Arial,sans-serif";
-  var FI="font-family:'Instrument Serif',Georgia,serif";
-  var FM="font-family:'DM Mono',Courier,monospace";
-  var footer=d.footerMsg||'Generated with Invoicely';
-  var items=d.items.length?d.items.map(function(i){return '<tr><td style="'+F+';padding:9px 0;font-size:0.83rem;color:#333;border-bottom:1px solid #f5e8c8">'+i.desc+'</td><td style="'+F+';padding:9px 0;font-size:0.83rem;color:#333;border-bottom:1px solid #f5e8c8;text-align:right">'+fmt(i.amount)+'</td></tr>';}).join(''):'<tr><td colspan="2" style="padding:9px 0;color:#bbb;font-style:italic;font-size:0.82rem">Add line items...</td></tr>';
-  var discount=d.discAmt>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:#888;'+F+'"><span>Discount</span><span>-'+fmt(d.discAmt)+'</span></div>':'';
-  var tax=d.taxRate>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:#888;'+F+'"><span>Tax ('+d.taxRate+'%)</span><span>'+fmt(d.tax)+'</span></div>':'';
-  return '<div style="background:'+bg+';padding:48px;font-size:14px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
-    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;padding-bottom:16px;border-bottom:3px solid #d97706">'
-    +'<div>'+logoHtml(d)+'<div style="'+FI+';font-size:1.8rem;color:#1a1a1a">'+d.bizName+'</div>'
-    +(d.bizEmail||d.bizPhone?'<div style="'+F+';font-size:0.78rem;color:#888;margin-top:4px">'+[d.bizEmail,d.bizPhone].filter(Boolean).join(' · ')+'</div>':'')+'</div>'
-    +'<div style="text-align:right"><span style="'+FM+';font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#d97706;display:block;margin-bottom:3px">Proforma Invoice</span>'
-    +'<div style="'+F+';font-size:1.3rem;font-weight:700;color:#1a1a1a">'+d.docNum+'</div></div></div>'
-    +'<div style="background:#fef3c7;border:1px solid #fbbf24;border-radius:8px;padding:10px 16px;'+F+';font-size:0.78rem;color:#92400e;margin-bottom:24px;display:flex;gap:8px;align-items:center">'
-    +'<span style="font-size:1rem">⚠️</span>This is a proforma invoice — not a legal tax document. A final invoice will be issued upon confirmation.</div>'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:28px">'
-    +'<div><div style="'+FM+';font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:#bbb;margin-bottom:4px">Prepared For</div>'
-    +'<div style="'+F+';font-size:0.9rem;font-weight:700;color:#1a1a1a;margin-bottom:2px">'+d.clientName+'</div>'
-    +(d.clientEmail?'<div style="'+F+';font-size:0.78rem;color:#666">'+d.clientEmail+'</div>':'')
-    +(d.clientAddress?'<div style="'+F+';font-size:0.78rem;color:#666;line-height:1.55">'+d.clientAddress.replace(/\n/g,'<br>')+'</div>':'')+'</div>'
-    +'<div style="text-align:right"><div style="'+FM+';font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:#bbb;margin-bottom:4px">Dates</div>'
-    +'<div style="'+F+';font-size:0.78rem;color:#666">Issue: '+d.invDate+'<br>Due: '+d.dueDate+'</div></div></div>'
-    +'<table style="width:100%;border-collapse:collapse;margin-bottom:16px">'
-    +'<thead><tr><th style="'+FM+';font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#d97706;padding:0 0 8px;border-bottom:2px solid #d97706;font-weight:600;text-align:left">Description</th>'
-    +'<th style="'+FM+';font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#d97706;padding:0 0 8px;border-bottom:2px solid #d97706;font-weight:600;text-align:right">Amount</th></tr></thead>'
-    +'<tbody>'+items+'</tbody></table>'
-    +'<div style="margin-left:auto;width:220px">'+discount
-    +'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:#888;'+F+'"><span>Subtotal</span><span>'+fmt(d.subtotal)+'</span></div>'+tax
-    +'<div style="display:flex;justify-content:space-between;padding:9px 0 4px;font-size:1rem;font-weight:700;color:#d97706;'+F+';border-top:2px solid #d97706;margin-top:4px"><span>Estimated Total</span><span>'+fmt(d.total)+'</span></div></div>'
-    +(d.notes?'<div style="margin-top:16px;padding:12px 16px;background:#fef3c7;'+F+';font-size:0.78rem;color:#92400e;line-height:1.65"><strong style="display:block;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:#d97706;margin-bottom:3px;'+FM+'">Notes</strong>'+d.notes+'</div>':'')
-    +(d.bankDetails?'<div style="margin-top:12px;padding:12px 16px;background:#fef3c7;'+F+';font-size:0.78rem;color:#92400e;line-height:1.65"><strong style="display:block;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:#d97706;margin-bottom:3px;'+FM+'">Payment Details</strong>'+d.bankDetails.replace(/\n/g,'<br>')+'</div>':'')
-    +'<div style="margin-top:20px;padding-top:14px;border-top:1px solid #f5e8c8;'+FM+';font-size:0.6rem;color:#ccc;text-align:center;letter-spacing:0.1em;text-transform:uppercase">'+footer+'</div>'
-    +'</div>';
+var bg=d.bg||'#fffbf0';
+var F="font-family:'Plus Jakarta Sans',Arial,sans-serif";
+var FI="font-family:'Instrument Serif',Georgia,serif";
+var FM="font-family:'DM Mono',Courier,monospace";
+var footer=d.footerMsg||'Generated with Invoicely';
+var items=d.items.length?d.items.map(function(i){return '<tr><td style="'+F+';padding:9px 0;font-size:0.83rem;color:#333;border-bottom:1px solid #f5e8c8">'+i.desc+'</td><td style="'+F+';padding:9px 0;font-size:0.83rem;color:#333;border-bottom:1px solid #f5e8c8;text-align:right">'+fmt(i.amount)+'</td></tr>';}).join(''):'<tr><td colspan="2" style="padding:9px 0;color:#bbb;font-style:italic;font-size:0.82rem">Add line items...</td></tr>';
+var discount=d.discAmt>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:#888;'+F+'"><span>Discount</span><span>-'+fmt(d.discAmt)+'</span></div>':'';
+var tax=d.taxRate>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:#888;'+F+'"><span>Tax ('+d.taxRate+'%)</span><span>'+fmt(d.tax)+'</span></div>':'';
+return '<div style="background:'+bg+';padding:48px;font-size:14px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
++'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;padding-bottom:16px;border-bottom:3px solid #d97706">'
++'<div>'+logoHtml(d)+'<div style="'+FI+';font-size:1.8rem;color:#1a1a1a">'+d.bizName+'</div>'
++(d.bizEmail||d.bizPhone?'<div style="'+F+';font-size:0.78rem;color:#888;margin-top:4px">'+[d.bizEmail,d.bizPhone].filter(Boolean).join(' · ')+'</div>':'')+'</div>'
++'<div style="text-align:right"><span style="'+FM+';font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#d97706;display:block;margin-bottom:3px">Proforma Invoice</span>'
++'<div style="'+F+';font-size:1.3rem;font-weight:700;color:#1a1a1a">'+d.docNum+'</div></div></div>'
++'<div style="background:#fef3c7;border:1px solid #fbbf24;border-radius:8px;padding:10px 16px;'+F+';font-size:0.78rem;color:#92400e;margin-bottom:24px;display:flex;gap:8px;align-items:center">'
++'<span style="font-size:1rem">⚠️</span>This is a proforma invoice — not a legal tax document. A final invoice will be issued upon confirmation.</div>'
++'<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:28px">'
++'<div><div style="'+FM+';font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:#bbb;margin-bottom:4px">Prepared For</div>'
++'<div style="'+F+';font-size:0.9rem;font-weight:700;color:#1a1a1a;margin-bottom:2px">'+d.clientName+'</div>'
++(d.clientEmail?'<div style="'+F+';font-size:0.78rem;color:#666">'+d.clientEmail+'</div>':'')
++(d.clientAddress?'<div style="'+F+';font-size:0.78rem;color:#666;line-height:1.55">'+d.clientAddress.replace(/\n/g,'<br>')+'</div>':'')+'</div>'
++'<div style="text-align:right"><div style="'+FM+';font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:#bbb;margin-bottom:4px">Dates</div>'
++'<div style="'+F+';font-size:0.78rem;color:#666">Issue: '+d.invDate+'<br>Due: '+d.dueDate+'</div></div></div>'
++'<table style="width:100%;border-collapse:collapse;margin-bottom:16px">'
++'<thead><tr><th style="'+FM+';font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#d97706;padding:0 0 8px;border-bottom:2px solid #d97706;font-weight:600;text-align:left">Description</th>'
++'<th style="'+FM+';font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#d97706;padding:0 0 8px;border-bottom:2px solid #d97706;font-weight:600;text-align:right">Amount</th></tr></thead>'
++'<tbody>'+items+'</tbody></table>'
++'<div style="margin-left:auto;width:220px">'+discount
++'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:#888;'+F+'"><span>Subtotal</span><span>'+fmt(d.subtotal)+'</span></div>'+tax
++'<div style="display:flex;justify-content:space-between;padding:9px 0 4px;font-size:1rem;font-weight:700;color:#d97706;'+F+';border-top:2px solid #d97706;margin-top:4px"><span>Estimated Total</span><span>'+fmt(d.total)+'</span></div></div>'
++(d.notes?'<div style="margin-top:16px;padding:12px 16px;background:#fef3c7;'+F+';font-size:0.78rem;color:#92400e;line-height:1.65"><strong style="display:block;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:#d97706;margin-bottom:3px;'+FM+'">Notes</strong>'+d.notes+'</div>':'')
++(d.bankDetails?'<div style="margin-top:12px;padding:12px 16px;background:#fef3c7;'+F+';font-size:0.78rem;color:#92400e;line-height:1.65"><strong style="display:block;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:#d97706;margin-bottom:3px;'+FM+'">Payment Details</strong>'+d.bankDetails.replace(/\n/g,'<br>')+'</div>':'')
++'<div style="margin-top:20px;padding-top:14px;border-top:1px solid #f5e8c8;'+FM+';font-size:0.6rem;color:#ccc;text-align:center;letter-spacing:0.1em;text-transform:uppercase">'+footer+'</div>'
++'</div>';
 }
 function updatePreview(){
-  var d=collectData();
-  var el=document.getElementById('previewDoc');
-  var panel=document.getElementById('previewDoc').parentElement.parentElement;
-  if(d.type==='receipt'||d.type==='quote') panel.style.background='#f0f0f0'; else panel.style.background='var(--bg)';
-  if(d.type==='quote') el.innerHTML=renderQuote(d);
-  else if(d.type==='receipt') el.innerHTML=renderReceipt(d);
-  else if(d.type==='proforma') el.innerHTML=renderProforma(d);
-  else el.innerHTML=renderInvoice(d);
+var d=collectData();
+var el=document.getElementById('previewDoc');
+var panel=document.getElementById('previewDoc').parentElement.parentElement;
+if(d.type==='receipt'||d.type==='quote') panel.style.background='#f0f0f0'; else panel.style.background='var(--bg)';
+if(d.type==='quote') el.innerHTML=renderQuote(d);
+else if(d.type==='receipt') el.innerHTML=renderReceipt(d);
+else if(d.type==='proforma') el.innerHTML=renderProforma(d);
+else el.innerHTML=renderInvoice(d);
 }
 
 // SAVE
 function saveDoc(){
-  if(!currentUser){showToast('Sign in to save','error');return;}
-  setSaveStatus('saving');
-  var d=collectData();
-  var userId=currentUser&&currentUser.id;
-  var payload={user_id:userId,type:currentDocType,title:d.bizName||'Untitled',doc_number:d.docNum,client_name:d.clientName,total:d.type==='receipt'?(parseFloat(d.receiptAmount)||0):d.total,status:currentStatus,due_date:null,data:Object.assign({},d,{logoDataUrl:logoDataUrl,template:currentDocType,bg:d.bg,logoPos:d.logoPos})};
-  var url=SUPA_URL+'/rest/v1/documents';
-  var method='POST';
-  if(currentDocId) url+='?id=eq.'+currentDocId+'&user_id=eq.'+userId,method='PATCH';
-  fetch(url,{method:method,headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(payload)})
-  .then(function(r){return r.json();}).then(function(res){
-    if(res&&res[0]){if(!currentDocId)currentDocId=res[0].id;setSaveStatus('saved');showToast('Saved!','success');document.getElementById('docTitleBar').textContent=d.docNum;}
-    else{setSaveStatus('unsaved');showToast('Save failed','error');}
-  }).catch(function(){setSaveStatus('unsaved');showToast('Save failed','error');});
+if(!currentUser){showToast('Sign in to save','error');return;}
+setSaveStatus('saving');
+var d=collectData();
+var userId=currentUser&&currentUser.id;
+var payload={user_id:userId,type:currentDocType,title:d.bizName||'Untitled',doc_number:d.docNum,client_name:d.clientName,total:d.type==='receipt'?(parseFloat(d.receiptAmount)||0):d.total,status:currentStatus,due_date:null,data:Object.assign({},d,{logoDataUrl:logoDataUrl,template:currentDocType,bg:d.bg,logoPos:d.logoPos})};
+var url=SUPA_URL+'/rest/v1/documents';
+var method='POST';
+if(currentDocId) url+='?id=eq.'+currentDocId+'&user_id=eq.'+userId,method='PATCH';
+fetch(url,{method:method,headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(payload)})
+.then(function(r){return r.json();}).then(function(res){
+if(res&&res[0]){if(!currentDocId)currentDocId=res[0].id;setSaveStatus('saved');showToast('Saved!','success');document.getElementById('docTitleBar').textContent=d.docNum;}
+else{setSaveStatus('unsaved');showToast('Save failed','error');}
+}).catch(function(){setSaveStatus('unsaved');showToast('Save failed','error');});
 }
 
 function loadDoc(id){
-  if(!currentUser) return;
-  fetch(SUPA_URL+'/rest/v1/documents?id=eq.'+id+'&user_id=eq.'+currentUser&&currentUser.id,{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}})
-  .then(function(r){return r.json();}).then(function(data){
-    if(data&&data[0]) populateForm(data[0]);
-  }).catch(function(){});
+if(!currentUser) return;
+fetch(SUPA_URL+'/rest/v1/documents?id=eq.'+id+'&user_id=eq.'+currentUser&&currentUser.id,{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}})
+.then(function(r){return r.json();}).then(function(data){
+if(data&&data[0]) populateForm(data[0]);
+}).catch(function(){});
 }
 
 function populateForm(doc){
-  currentDocId=doc.id;currentStatus=doc.status||'draft';
-  ['draft','sent','paid','unpaid'].forEach(function(s){document.getElementById('status-'+s).classList.toggle('active',s===currentStatus);});
-  var d=doc.data;if(!d) return;
-  if(d.type) setDocType(d.type);
-  if(d.bg) setBg(d.bg);
-  if(d.logoPos) setLogoPos(d.logoPos);
-  if(d.logoDataUrl){logoDataUrl=d.logoDataUrl;document.getElementById('logoThumb').src=logoDataUrl;document.getElementById('logoPreviewBox').style.display='flex';document.getElementById('logoUploadArea').style.display='none';document.getElementById('logoPosSection').style.display='block';}
-  var fields={bizName:'bizName',bizContact:'bizContact',bizEmail:'bizEmail',bizPhone:'bizPhone',bizAddress:'bizAddress',clientName:'clientName',clientEmail:'clientEmail',clientAddress:'clientAddress',docNum:'invNumber',notes:'notes',bankDetails:'bankDetails',footerMsg:'footerMsg',quoteIntro:'quoteIntro',receiptAmount:'receiptAmount',receiptDesc:'receiptDesc',discountPct:'discountPct',discountFixed:'discountFixed'};
-  Object.keys(fields).forEach(function(k){var el=document.getElementById(fields[k]);if(el&&d[k]) el.value=d[k];});
-  if(d.invDate) document.getElementById('invDate').value=d.invDate;
-  if(d.dueDate) document.getElementById('dueDate').value=d.dueDate;
-  if(d.taxRate) document.getElementById('taxRate').value=d.taxRate;
-  if(d.currency) document.getElementById('currencySelect').value=d.currency;
-  if(d.receiptPayMethod) document.getElementById('receiptPayMethod').value=d.receiptPayMethod;
-  if(d.lineItems&&d.lineItems.length){
-    document.getElementById('lineItems').innerHTML='';
-    d.lineItems.forEach(function(){addItem();});
-    var items=document.querySelectorAll('#lineItems .line-item');
-    d.lineItems.forEach(function(li,i){
-      if(items[i]){
-        var desc=items[i].querySelector('.line-item-desc');if(desc) desc.value=li.desc||'';
-        var pi=items[i].querySelector('.price-input');if(pi) pi.value=li.amount||'';
-      }
-    });
-  }
-  document.getElementById('docTitleBar').textContent=d.docNum||'Document';
-  setSaveStatus('saved');
-  updatePreview();
+currentDocId=doc.id;currentStatus=doc.status||'draft';
+['draft','sent','paid','unpaid'].forEach(function(s){document.getElementById('status-'+s).classList.toggle('active',s===currentStatus);});
+var d=doc.data;if(!d) return;
+if(d.type) setDocType(d.type);
+if(d.bg) setBg(d.bg);
+if(d.logoPos) setLogoPos(d.logoPos);
+if(d.logoDataUrl){logoDataUrl=d.logoDataUrl;document.getElementById('logoThumb').src=logoDataUrl;document.getElementById('logoPreviewBox').style.display='flex';document.getElementById('logoUploadArea').style.display='none';document.getElementById('logoPosSection').style.display='block';}
+var fields={bizName:'bizName',bizContact:'bizContact',bizEmail:'bizEmail',bizPhone:'bizPhone',bizAddress:'bizAddress',clientName:'clientName',clientEmail:'clientEmail',clientAddress:'clientAddress',docNum:'invNumber',notes:'notes',bankDetails:'bankDetails',footerMsg:'footerMsg',quoteIntro:'quoteIntro',receiptAmount:'receiptAmount',receiptDesc:'receiptDesc',discountPct:'discountPct',discountFixed:'discountFixed'};
+Object.keys(fields).forEach(function(k){var el=document.getElementById(fields[k]);if(el&&d[k]) el.value=d[k];});
+if(d.invDate) document.getElementById('invDate').value=d.invDate;
+if(d.dueDate) document.getElementById('dueDate').value=d.dueDate;
+if(d.taxRate) document.getElementById('taxRate').value=d.taxRate;
+if(d.currency) document.getElementById('currencySelect').value=d.currency;
+if(d.receiptPayMethod) document.getElementById('receiptPayMethod').value=d.receiptPayMethod;
+if(d.lineItems&&d.lineItems.length){
+document.getElementById('lineItems').innerHTML='';
+d.lineItems.forEach(function(){addItem();});
+var items=document.querySelectorAll('#lineItems .line-item');
+d.lineItems.forEach(function(li,i){
+if(items[i]){
+var desc=items[i].querySelector('.line-item-desc');if(desc) desc.value=li.desc||'';
+var pi=items[i].querySelector('.price-input');if(pi) pi.value=li.amount||'';
+}
+});
+}
+document.getElementById('docTitleBar').textContent=d.docNum||'Document';
+setSaveStatus('saved');
+updatePreview();
 }
 
 // STRIPE & DOWNLOAD
@@ -1100,83 +1107,83 @@ function goToStripe(){window.location.href=STRIPE;}
 document.getElementById('payModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
 
 function checkUnlocked(callback){
-  // Always check Supabase — never trust localStorage alone
-  // This prevents new accounts on same browser appearing as unlocked
-  var uid=currentUser&&currentUser.id;
-  if(!uid){_unlocked=false;localStorage.removeItem('inv_unlocked');if(callback)callback(false);return;}
-  fetch(SUPA_URL+'/rest/v1/unlocked_users?user_id=eq.'+uid,{
-    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
-  }).then(function(r){return r.json();}).then(function(data){
-    if(data&&data.length>0){
-      _unlocked=true;
-      localStorage.setItem('inv_unlocked_'+uid,'true');
-    } else {
-      _unlocked=false;
-      localStorage.removeItem('inv_unlocked_'+uid);
-      localStorage.removeItem('inv_unlocked');
-    }
-    if(callback)callback(_unlocked);
-  }).catch(function(){
-    // Offline fallback - use user-specific key
-    _unlocked=localStorage.getItem('inv_unlocked_'+uid)==='true';
-    if(callback)callback(_unlocked);
-  });
+// Always check Supabase — never trust localStorage alone
+// This prevents new accounts on same browser appearing as unlocked
+var uid=currentUser&&currentUser.id;
+if(!uid){_unlocked=false;localStorage.removeItem('inv_unlocked');if(callback)callback(false);return;}
+fetch(SUPA_URL+'/rest/v1/unlocked_users?user_id=eq.'+uid,{
+headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+}).then(function(r){return r.json();}).then(function(data){
+if(data&&data.length>0){
+_unlocked=true;
+localStorage.setItem('inv_unlocked_'+uid,'true');
+} else {
+_unlocked=false;
+localStorage.removeItem('inv_unlocked_'+uid);
+localStorage.removeItem('inv_unlocked');
+}
+if(callback)callback(_unlocked);
+}).catch(function(){
+// Offline fallback - use user-specific key
+_unlocked=localStorage.getItem('inv_unlocked_'+uid)==='true';
+if(callback)callback(_unlocked);
+});
 }
 
 function saveUnlockToSupabase(){
-  var uid=currentUser&&currentUser.id;if(!uid) return;
-  localStorage.setItem('inv_unlocked_'+uid,'true');
-  fetch(SUPA_URL+'/rest/v1/unlocked_users',{
-    method:'POST',
-    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'resolution=ignore-duplicates'},
-    body:JSON.stringify({user_id:uid})
-  }).catch(function(){});
+var uid=currentUser&&currentUser.id;if(!uid) return;
+localStorage.setItem('inv_unlocked_'+uid,'true');
+fetch(SUPA_URL+'/rest/v1/unlocked_users',{
+method:'POST',
+headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'resolution=ignore-duplicates'},
+body:JSON.stringify({user_id:uid})
+}).catch(function(){});
 }
 
 function getFreeCount(){return parseInt(localStorage.getItem('inv_free')||'0');}
 
 function updateFreeCounter(){
-  var el=document.getElementById('freeCounter');
-  if(_unlocked){el.style.display='none';return;}
-  var left=Math.max(0,2-getFreeCount());
-  el.style.display='block';
-  if(left===0){el.className='free-counter empty';el.innerHTML='No free downloads left — <strong onclick="openModal()" style="cursor:pointer;text-decoration:underline">Unlock for $2.99</strong>';}
-  else if(left===1){el.className='free-counter warn';el.textContent='1 free download remaining';}
-  else{el.className='free-counter';el.textContent=left+' free downloads remaining';}
+var el=document.getElementById('freeCounter');
+if(_unlocked){el.style.display='none';return;}
+var left=Math.max(0,2-getFreeCount());
+el.style.display='block';
+if(left===0){el.className='free-counter empty';el.innerHTML='No free downloads left — <strong onclick="openModal()" style="cursor:pointer;text-decoration:underline">Unlock for $2.99</strong>';}
+else if(left===1){el.className='free-counter warn';el.textContent='1 free download remaining';}
+else{el.className='free-counter';el.textContent=left+' free downloads remaining';}
 }
 function handleDownload(){
-  if(_unlocked){downloadPDF();return;}
-  if(getFreeCount()<2){localStorage.setItem('inv_free',getFreeCount()+1);updateFreeCounter();downloadPDF();}
-  else openModal();
+if(_unlocked){downloadPDF();return;}
+if(getFreeCount()<2){localStorage.setItem('inv_free',getFreeCount()+1);updateFreeCounter();downloadPDF();}
+else openModal();
 }
 function handlePrint(){
-  if(_unlocked||getFreeCount()<2){if(!_unlocked){localStorage.setItem('inv_free',getFreeCount()+1);updateFreeCounter();}window.print();}
-  else openModal();
+if(_unlocked||getFreeCount()<2){if(!_unlocked){localStorage.setItem('inv_free',getFreeCount()+1);updateFreeCounter();}window.print();}
+else openModal();
 }
 function downloadPDF(){
-  var btn=document.getElementById('dlBtn');btn.textContent='Generating...';btn.disabled=true;
-  var d=collectData();
-  var bg=d.type==='receipt'?'#ffffff':d.bg||'#faf9f6';
-  var fname=(d.bizName||'Document').replace(/[^a-zA-Z0-9]/g,'-')+'-'+d.docNum+'.pdf';
-  // Use the live preview element directly
-  var src=document.getElementById('previewDoc');
-  html2pdf().set({
-    margin:0,
-    filename:fname,
-    image:{type:'jpeg',quality:0.98},
-    html2canvas:{scale:2,useCORS:true,allowTaint:true,backgroundColor:bg,logging:false,scrollX:0,scrollY:0},
-    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
-  }).from(src).save().then(function(){
-    btn.textContent='Download PDF';btn.disabled=false;
-  }).catch(function(e){
-    btn.textContent='Download PDF';btn.disabled=false;
-    console.error(e);
-  });
+var btn=document.getElementById('dlBtn');btn.textContent='Generating...';btn.disabled=true;
+var d=collectData();
+var bg=d.type==='receipt'?'#ffffff':d.bg||'#faf9f6';
+var fname=(d.bizName||'Document').replace(/[^a-zA-Z0-9]/g,'-')+'-'+d.docNum+'.pdf';
+// Use the live preview element directly
+var src=document.getElementById('previewDoc');
+html2pdf().set({
+margin:0,
+filename:fname,
+image:{type:'jpeg',quality:0.98},
+html2canvas:{scale:2,useCORS:true,allowTaint:true,backgroundColor:bg,logging:false,scrollX:0,scrollY:0},
+jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
+}).from(src).save().then(function(){
+btn.textContent='Download PDF';btn.disabled=false;
+}).catch(function(e){
+btn.textContent='Download PDF';btn.disabled=false;
+console.error(e);
+});
 }
 
 function showToast(msg,type){
-  var t=document.getElementById('toast');t.textContent=msg;t.className='toast '+(type||'info');t.classList.add('show');
-  setTimeout(function(){t.classList.remove('show');},3000);
+var t=document.getElementById('toast');t.textContent=msg;t.className='toast '+(type||'info');t.classList.add('show');
+setTimeout(function(){t.classList.remove('show');},3000);
 }
 
 document.addEventListener('input',function(e){if(e.target.closest('.form-panel')){markUnsaved();clearTimeout(saveTimer);if(currentUser) saveTimer=setTimeout(saveDoc,5000);}});
