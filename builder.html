@@ -670,7 +670,17 @@ function initBuilder(){
   document.getElementById('invNumber').value=(prefixes[type]||'INV-')+String(Math.floor(Math.random()*9000)+1000);
   updateFreeCounter();
   updatePreview();
-  if(params.get('unlocked')==='true') localStorage.setItem('inv_unlocked','true');
+  if(params.get('unlocked')==='true'){
+    localStorage.setItem('inv_unlocked','true');
+    _unlocked=true;
+    saveUnlockToSupabase();
+    showToast('🎉 Unlocked! Unlimited downloads activated.','success');
+  }
+  // Always check Supabase for unlock status
+  checkUnlocked(function(unlocked){
+    _unlocked=unlocked;
+    updateFreeCounter();
+  });
 }
 
 // SAVE STATUS
@@ -1039,15 +1049,43 @@ function populateForm(doc){
 }
 
 // STRIPE & DOWNLOAD
-function isUnlocked(){return localStorage.getItem('inv_unlocked')==='true';}
-function getFreeCount(){return parseInt(localStorage.getItem('inv_free')||'0');}
+var _unlocked = false;
+
 function openModal(){document.getElementById('payModal').classList.add('open');}
 function closeModal(){document.getElementById('payModal').classList.remove('open');}
 function goToStripe(){window.location.href=STRIPE;}
 document.getElementById('payModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+function checkUnlocked(callback){
+  // Check localStorage first (fast)
+  if(localStorage.getItem('inv_unlocked')==='true'){_unlocked=true;if(callback)callback(true);return;}
+  // Then check Supabase (persistent across devices)
+  if(!currentUser){if(callback)callback(false);return;}
+  fetch(SUPA_URL+'/rest/v1/unlocked_users?user_id=eq.'+currentUser.id,{
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+  }).then(function(r){return r.json();}).then(function(data){
+    if(data&&data.length>0){
+      _unlocked=true;
+      localStorage.setItem('inv_unlocked','true');
+    }
+    if(callback)callback(_unlocked);
+  }).catch(function(){if(callback)callback(false);});
+}
+
+function saveUnlockToSupabase(){
+  if(!currentUser) return;
+  fetch(SUPA_URL+'/rest/v1/unlocked_users',{
+    method:'POST',
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'resolution=ignore-duplicates'},
+    body:JSON.stringify({user_id:currentUser.id})
+  }).catch(function(){});
+}
+
+function getFreeCount(){return parseInt(localStorage.getItem('inv_free')||'0');}
+
 function updateFreeCounter(){
   var el=document.getElementById('freeCounter');
-  if(isUnlocked()){el.style.display='none';return;}
+  if(_unlocked){el.style.display='none';return;}
   var left=Math.max(0,2-getFreeCount());
   el.style.display='block';
   if(left===0){el.className='free-counter empty';el.innerHTML='No free downloads left — <strong onclick="openModal()" style="cursor:pointer;text-decoration:underline">Unlock for $2.99</strong>';}
@@ -1055,12 +1093,12 @@ function updateFreeCounter(){
   else{el.className='free-counter';el.textContent=left+' free downloads remaining';}
 }
 function handleDownload(){
-  if(isUnlocked()){downloadPDF();return;}
+  if(_unlocked){downloadPDF();return;}
   if(getFreeCount()<2){localStorage.setItem('inv_free',getFreeCount()+1);updateFreeCounter();downloadPDF();}
   else openModal();
 }
 function handlePrint(){
-  if(isUnlocked()||getFreeCount()<2){if(!isUnlocked()){localStorage.setItem('inv_free',getFreeCount()+1);updateFreeCounter();}window.print();}
+  if(_unlocked||getFreeCount()<2){if(!_unlocked){localStorage.setItem('inv_free',getFreeCount()+1);updateFreeCounter();}window.print();}
   else openModal();
 }
 function downloadPDF(){
