@@ -809,10 +809,26 @@ function renderDocs(docs,tableId){
       +'<div class="doc-client">'+(d.client_name||'—')+'</div>'
       +'<div class="doc-amt">€'+(parseFloat(d.total)||0).toFixed(2)+'</div>'
       +'<div class="doc-date">'+date+'</div>'
-      +'<div><button class="badge '+bc+'" onclick="event.stopPropagation();cycleStatus(\''+d.id+'\',\''+d.status+'\',\''+type+'\',this)">'+bt+'</button></div>'
+      +'<div style="display:flex;align-items:center;gap:6px">'
+      +'<button class="badge '+bc+'" onclick="event.stopPropagation();cycleStatus(\''+d.id+'\',\''+d.status+'\',\''+type+'\',this)">'+bt+'</button>'
+      +'<button onclick="event.stopPropagation();deleteDoc(\''+d.id+'\')" style="background:none;border:none;cursor:pointer;color:var(--ink-4);padding:4px;border-radius:4px;line-height:0" title="Delete" onmouseover="this.style.color=\'var(--red)\';this.style.background=\'var(--red-bg)\'" onmouseout="this.style.color=\'var(--ink-4)\';this.style.background=\'none\'">'
+      +'<svg width=\"13\" height=\"13\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\" stroke-width=\"2\"><polyline points=\"3 6 5 6 21 6\"/><path d=\"M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6\"/><path d=\"M10 11v6M14 11v6\"/><path d=\"M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2\"/></svg>'
+      +'</button></div>'
       +'</div>';
   });
   el.innerHTML=html;
+}
+
+function deleteDoc(id){
+  if(!confirm('Delete this document? This cannot be undone.')) return;
+  fetch(SUPA_URL+'/rest/v1/documents?id=eq.'+id,{
+    method:'DELETE',
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+  }).then(function(){
+    allDocs=allDocs.filter(function(d){return d.id!==id;});
+    filteredDocs=filteredDocs.filter(function(d){return d.id!==id;});
+    renderAll();
+  }).catch(function(){alert('Delete failed.');});
 }
 
 function cycleStatus(id,status,type,btn){
