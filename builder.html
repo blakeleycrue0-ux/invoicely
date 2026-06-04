@@ -883,104 +883,148 @@ function renderInvoice(d){
   var bgLight=d.dark?'rgba(255,255,255,0.06)':'#f0ece4';
   var status=d.status==='paid'?'background:#d4edda;color:#155724':d.status==='sent'?'background:#dbeafe;color:#2563eb':'background:#fff3cd;color:#856404';
   var statusText=d.status==='paid'?'✓ Paid':d.status==='sent'?'Sent':'Unpaid';
-  var bankBlock=d.bankDetails?'<div style="margin-top:16px;padding:12px 16px;background:'+bgLight+';font-size:0.78rem;color:'+mc+';line-height:1.6"><strong style="display:block;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:'+tc+';margin-bottom:3px;font-family:DM Mono,monospace">Payment Details</strong>'+d.bankDetails.replace(/\n/g,'<br>')+'</div>':'';
-  var notesBlock=d.notes?'<div style="margin-top:16px;padding:12px 16px;background:'+bgLight+';font-size:0.78rem;color:'+mc+';line-height:1.6"><strong style="display:block;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:'+tc+';margin-bottom:3px;font-family:DM Mono,monospace">Notes</strong>'+d.notes+'</div>':'';
-  var footerText=d.footerMsg||'Generated with Invoicely · invoicely0.netlify.app';
-  var items=d.items.length?d.items.map(function(i){return '<tr><td style="padding:9px 0;font-size:0.85rem;color:'+tc+';border-bottom:1px solid '+rb+'">'+i.desc+'</td><td style="padding:9px 0;font-size:0.85rem;color:'+tc+';border-bottom:1px solid '+rb+';text-align:right">'+fmt(i.amount)+'</td></tr>';}).join(''):'<tr><td colspan="2" style="padding:12px 0;color:#bbb;font-style:italic;font-size:0.82rem">Add line items...</td></tr>';
-  var discount=d.discAmt>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:'+mc+'"><span>Discount</span><span>-'+fmt(d.discAmt)+'</span></div>':'';
-  return '<div class="inv-classic" style="background:'+bg+'">'
-    +'<div class="doc-header" style="border-bottom-color:'+bc+'">'
-    +'<div>'+logoHtml(d)+'<div class="biz-name" style="color:'+tc+'">'+d.bizName+'</div>'
-    +(d.bizContact||d.bizEmail||d.bizPhone?'<div class="biz-sub">'+[d.bizContact,d.bizEmail,d.bizPhone].filter(Boolean).join(' · ')+'</div>':'')+'</div>'
-    +'<div class="doc-meta"><span class="doc-type-label">Invoice</span><div class="doc-number" style="color:'+tc+'">'+d.docNum+'</div>'
-    +'<div style="margin-top:5px"><span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:0.62rem;font-family:DM Mono,monospace;letter-spacing:0.1em;text-transform:uppercase;'+status+'">'+statusText+'</span></div></div></div>'
-    +'<div class="parties"><div><div class="party-label">Billed To</div><div class="party-name" style="color:'+tc+'">'+d.clientName+'</div>'
-    +(d.clientEmail?'<div class="party-detail">'+d.clientEmail+'</div>':'')+(d.clientAddress?'<div class="party-detail">'+d.clientAddress.replace(/\n/g,'<br>')+'</div>':'')+'</div>'
-    +'<div class="dates-block"><div class="party-label">Dates</div><div class="party-detail">Issue: '+d.invDate+'<br>Due: '+d.dueDate+'</div></div></div>'
-    +'<table><thead><tr><th style="color:'+mc+'">Description</th><th style="color:'+mc+';text-align:right">Amount</th></tr></thead><tbody>'+items+'</tbody></table>'
-    +'<div class="totals">'+discount+'<div class="total-row" style="color:'+mc+'"><span>Subtotal</span><span>'+fmt(d.subtotal)+'</span></div>'
-    +(d.taxRate>0?'<div class="total-row" style="color:'+mc+'"><span>Tax ('+d.taxRate+'%)</span><span>'+fmt(d.tax)+'</span></div>':'')
-    +'<div class="total-row grand" style="color:'+tc+';border-top-color:'+bc+'"><span>Total Due</span><span>'+fmt(d.total)+'</span></div></div>'
+  var F="font-family:'Plus Jakarta Sans',Arial,sans-serif";
+  var FI="font-family:'Instrument Serif',Georgia,serif";
+  var FM="font-family:'DM Mono',Courier,monospace";
+  var bankBlock=d.bankDetails?'<div style="margin-top:16px;padding:12px 16px;background:'+bgLight+';font-size:0.78rem;color:'+mc+';line-height:1.6;'+F+'"><strong style="display:block;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:'+tc+';margin-bottom:3px;'+FM+'">Payment Details</strong>'+d.bankDetails.replace(/\n/g,'<br>')+'</div>':'';
+  var notesBlock=d.notes?'<div style="margin-top:16px;padding:12px 16px;background:'+bgLight+';font-size:0.78rem;color:'+mc+';line-height:1.6;'+F+'"><strong style="display:block;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:'+tc+';margin-bottom:3px;'+FM+'">Notes</strong>'+d.notes+'</div>':'';
+  var footer=d.footerMsg||'Generated with Invoicely';
+  var items=d.items.length?d.items.map(function(i){return '<tr><td style="padding:9px 0;font-size:0.85rem;color:'+tc+';border-bottom:1px solid '+rb+';'+F+'">'+i.desc+'</td><td style="padding:9px 0;font-size:0.85rem;color:'+tc+';border-bottom:1px solid '+rb+';text-align:right;'+F+'">'+fmt(i.amount)+'</td></tr>';}).join(''):'<tr><td colspan="2" style="padding:12px 0;color:#bbb;font-style:italic;font-size:0.82rem">Add line items...</td></tr>';
+  var discount=d.discAmt>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:'+mc+';'+F+'"><span>Discount</span><span>-'+fmt(d.discAmt)+'</span></div>':'';
+  var tax=d.taxRate>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:'+mc+';'+F+'"><span>Tax ('+d.taxRate+'%)</span><span>'+fmt(d.tax)+'</span></div>':'';
+  return '<div style="background:'+bg+';padding:48px;font-size:14px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
+    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;padding-bottom:20px;border-bottom:2px solid '+bc+'">'
+    +'<div>'+logoHtml(d)+'<div style="'+FI+';font-size:2rem;color:'+tc+';line-height:1">'+d.bizName+'</div>'
+    +(d.bizContact||d.bizEmail||d.bizPhone?'<div style="'+F+';font-size:0.78rem;color:'+mc+';margin-top:4px">'+[d.bizContact,d.bizEmail,d.bizPhone].filter(Boolean).join(' · ')+'</div>':'')+'</div>'
+    +'<div style="text-align:right"><span style="'+FM+';font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:#c9a84c;display:block;margin-bottom:3px">Invoice</span>'
+    +'<div style="'+FI+';font-size:1.4rem;color:'+tc+'">'+d.docNum+'</div>'
+    +'<div style="margin-top:6px"><span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:0.62rem;'+FM+';letter-spacing:0.1em;text-transform:uppercase;'+status+'">'+statusText+'</span></div></div></div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:32px">'
+    +'<div><div style="'+FM+';font-size:0.62rem;letter-spacing:0.16em;text-transform:uppercase;color:#bbb;margin-bottom:6px">Billed To</div>'
+    +'<div style="'+F+';font-size:0.92rem;font-weight:700;color:'+tc+';margin-bottom:3px">'+d.clientName+'</div>'
+    +(d.clientEmail?'<div style="'+F+';font-size:0.8rem;color:'+mc+'">'+d.clientEmail+'</div>':'')
+    +(d.clientAddress?'<div style="'+F+';font-size:0.8rem;color:'+mc+';line-height:1.55">'+d.clientAddress.replace(/\n/g,'<br>')+'</div>':'')+'</div>'
+    +'<div style="text-align:right"><div style="'+FM+';font-size:0.62rem;letter-spacing:0.16em;text-transform:uppercase;color:#bbb;margin-bottom:6px">Dates</div>'
+    +'<div style="'+F+';font-size:0.8rem;color:'+mc+'">Issue: '+d.invDate+'<br>Due: '+d.dueDate+'</div></div></div>'
+    +'<table style="width:100%;border-collapse:collapse;margin-bottom:16px">'
+    +'<thead><tr><th style="'+FM+';font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:'+mc+';padding:0 0 8px;border-bottom:1.5px solid '+bc+';font-weight:400;text-align:left">Description</th>'
+    +'<th style="'+FM+';font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:'+mc+';padding:0 0 8px;border-bottom:1.5px solid '+bc+';font-weight:400;text-align:right">Amount</th></tr></thead>'
+    +'<tbody>'+items+'</tbody></table>'
+    +'<div style="margin-left:auto;width:220px">'+discount
+    +'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:'+mc+';'+F+'"><span>Subtotal</span><span>'+fmt(d.subtotal)+'</span></div>'+tax
+    +'<div style="display:flex;justify-content:space-between;padding:10px 0 4px;font-size:1rem;font-weight:700;color:'+tc+';'+F+';border-top:2px solid '+bc+';margin-top:4px"><span>Total Due</span><span>'+fmt(d.total)+'</span></div></div>'
     +notesBlock+bankBlock
-    +'<div class="doc-footer" style="color:'+mc+';border-top-color:'+rb+'">'+footerText+'</div></div>';
+    +'<div style="margin-top:24px;padding-top:14px;border-top:1px solid '+rb+';'+FM+';font-size:0.6rem;color:'+mc+';text-align:center;letter-spacing:0.1em;text-transform:uppercase">'+footer+'</div>'
+    +'</div>';
 }
 
 function renderQuote(d){
-  var footerText=d.footerMsg||'Generated with Invoicely · invoicely0.netlify.app';
-  var items=d.items.length?d.items.map(function(i){return '<tr><td>'+i.desc+'</td><td style="text-align:right">'+fmt(i.amount)+'</td></tr>';}).join(''):'<tr><td colspan="2" style="color:#bbb;font-style:italic;font-size:0.82rem;padding:10px 12px">Add line items...</td></tr>';
-  var discount=d.discAmt>0?'<div class="q-total-row"><span>Discount</span><span>-'+fmt(d.discAmt)+'</span></div>':'';
-  return '<div class="inv-quote">'
-    +'<div class="quote-header">'
-    +'<div class="quote-header-top">'
-    +'<div>'+logoHtml(d)+'<div class="q-biz-name">'+d.bizName+'</div>'
-    +(d.bizEmail||d.bizPhone?'<div class="q-biz-sub">'+[d.bizEmail,d.bizPhone].filter(Boolean).join(' · ')+'</div>':'')+'</div>'
-    +'<div style="text-align:right"><span class="q-doc-label">Quote</span><div class="q-doc-number">'+d.docNum+'</div>'
-    +'<div><span class="q-status">Proposal</span></div></div></div>'
-    +(d.quoteIntro?'<div class="q-intro">'+d.quoteIntro+'</div>':'')+'</div>'
-    +'<div class="quote-body">'
-    +'<div class="q-parties"><div><div class="q-party-label">Prepared For</div><div class="q-party-name">'+d.clientName+'</div>'
-    +(d.clientEmail?'<div class="q-party-detail">'+d.clientEmail+'</div>':'')+(d.clientAddress?'<div class="q-party-detail">'+d.clientAddress.replace(/\n/g,'<br>')+'</div>':'')+'</div>'
-    +'<div style="text-align:right"><div class="q-party-label">Dates</div><div class="q-party-detail">Issue: '+d.invDate+'<br>Valid until: '+d.validUntil+'</div></div></div>'
-    +'<table><thead><tr><th>Description</th><th style="text-align:right">Amount</th></tr></thead><tbody>'+items+'</tbody></table>'
-    +'<div class="q-totals">'+discount+'<div class="q-total-row"><span>Subtotal</span><span>'+fmt(d.subtotal)+'</span></div>'
-    +(d.taxRate>0?'<div class="q-total-row"><span>Tax ('+d.taxRate+'%)</span><span>'+fmt(d.tax)+'</span></div>':'')
-    +'<div class="q-total-row grand"><span>Estimate Total</span><span>'+fmt(d.total)+'</span></div></div>'
-    +(d.notes?'<div class="q-notes"><strong>Terms</strong>'+d.notes+'</div>':'')
-    +'<div class="q-validity">This quote is valid until '+d.validUntil+'</div>'
-    +'<div class="sig-block"><div><div class="sig-line"></div><div class="sig-label">Client Signature</div></div><div><div class="sig-line"></div><div class="sig-label">Date Accepted</div></div></div>'
-    +'<div class="q-footer">'+footerText+'</div></div></div>';
-}
-
-function renderReceipt(d){
-  var amount=parseFloat(d.receiptAmount)||0;
-  var footerText=d.footerMsg||'Generated with Invoicely · invoicely0.netlify.app';
-  return '<div class="inv-receipt">'
-    +'<div class="r-header">'
-    +'<div class="r-icon">✓</div>'
-    +'<div class="r-title">Payment Receipt</div>'
-    +'<div class="r-biz">'+d.bizName+'</div>'
-    +'</div>'
-    +'<div class="r-body">'
-    +'<div class="r-amount-box">'
-    +'<div class="r-amount-label">Amount Received</div>'
-    +'<div class="r-amount">'+getCur()+(amount).toFixed(2)+'</div>'
-    +'</div>'
-    +'<div class="r-details">'
-    +'<div class="r-detail-row"><span class="r-detail-label">Receipt #</span><span class="r-detail-val">'+d.docNum+'</span></div>'
-    +'<div class="r-detail-row"><span class="r-detail-label">Date</span><span class="r-detail-val">'+d.invDate+'</span></div>'
-    +'<div class="r-detail-row"><span class="r-detail-label">Received From</span><span class="r-detail-val">'+d.clientName+'</span></div>'
-    +(d.receiptDesc?'<div class="r-detail-row"><span class="r-detail-label">For</span><span class="r-detail-val" style="max-width:60%;text-align:right">'+d.receiptDesc+'</span></div>':'')
-    +'<div class="r-detail-row"><span class="r-detail-label">Payment Method</span><span class="r-detail-val">'+d.receiptPayMethod+'</span></div>'
-    +'<div class="r-detail-row"><span class="r-detail-label">Received By</span><span class="r-detail-val">'+d.bizName+'</span></div>'
-    +'</div>'
-    +'<div class="r-paid-stamp"><div class="r-paid-badge">✓ Payment Confirmed</div></div>'
-    +'<div class="r-footer">'+footerText+'</div>'
+  var F="font-family:'Plus Jakarta Sans',Arial,sans-serif";
+  var FI="font-family:'Instrument Serif',Georgia,serif";
+  var FM="font-family:'DM Mono',Courier,monospace";
+  var footer=d.footerMsg||'Generated with Invoicely';
+  var items=d.items.length?d.items.map(function(i){return '<tr><td style="'+F+';padding:11px 12px;font-size:0.84rem;color:#374151;border-bottom:1px solid #e5e7eb">'+i.desc+'</td><td style="'+F+';padding:11px 12px;font-size:0.84rem;color:#374151;border-bottom:1px solid #e5e7eb;text-align:right">'+fmt(i.amount)+'</td></tr>';}).join(''):'<tr><td colspan="2" style="padding:12px;color:#bbb;font-style:italic;font-size:0.82rem">Add line items...</td></tr>';
+  var discount=d.discAmt>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:#6b7280;'+F+'"><span>Discount</span><span>-'+fmt(d.discAmt)+'</span></div>':'';
+  var tax=d.taxRate>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:#6b7280;'+F+'"><span>Tax ('+d.taxRate+'%)</span><span>'+fmt(d.tax)+'</span></div>':'';
+  return '<div style="font-size:14px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
+    +'<div style="background:linear-gradient(135deg,#4f46e5 0%,#6366f1 100%);padding:36px 48px;color:white">'
+    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px">'
+    +'<div>'+logoHtml(d)+'<div style="'+FI+';font-size:1.8rem;color:white;line-height:1">'+d.bizName+'</div>'
+    +(d.bizEmail||d.bizPhone?'<div style="'+F+';font-size:0.78rem;color:rgba(255,255,255,0.7);margin-top:4px">'+[d.bizEmail,d.bizPhone].filter(Boolean).join(' · ')+'</div>':'')+'</div>'
+    +'<div style="text-align:right"><span style="'+FM+';font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.6);display:block;margin-bottom:3px">Quote</span>'
+    +'<div style="'+F+';font-size:1.4rem;font-weight:700;color:white">'+d.docNum+'</div>'
+    +'<div style="margin-top:5px"><span style="display:inline-block;padding:3px 10px;border-radius:4px;font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;background:rgba(255,255,255,0.2);color:white;'+F+'">Proposal</span></div></div></div>'
+    +(d.quoteIntro?'<div style="'+F+';font-size:0.88rem;color:rgba(255,255,255,0.85);line-height:1.7;padding-top:16px;border-top:1px solid rgba(255,255,255,0.2)">'+d.quoteIntro+'</div>':'')+'</div>'
+    +'<div style="padding:36px 48px;background:#fff">'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:32px">'
+    +'<div><div style="'+FM+';font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:#9ca3af;margin-bottom:6px">Prepared For</div>'
+    +'<div style="'+F+';font-size:0.92rem;font-weight:700;color:#0f1729;margin-bottom:3px">'+d.clientName+'</div>'
+    +(d.clientEmail?'<div style="'+F+';font-size:0.8rem;color:#6b7280">'+d.clientEmail+'</div>':'')
+    +(d.clientAddress?'<div style="'+F+';font-size:0.8rem;color:#6b7280;line-height:1.55">'+d.clientAddress.replace(/\n/g,'<br>')+'</div>':'')+'</div>'
+    +'<div style="text-align:right"><div style="'+FM+';font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:#9ca3af;margin-bottom:6px">Dates</div>'
+    +'<div style="'+F+';font-size:0.8rem;color:#6b7280">Issue: '+d.invDate+'<br>Valid until: '+d.validUntil+'</div></div></div>'
+    +'<table style="width:100%;border-collapse:collapse;margin-bottom:16px">'
+    +'<thead><tr style="background:#eef2ff"><th style="'+FM+';font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:#4f46e5;padding:10px 12px;font-weight:600;text-align:left">Description</th>'
+    +'<th style="'+FM+';font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:#4f46e5;padding:10px 12px;font-weight:600;text-align:right">Amount</th></tr></thead>'
+    +'<tbody>'+items+'</tbody></table>'
+    +'<div style="margin-left:auto;width:220px">'+discount
+    +'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:#6b7280;'+F+'"><span>Subtotal</span><span>'+fmt(d.subtotal)+'</span></div>'+tax
+    +'<div style="display:flex;justify-content:space-between;padding:10px 0 4px;font-size:1rem;font-weight:700;color:#4f46e5;'+F+';border-top:2px solid #4f46e5;margin-top:4px"><span>Estimate Total</span><span>'+fmt(d.total)+'</span></div></div>'
+    +(d.notes?'<div style="margin-top:20px;padding:14px 18px;background:#eef2ff;border-left:3px solid #4f46e5;'+F+';font-size:0.78rem;color:#374151;line-height:1.65"><strong style="display:block;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#4f46e5;margin-bottom:3px;'+FM+'">Terms</strong>'+d.notes+'</div>':'')
+    +'<div style="margin-top:16px;text-align:center;'+FM+';font-size:0.72rem;color:#9ca3af;letter-spacing:0.08em;text-transform:uppercase">This quote is valid until '+d.validUntil+'</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:28px;padding-top:20px;border-top:1px solid #e5e7eb">'
+    +'<div><div style="height:40px;border-bottom:1.5px solid #e5e7eb;margin-bottom:6px"></div><div style="'+FM+';font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af">Client Signature</div></div>'
+    +'<div><div style="height:40px;border-bottom:1.5px solid #e5e7eb;margin-bottom:6px"></div><div style="'+FM+';font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af">Date Accepted</div></div></div>'
+    +'<div style="margin-top:20px;padding-top:14px;border-top:1px solid #e5e7eb;'+FM+';font-size:0.6rem;color:#9ca3af;text-align:center;letter-spacing:0.1em;text-transform:uppercase">'+footer+'</div>'
     +'</div></div>';
 }
-
+function renderReceipt(d){
+  var F="font-family:'Plus Jakarta Sans',Arial,sans-serif";
+  var FI="font-family:'Instrument Serif',Georgia,serif";
+  var FM="font-family:'DM Mono',Courier,monospace";
+  var amount=parseFloat(d.receiptAmount)||0;
+  var footer=d.footerMsg||'Generated with Invoicely';
+  return '<div style="font-size:14px;max-width:520px;margin:0 auto;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
+    +'<div style="background:#16a34a;padding:32px 40px;color:white;text-align:center">'
+    +'<div style="width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:1.5rem;line-height:56px">✓</div>'
+    +'<div style="'+FI+';font-size:1.6rem;color:white;margin-bottom:4px">Payment Receipt</div>'
+    +'<div style="'+F+';font-size:0.85rem;color:rgba(255,255,255,0.8)">'+d.bizName+'</div>'
+    +'</div>'
+    +'<div style="padding:32px 40px;background:#fff">'
+    +'<div style="background:#f0faf4;border:2px solid #bbf7d0;border-radius:12px;padding:20px;text-align:center;margin-bottom:24px">'
+    +'<div style="'+FM+';font-size:0.72rem;color:#15803d;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px">Amount Received</div>'
+    +'<div style="'+F+';font-size:2.5rem;font-weight:800;color:#15803d;line-height:1">'+getCur()+(amount).toFixed(2)+'</div>'
+    +'</div>'
+    +'<div style="border-top:1px solid #f0f0f0">'
+    +'<div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f0f0f0"><span style="'+F+';font-size:0.8rem;color:#666">Receipt #</span><span style="'+F+';font-size:0.85rem;font-weight:600;color:#1a1a1a">'+d.docNum+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f0f0f0"><span style="'+F+';font-size:0.8rem;color:#666">Date</span><span style="'+F+';font-size:0.85rem;font-weight:600;color:#1a1a1a">'+d.invDate+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f0f0f0"><span style="'+F+';font-size:0.8rem;color:#666">Received From</span><span style="'+F+';font-size:0.85rem;font-weight:600;color:#1a1a1a">'+d.clientName+'</span></div>'
+    +(d.receiptDesc?'<div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f0f0f0"><span style="'+F+';font-size:0.8rem;color:#666">For</span><span style="'+F+';font-size:0.85rem;font-weight:600;color:#1a1a1a;text-align:right;max-width:60%">'+d.receiptDesc+'</span></div>':'')
+    +'<div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f0f0f0"><span style="'+F+';font-size:0.8rem;color:#666">Payment Method</span><span style="'+F+';font-size:0.85rem;font-weight:600;color:#1a1a1a">'+d.receiptPayMethod+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;padding:12px 0"><span style="'+F+';font-size:0.8rem;color:#666">Received By</span><span style="'+F+';font-size:0.85rem;font-weight:600;color:#1a1a1a">'+d.bizName+'</span></div>'
+    +'</div>'
+    +'<div style="text-align:center;margin-top:24px;padding-top:20px;border-top:2px dashed #bbf7d0">'
+    +'<div style="display:inline-flex;align-items:center;gap:8px;background:#16a34a;color:white;padding:10px 24px;border-radius:50px;'+F+';font-size:0.9rem;font-weight:700">✓ Payment Confirmed</div>'
+    +'</div>'
+    +'<div style="margin-top:20px;'+FM+';font-size:0.68rem;color:#bbb;text-align:center;letter-spacing:0.08em;text-transform:uppercase">'+footer+'</div>'
+    +'</div></div>';
+}
 function renderProforma(d){
   var bg=d.bg||'#fffbf0';
-  var footerText=d.footerMsg||'Generated with Invoicely · invoicely0.netlify.app';
-  var items=d.items.length?d.items.map(function(i){return '<tr><td>'+i.desc+'</td><td style="text-align:right">'+fmt(i.amount)+'</td></tr>';}).join(''):'<tr><td colspan="2" style="color:#bbb;font-style:italic;font-size:0.82rem;padding:9px 0">Add line items...</td></tr>';
-  var discount=d.discAmt>0?'<div class="p-total-row"><span>Discount</span><span>-'+fmt(d.discAmt)+'</span></div>':'';
-  return '<div class="inv-proforma" style="background:'+bg+'">'
-    +'<div class="p-header">'
-    +'<div>'+logoHtml(d)+'<div class="p-biz-name">'+d.bizName+'</div>'
-    +(d.bizEmail||d.bizPhone?'<div class="p-biz-sub">'+[d.bizEmail,d.bizPhone].filter(Boolean).join(' · ')+'</div>':'')+'</div>'
-    +'<div class="p-doc-meta"><span class="p-doc-label">Proforma Invoice</span><div class="p-doc-number">'+d.docNum+'</div></div></div>'
-    +'<div class="p-notice"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>This is a proforma invoice — not a legal tax document. A final invoice will be issued upon confirmation.</div>'
-    +'<div class="p-parties"><div><div class="p-party-label">Prepared For</div><div class="p-party-name">'+d.clientName+'</div>'
-    +(d.clientEmail?'<div class="p-party-detail">'+d.clientEmail+'</div>':'')+(d.clientAddress?'<div class="p-party-detail">'+d.clientAddress.replace(/\n/g,'<br>')+'</div>':'')+'</div>'
-    +'<div style="text-align:right"><div class="p-party-label">Dates</div><div class="p-party-detail">Issue: '+d.invDate+'<br>Due: '+d.dueDate+'</div></div></div>'
-    +'<table><thead><tr><th>Description</th><th style="text-align:right">Amount</th></tr></thead><tbody>'+items+'</tbody></table>'
-    +'<div class="p-totals">'+discount+'<div class="p-total-row"><span>Subtotal</span><span>'+fmt(d.subtotal)+'</span></div>'
-    +(d.taxRate>0?'<div class="p-total-row"><span>Tax ('+d.taxRate+'%)</span><span>'+fmt(d.tax)+'</span></div>':'')
-    +'<div class="p-total-row grand"><span>Estimated Total</span><span>'+fmt(d.total)+'</span></div></div>'
-    +(d.notes?'<div class="p-notes"><strong>Notes / Terms</strong>'+d.notes+'</div>':'')
-    +(d.bankDetails?'<div class="p-notes"><strong>Payment Details</strong>'+d.bankDetails.replace(/\n/g,'<br>')+'</div>':'')
-    +'<div class="p-footer">'+footerText+'</div></div>';
+  var F="font-family:'Plus Jakarta Sans',Arial,sans-serif";
+  var FI="font-family:'Instrument Serif',Georgia,serif";
+  var FM="font-family:'DM Mono',Courier,monospace";
+  var footer=d.footerMsg||'Generated with Invoicely';
+  var items=d.items.length?d.items.map(function(i){return '<tr><td style="'+F+';padding:9px 0;font-size:0.83rem;color:#333;border-bottom:1px solid #f5e8c8">'+i.desc+'</td><td style="'+F+';padding:9px 0;font-size:0.83rem;color:#333;border-bottom:1px solid #f5e8c8;text-align:right">'+fmt(i.amount)+'</td></tr>';}).join(''):'<tr><td colspan="2" style="padding:9px 0;color:#bbb;font-style:italic;font-size:0.82rem">Add line items...</td></tr>';
+  var discount=d.discAmt>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:#888;'+F+'"><span>Discount</span><span>-'+fmt(d.discAmt)+'</span></div>':'';
+  var tax=d.taxRate>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:#888;'+F+'"><span>Tax ('+d.taxRate+'%)</span><span>'+fmt(d.tax)+'</span></div>':'';
+  return '<div style="background:'+bg+';padding:48px;font-size:14px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
+    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;padding-bottom:16px;border-bottom:3px solid #d97706">'
+    +'<div>'+logoHtml(d)+'<div style="'+FI+';font-size:1.8rem;color:#1a1a1a">'+d.bizName+'</div>'
+    +(d.bizEmail||d.bizPhone?'<div style="'+F+';font-size:0.78rem;color:#888;margin-top:4px">'+[d.bizEmail,d.bizPhone].filter(Boolean).join(' · ')+'</div>':'')+'</div>'
+    +'<div style="text-align:right"><span style="'+FM+';font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#d97706;display:block;margin-bottom:3px">Proforma Invoice</span>'
+    +'<div style="'+F+';font-size:1.3rem;font-weight:700;color:#1a1a1a">'+d.docNum+'</div></div></div>'
+    +'<div style="background:#fef3c7;border:1px solid #fbbf24;border-radius:8px;padding:10px 16px;'+F+';font-size:0.78rem;color:#92400e;margin-bottom:24px;display:flex;gap:8px;align-items:center">'
+    +'<span style="font-size:1rem">⚠️</span>This is a proforma invoice — not a legal tax document. A final invoice will be issued upon confirmation.</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:28px">'
+    +'<div><div style="'+FM+';font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:#bbb;margin-bottom:4px">Prepared For</div>'
+    +'<div style="'+F+';font-size:0.9rem;font-weight:700;color:#1a1a1a;margin-bottom:2px">'+d.clientName+'</div>'
+    +(d.clientEmail?'<div style="'+F+';font-size:0.78rem;color:#666">'+d.clientEmail+'</div>':'')
+    +(d.clientAddress?'<div style="'+F+';font-size:0.78rem;color:#666;line-height:1.55">'+d.clientAddress.replace(/\n/g,'<br>')+'</div>':'')+'</div>'
+    +'<div style="text-align:right"><div style="'+FM+';font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:#bbb;margin-bottom:4px">Dates</div>'
+    +'<div style="'+F+';font-size:0.78rem;color:#666">Issue: '+d.invDate+'<br>Due: '+d.dueDate+'</div></div></div>'
+    +'<table style="width:100%;border-collapse:collapse;margin-bottom:16px">'
+    +'<thead><tr><th style="'+FM+';font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#d97706;padding:0 0 8px;border-bottom:2px solid #d97706;font-weight:600;text-align:left">Description</th>'
+    +'<th style="'+FM+';font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#d97706;padding:0 0 8px;border-bottom:2px solid #d97706;font-weight:600;text-align:right">Amount</th></tr></thead>'
+    +'<tbody>'+items+'</tbody></table>'
+    +'<div style="margin-left:auto;width:220px">'+discount
+    +'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.82rem;color:#888;'+F+'"><span>Subtotal</span><span>'+fmt(d.subtotal)+'</span></div>'+tax
+    +'<div style="display:flex;justify-content:space-between;padding:9px 0 4px;font-size:1rem;font-weight:700;color:#d97706;'+F+';border-top:2px solid #d97706;margin-top:4px"><span>Estimated Total</span><span>'+fmt(d.total)+'</span></div></div>'
+    +(d.notes?'<div style="margin-top:16px;padding:12px 16px;background:#fef3c7;'+F+';font-size:0.78rem;color:#92400e;line-height:1.65"><strong style="display:block;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:#d97706;margin-bottom:3px;'+FM+'">Notes</strong>'+d.notes+'</div>':'')
+    +(d.bankDetails?'<div style="margin-top:12px;padding:12px 16px;background:#fef3c7;'+F+';font-size:0.78rem;color:#92400e;line-height:1.65"><strong style="display:block;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:#d97706;margin-bottom:3px;'+FM+'">Payment Details</strong>'+d.bankDetails.replace(/\n/g,'<br>')+'</div>':'')
+    +'<div style="margin-top:20px;padding-top:14px;border-top:1px solid #f5e8c8;'+FM+';font-size:0.6rem;color:#ccc;text-align:center;letter-spacing:0.1em;text-transform:uppercase">'+footer+'</div>'
+    +'</div>';
 }
-
 function updatePreview(){
   var d=collectData();
   var el=document.getElementById('previewDoc');
