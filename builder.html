@@ -1071,11 +1071,13 @@ function saveDoc(){
   setSaveStatus('saving');
   var d=collectData();
   var userId=currentUser.id;
+  if(!userId){showToast('Authentication error','error');setSaveStatus('unsaved');return;}
   var payload={user_id:userId,type:currentDocType,title:d.bizName||'Untitled',doc_number:d.docNum,client_name:d.clientName,total:d.type==='receipt'?(parseFloat(d.receiptAmount)||0):d.total,status:currentStatus,due_date:null,data:Object.assign({},d,{logoDataUrl:logoDataUrl,template:currentDocType,bg:d.bg,logoPos:d.logoPos})};
   var url=SUPA_URL+'/rest/v1/documents';
   var method='POST';
-  if(currentDocId) url+='?id=eq.'+currentDocId+'&user_id=eq.'+userId,method='PATCH';
-  fetch(url,{method:method,headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(payload)})
+  var hdrs={'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
+  if(currentDocId){url+='?id=eq.'+currentDocId+'&user_id=eq.'+userId;method='PATCH';}
+  fetch(url,{method:method,headers:hdrs,body:JSON.stringify(payload)})
   .then(function(r){return r.json();}).then(function(res){
     if(res&&res[0]){if(!currentDocId)currentDocId=res[0].id;setSaveStatus('saved');showToast('Saved!','success');document.getElementById('docTitleBar').textContent=d.docNum;}
     else{setSaveStatus('unsaved');showToast('Save failed','error');}
