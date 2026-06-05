@@ -567,6 +567,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         </div>
       </div>
 
+      <!-- HIDDEN FIELDS FOR DATA COLLECTION -->
+      <input type="hidden" id="payMethod" value="Bank Transfer">
+
       <!-- DOWNLOAD -->
       <div class="download-section">
         <div class="free-counter" id="freeCounter"></div>
@@ -876,7 +879,7 @@ function collectData(){
     receiptNumber:document.getElementById('receiptNumber')?document.getElementById('receiptNumber').value:'',
     receiptDate:document.getElementById('receiptDate')?document.getElementById('receiptDate').value:'',
     receiptCurrency:document.getElementById('receiptCurrency')?document.getElementById('receiptCurrency').value:'€',
-    payMethod:document.getElementById('payMethod').value,
+    payMethod:document.getElementById('payMethod')?document.getElementById('payMethod').value:'Bank Transfer',
     currency:getCur(), lineItems:items,
     discountPct:dp, discountFixed:df
   };
@@ -1187,4 +1190,3 @@ window.addEventListener('load', function(){ updatePreview(); });
 </script>
 </body>
 </html>
-
