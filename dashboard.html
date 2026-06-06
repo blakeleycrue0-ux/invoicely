@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -316,7 +316,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   </div>
   <nav class="sb-nav">
     <div class="sb-label">Overview</div>
-    <a class="sb-item" href="dashboard.html">
+    <a class="sb-item" href="dashboard.html" onclick="location.assign('dashboard.html');return false;">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       Dashboard
     </a>
@@ -351,7 +351,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   <div class="topbar">
     <div class="topbar-title" id="docTitleBar">New Invoice</div>
     <div class="save-status"><div class="save-dot unsaved" id="saveDot"></div><span id="saveStatusText">Unsaved</span></div>
-    <button class="tb-btn secondary" onclick="window.location.href='dashboard.html'">← Dashboard</button>
+    <button class="tb-btn secondary" onclick="location.assign('dashboard.html')">← Dashboard</button>
     <button class="tb-btn success" onclick="saveDoc()">
       <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
       Save
