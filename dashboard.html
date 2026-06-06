@@ -733,7 +733,7 @@ function showPage(id,el){
 
 function loadDocs(user){
   if(!user||!user.id){hideLoading();return;}
-  fetch(SUPA_URL+'/rest/v1/documents?order=created_at.desc&limit=200',{
+  fetch(SUPA_URL+'/rest/v1/documents?order=created_at.desc',{
     headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'}
   }).then(function(r){return r.json();}).then(function(data){
     allDocs=Array.isArray(data)?data:[];
