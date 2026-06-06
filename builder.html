@@ -1078,11 +1078,17 @@ function saveDoc(){
   var hdrs={'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
   if(currentDocId){url+='?id=eq.'+currentDocId+'&user_id=eq.'+userId;method='PATCH';}
   fetch(url,{method:method,headers:hdrs,body:JSON.stringify(payload)})
-  .then(function(r){return r.json();}).then(function(res){
+  .then(function(r){
+    if(!r.ok){return r.text().then(function(t){throw new Error(r.status+': '+t);});}
+    return r.json();
+  }).then(function(res){
     var row=Array.isArray(res)?res[0]:res;
     if(row&&row.id){if(!currentDocId)currentDocId=row.id;}
-    setSaveStatus('saved');showToast('Saved!','success');document.getElementById('docTitleBar').textContent=d.docNum;
-  }).catch(function(){setSaveStatus('unsaved');showToast('Save failed','error');});
+    setSaveStatus('saved');showToast('Saved!','success');
+  }).catch(function(err){
+    console.error('Save error:',err);
+    setSaveStatus('unsaved');showToast('Save failed: '+err.message,'error');
+  });
 }
 
 function loadDoc(id){
