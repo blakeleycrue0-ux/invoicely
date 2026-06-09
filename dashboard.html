@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -619,7 +619,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         </div>
         <div class="settings-row">
           <div><div class="settings-label">Unlock unlimited</div><div class="settings-sub">One-time payment, yours forever</div></div>
-          <button class="save-btn" onclick="window.location.href='https://buy.stripe.com/dRm7sL2CGewA7Y64I91Jm00'">Unlock for $2.99</button>
+          <button class="save-btn" onclick="var u=(currentUser&&currentUser.id)?('?client_reference_id='+encodeURIComponent(currentUser.id)+(currentUser.email?'&prefilled_email='+encodeURIComponent(currentUser.email):'')):'';window.location.href='https://buy.stripe.com/dRm7sL2CGewA7Y64I91Jm00'+u;">Unlock for $2.99</button>
         </div>
       </div>
 
