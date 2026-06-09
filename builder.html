@@ -1135,7 +1135,7 @@ var _unlocked = false;
 
 function openModal(){document.getElementById('payModal').classList.add('open');}
 function closeModal(){document.getElementById('payModal').classList.remove('open');}
-function goToStripe(){var ref=(currentUser&&currentUser.id)?((STRIPE.indexOf('?')>-1?'&':'?')+'client_reference_id='+encodeURIComponent(currentUser.id)):'';window.location.href=STRIPE+ref;}
+function goToStripe(){var p=[];if(currentUser&&currentUser.id)p.push('client_reference_id='+encodeURIComponent(currentUser.id));if(currentUser&&currentUser.email)p.push('prefilled_email='+encodeURIComponent(currentUser.email));var q=p.length?((STRIPE.indexOf('?')>-1?'&':'?')+p.join('&')):'';window.location.href=STRIPE+q;}
 document.getElementById('payModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
 
 function checkUnlocked(callback){
