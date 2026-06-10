@@ -1139,29 +1139,28 @@ function goToStripe(){var p=[];if(currentUser&&currentUser.id)p.push('client_ref
 document.getElementById('payModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
 
 function checkUnlocked(callback){
-  // read the permanent paid record from Supabase so it persists forever, on any device
-  var cached=localStorage.getItem('inv_unlocked')==='true';
-  _unlocked=cached;
-  if(!(currentUser&&currentUser.id)){ if(callback)callback(cached); return; }
-  fetch(SUPA_URL+'/rest/v1/unlocked_users?user_id=eq.'+currentUser.id,{
+  if(!(currentUser&&currentUser.id)){if(callback)callback(false);return;}
+  fetch(SUPA_URL+'/rest/v1/unlocked_users?user_id=eq.'+encodeURIComponent(currentUser.id),{
     headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
   }).then(function(r){return r.json();}).then(function(data){
-    var unlocked=(data&&data.length>0)||cached;
+    var unlocked=Array.isArray(data)&&data.length>0;
     _unlocked=unlocked;
-    if(unlocked) localStorage.setItem('inv_unlocked','true');
+    if(unlocked)localStorage.setItem('inv_unlocked','true');
+    else localStorage.removeItem('inv_unlocked');
     if(callback)callback(unlocked);
-  }).catch(function(){ if(callback)callback(cached); });
+  }).catch(function(){
+    var cached=localStorage.getItem('inv_unlocked')==='true';
+    _unlocked=cached;if(callback)callback(cached);
+  });
 }
 
 function saveUnlockToSupabase(){
-  // write the permanent paid record so it is there forever (idempotent)
-  localStorage.setItem('inv_unlocked','true');
   if(!(currentUser&&currentUser.id)) return;
   fetch(SUPA_URL+'/rest/v1/unlocked_users',{
     method:'POST',
     headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'resolution=ignore-duplicates,return=minimal'},
     body:JSON.stringify({user_id:currentUser.id})
-  }).catch(function(){});
+  }).then(function(r){if(r.ok)localStorage.setItem('inv_unlocked','true');}).catch(function(){});
 }
 
 function getFreeCount(){return parseInt(localStorage.getItem('inv_free')||'0');}
