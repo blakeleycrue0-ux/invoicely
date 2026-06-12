@@ -1,82 +1,82 @@
 // netlify/functions/stripe-webhook.js
-// Stripe -> Supabase permanent unlock.
-// A verified payment is the ONLY thing that writes the unlock row. Pay = unlocked, forever.
+// Zero external dependencies — uses only Node built-in crypto.
+const crypto = require('crypto');
 
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const SUPABASE_URL   = process.env.SUPABASE_URL;
+const SERVICE_KEY    = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 
-const SUPABASE_URL = process.env.SUPABASE_URL;               // e.g. https://keumnwqprtgwxvzvewtk.supabase.co
-const SERVICE_KEY  = process.env.SUPABASE_SERVICE_ROLE_KEY;  // service_role key — server only, NEVER in the frontend
+function verifyAndParse(rawBody, sigHeader) {
+  const parts = {};
+  sigHeader.split(',').forEach(item => {
+    const eq = item.indexOf('=');
+    const k = item.slice(0, eq), v = item.slice(eq + 1);
+    (parts[k] = parts[k] || []).push(v);
+  });
+  const t = parts.t && parts.t[0];
+  const v1 = parts.v1 || [];
+  if (!t || !v1.length) throw new Error('Invalid signature header');
+  if (Math.abs(Date.now() / 1000 - Number(t)) > 300) throw new Error('Timestamp expired');
+  const expected = crypto.createHmac('sha256', WEBHOOK_SECRET)
+    .update(`${t}.${rawBody}`).digest('hex');
+  const valid = v1.some(sig => {
+    try { return crypto.timingSafeEqual(Buffer.from(sig, 'hex'), Buffer.from(expected, 'hex')); }
+    catch (e) { return false; }
+  });
+  if (!valid) throw new Error('Signature mismatch');
+  return JSON.parse(rawBody);
+}
 
-async function writeUnlock(row, opts) {
-  opts = opts || {};
-  let url = SUPABASE_URL + '/rest/v1/unlocked_users';
-  if (opts.onConflict) url += '?on_conflict=' + opts.onConflict;
-  const prefer = opts.ignore
-    ? 'resolution=ignore-duplicates,return=minimal'
-    : 'resolution=merge-duplicates,return=minimal';
-  return fetch(url, {
+async function writeUnlock(row, ignore) {
+  return fetch(SUPABASE_URL + '/rest/v1/unlocked_users', {
     method: 'POST',
     headers: {
       'apikey': SERVICE_KEY,
       'Authorization': 'Bearer ' + SERVICE_KEY,
       'Content-Type': 'application/json',
-      'Prefer': prefer
+      'Prefer': ignore
+        ? 'resolution=ignore-duplicates,return=minimal'
+        : 'resolution=merge-duplicates,return=minimal'
     },
     body: JSON.stringify(row)
   });
 }
 
 exports.handler = async (event) => {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
-  }
+  if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
 
-  // Stripe needs the raw, unmodified body to verify the signature.
-  const sig = event.headers['stripe-signature'];
+  const sig     = event.headers['stripe-signature'];
   const rawBody = event.isBase64Encoded
     ? Buffer.from(event.body, 'base64').toString('utf8')
     : event.body;
 
   let evt;
-  try {
-    evt = stripe.webhooks.constructEvent(rawBody, sig, process.env.STRIPE_WEBHOOK_SECRET);
-  } catch (err) {
+  try { evt = verifyAndParse(rawBody, sig); }
+  catch (err) {
     console.error('Signature check failed:', err.message);
-    return { statusCode: 400, body: 'Bad signature' };
+    return { statusCode: 400, body: 'Bad signature: ' + err.message };
   }
 
   if (evt.type === 'checkout.session.completed') {
-    const s = evt.data.object;
+    const s    = evt.data.object;
     const paid = s.payment_status === 'paid' || s.status === 'complete';
-
     if (paid) {
       const userId = s.client_reference_id || null;
       const email  = (s.customer_details && s.customer_details.email) || s.customer_email || null;
 
-      // 1) Try the full record (needs email + unlocked_at columns).
       let res = await writeUnlock(
-        { user_id: userId, email: email, unlocked_at: new Date().toISOString() },
-        { onConflict: 'user_id' }
+        { user_id: userId, email: email, unlocked_at: new Date().toISOString() }, false
       );
-
-      // 2) If columns aren't added yet, fall back to just the user id.
-      if (!res.ok && userId) {
-        res = await writeUnlock({ user_id: userId }, { onConflict: 'user_id', ignore: true });
-      }
-
-      // 3) No user id but we have an email? Store by email so nothing is lost.
-      if (!res.ok && !userId && email) {
-        res = await writeUnlock({ email: email }, { ignore: true });
-      }
+      if (!res.ok && userId)         res = await writeUnlock({ user_id: userId }, true);
+      if (!res.ok && !userId && email) res = await writeUnlock({ email: email }, true);
 
       if (!res.ok) {
-        const t = await res.text().catch(() => '');
-        console.error('Supabase write failed', res.status, t);
-        return { statusCode: 500, body: 'DB write failed' }; // non-200 => Stripe retries automatically
+        const txt = await res.text().catch(() => '');
+        console.error('Supabase write failed', res.status, txt);
+        return { statusCode: 500, body: 'DB write failed' };
       }
       console.log('Unlocked:', userId || email);
     }
   }
-
   return { statusCode: 200, body: JSON.stringify({ received: true }) };
 };
