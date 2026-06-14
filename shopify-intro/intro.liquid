@@ -1,0 +1,492 @@
+{%- comment -%}
+  ============================================================================
+  [BRAND] — Cinematic Intro (self-contained, scoped, real-time Three.js + GLSL)
+  ----------------------------------------------------------------------------
+  Sequence:
+    1. Fade in on black -> 3D matte stainless bottle, studio light, LED powers on
+    2. Refractive water rises and fills the scene
+    3. Brand name coalesces out of the water (noise dissolve + wet edges + droplets)
+    4. Camera dollies through and dissolves into the live store
+  Behaviour:
+    - Skippable (subtle Skip button)
+    - Plays once per browser session (sessionStorage)
+    - Respects prefers-reduced-motion (skips straight to the store)
+    - Lazy-loads Three.js only when it will actually play
+    - Everything scoped under #wb-intro / wb- prefixes (no theme clashes)
+
+  EDIT THIS: set your brand name on the data-brand attribute below.
+  ============================================================================
+{%- endcomment -%}
+
+<div id="wb-intro"
+     data-brand="[BRAND]"
+     data-duration="4600"
+     aria-hidden="true"
+     role="presentation">
+  <canvas id="wb-intro-canvas"></canvas>
+  <button type="button" id="wb-intro-skip" aria-label="Skip intro">Skip</button>
+  <div id="wb-intro-fade"></div>
+</div>
+
+<style>
+  /* ---- scoped: everything lives under #wb-intro ---------------------------- */
+  #wb-intro{
+    position:fixed; inset:0; z-index:2147483000;
+    background:#000; overflow:hidden;
+    opacity:1; transition:opacity .9s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  #wb-intro.wb-done{ opacity:0; pointer-events:none; }
+  #wb-intro #wb-intro-canvas{ display:block; width:100%; height:100%; }
+  #wb-intro #wb-intro-fade{
+    position:absolute; inset:0; background:#000; opacity:1;
+    pointer-events:none; transition:opacity 1.1s ease;
+  }
+  #wb-intro.wb-lit #wb-intro-fade{ opacity:0; }
+  #wb-intro #wb-intro-skip{
+    position:absolute; bottom:26px; right:26px;
+    font:500 12px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    letter-spacing:.22em; text-transform:uppercase;
+    color:rgba(255,255,255,.55); background:transparent;
+    border:1px solid rgba(255,255,255,.22); border-radius:999px;
+    padding:10px 18px; cursor:pointer; opacity:0;
+    transition:opacity .6s ease .8s, color .25s ease, border-color .25s ease;
+    -webkit-appearance:none; appearance:none;
+  }
+  #wb-intro.wb-ready #wb-intro-skip{ opacity:1; }
+  #wb-intro #wb-intro-skip:hover{ color:#fff; border-color:rgba(255,255,255,.6); }
+  @media (max-width:600px){
+    #wb-intro #wb-intro-skip{ bottom:18px; right:18px; padding:9px 15px; font-size:11px; }
+  }
+  /* hard fallback: if motion is reduced, never show the overlay */
+  @media (prefers-reduced-motion: reduce){ #wb-intro{ display:none !important; } }
+</style>
+
+<script>
+(function () {
+  "use strict";
+
+  var root = document.getElementById("wb-intro");
+  if (!root) return;
+
+  var KEY = "wbIntroPlayed";
+  var reduceMotion = window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // ---- gate: reduced motion OR already played this session -> remove now ----
+  function removeNow() {
+    if (root && root.parentNode) root.parentNode.removeChild(root);
+    document.documentElement.style.removeProperty("overflow");
+  }
+  var alreadyPlayed = false;
+  try { alreadyPlayed = sessionStorage.getItem(KEY) === "1"; } catch (e) {}
+  if (reduceMotion || alreadyPlayed) { removeNow(); return; }
+  try { sessionStorage.setItem(KEY, "1"); } catch (e) {}
+
+  // lock scroll while the intro is on screen
+  document.documentElement.style.overflow = "hidden";
+
+  var BRAND     = (root.getAttribute("data-brand") || "BRAND").trim();
+  var DURATION  = parseInt(root.getAttribute("data-duration"), 10) || 4600; // ms
+  var canvas    = document.getElementById("wb-intro-canvas");
+  var skipBtn   = document.getElementById("wb-intro-skip");
+
+  var finished = false;
+  function finish() {
+    if (finished) return;
+    finished = true;
+    root.classList.add("wb-done");
+    document.documentElement.style.removeProperty("overflow");
+    window.setTimeout(removeNow, 1000);
+  }
+  skipBtn.addEventListener("click", finish);
+
+  // ---------- lazy-load Three.js, then run ----------------------------------
+  var THREE_URL = "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
+  var ROOMENV_URL = "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/environments/RoomEnvironment.js";
+
+  // Safety net: if WebGL fails or anything throws, just show the store.
+  function safe(fn){ try { fn(); } catch (err) { console.warn("[wb-intro]", err); finish(); } }
+
+  Promise.all([ import(THREE_URL), import(ROOMENV_URL) ])
+    .then(function (mods) { safe(function(){ run(mods[0], mods[1].RoomEnvironment); }); })
+    .catch(function (err) { console.warn("[wb-intro] load failed", err); finish(); });
+
+  // ==========================================================================
+  function run(THREE, RoomEnvironment) {
+    if (!window.WebGLRenderingContext) { finish(); return; }
+
+    var W = root.clientWidth, H = root.clientHeight;
+    var isMobile = Math.min(W, H) < 700;
+
+    var renderer = new THREE.WebGLRenderer({
+      canvas: canvas, antialias: !isMobile, alpha: false, powerPreference: "high-performance"
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2));
+    renderer.setSize(W, H, false);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+
+    var scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x05070a);
+
+    var camera = new THREE.PerspectiveCamera(34, W / H, 0.1, 100);
+    camera.position.set(0, 0.55, 6.4);
+    camera.lookAt(0, 0.25, 0);
+
+    // ---- environment for premium metal reflections (no assets needed) ------
+    var pmrem = new THREE.PMREMGenerator(renderer);
+    var envTex = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
+    scene.environment = envTex;
+
+    // ---- studio lighting ---------------------------------------------------
+    scene.add(new THREE.AmbientLight(0x3a4456, 0.5));
+    var key = new THREE.SpotLight(0xffffff, 60, 30, Math.PI / 7, 0.5, 1.5);
+    key.position.set(-4.5, 7, 5); scene.add(key);
+    var rim = new THREE.DirectionalLight(0x88aaff, 1.6);
+    rim.position.set(5, 2, -4); scene.add(rim);
+    var fill = new THREE.DirectionalLight(0xffd9b0, 0.45);
+    fill.position.set(4, -1, 5); scene.add(fill);
+
+    // ---- reflective studio floor ------------------------------------------
+    var floorMat = new THREE.MeshStandardMaterial({
+      color: 0x05070a, metalness: 0.9, roughness: 0.42
+    });
+    var floor = new THREE.Mesh(new THREE.CircleGeometry(14, 64), floorMat);
+    floor.rotation.x = -Math.PI / 2; floor.position.y = -1.55; scene.add(floor);
+
+    // =======================================================================
+    //  THE BOTTLE  (matte dark stainless steel, minimal, premium)
+    // =======================================================================
+    var bottle = new THREE.Group();
+    bottle.position.y = -0.15; scene.add(bottle);
+
+    var steel = new THREE.MeshStandardMaterial({
+      color: 0x14181d, metalness: 1.0, roughness: 0.34, envMapIntensity: 1.15
+    });
+    var steelDark = new THREE.MeshStandardMaterial({
+      color: 0x0c0f12, metalness: 1.0, roughness: 0.5, envMapIntensity: 0.9
+    });
+
+    // tapered lathe body for a sleek silhouette
+    var pts = [];
+    pts.push(new THREE.Vector2(0.00, -1.45));
+    pts.push(new THREE.Vector2(0.55, -1.45));
+    pts.push(new THREE.Vector2(0.62, -1.30));
+    pts.push(new THREE.Vector2(0.62,  0.55));
+    pts.push(new THREE.Vector2(0.60,  0.95));
+    pts.push(new THREE.Vector2(0.40,  1.18));   // shoulder
+    pts.push(new THREE.Vector2(0.34,  1.25));
+    var body = new THREE.Mesh(new THREE.LatheGeometry(pts, 80), steel);
+    bottle.add(body);
+
+    // neck + cap
+    var neck = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.36, 0.16, 48), steelDark);
+    neck.position.y = 1.30; bottle.add(neck);
+    var cap = new THREE.Mesh(new THREE.CylinderGeometry(0.40, 0.36, 0.30, 48), steelDark);
+    cap.position.y = 1.52; bottle.add(cap);
+    var capTop = new THREE.Mesh(new THREE.CylinderGeometry(0.40, 0.40, 0.04, 48), steel);
+    capTop.position.y = 1.69; bottle.add(capTop);
+
+    // ---- LED temperature display on the cap (cool blue glow) ----------------
+    var ledCanvas = document.createElement("canvas");
+    ledCanvas.width = 256; ledCanvas.height = 128;
+    var lctx = ledCanvas.getContext("2d");
+    function drawLED(temp, on) {
+      lctx.clearRect(0, 0, 256, 128);
+      lctx.fillStyle = "rgba(2,6,12," + (on ? 1 : 1) + ")";
+      lctx.fillRect(0, 0, 256, 128);
+      if (on) {
+        lctx.fillStyle = "#bfe6ff";
+        lctx.shadowColor = "#3aa0ff"; lctx.shadowBlur = 22;
+        lctx.font = "700 78px ui-monospace,Menlo,Consolas,monospace";
+        lctx.textAlign = "center"; lctx.textBaseline = "middle";
+        lctx.fillText(temp + "°", 128, 66);
+      }
+    }
+    drawLED("--", false);
+    var ledTex = new THREE.CanvasTexture(ledCanvas);
+    ledTex.colorSpace = THREE.SRGBColorSpace;
+    var ledMat = new THREE.MeshBasicMaterial({ map: ledTex, transparent: true });
+    var led = new THREE.Mesh(new THREE.CircleGeometry(0.28, 48), ledMat);
+    led.position.set(0, 1.715, 0); led.rotation.x = -Math.PI / 2; bottle.add(led);
+    // soft blue glow halo above the cap
+    var halo = new THREE.PointLight(0x3aa0ff, 0, 4);
+    halo.position.set(0, 1.85, 0); bottle.add(halo);
+
+    // =======================================================================
+    //  WATER LAYER  (refractive, rises to fill the scene)
+    // =======================================================================
+    var waterUniforms = {
+      uTime:   { value: 0 },
+      uLevel:  { value: -1.6 },   // world-Y of the surface; animates upward
+      uColor:  { value: new THREE.Color(0x0a2a3a) },
+      uTint:   { value: new THREE.Color(0x1fb6d6) },
+      uOpacity:{ value: 0.0 }
+    };
+    var waterMat = new THREE.ShaderMaterial({
+      transparent: true, depthWrite: false,
+      uniforms: waterUniforms,
+      vertexShader: [
+        "varying vec3 vWorld;",
+        "void main(){",
+        "  vec4 wp = modelMatrix * vec4(position,1.0);",
+        "  vWorld = wp.xyz;",
+        "  gl_Position = projectionMatrix * viewMatrix * wp;",
+        "}"
+      ].join("\n"),
+      fragmentShader: [
+        "precision highp float;",
+        "varying vec3 vWorld;",
+        "uniform float uTime,uLevel,uOpacity;",
+        "uniform vec3 uColor,uTint;",
+        // cheap value noise
+        "float hash(vec2 p){return fract(sin(dot(p,vec2(41.3,289.1)))*43758.5453);}",
+        "float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);",
+        "  return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);}",
+        "void main(){",
+        "  float d = uLevel - vWorld.y;",          // depth below surface
+        "  if(d < 0.0) discard;",
+        "  vec2 uv = vWorld.xz*0.7;",
+        "  float caustic = noise(uv*2.0 + uTime*0.5) * noise(uv*3.3 - uTime*0.4);",
+        "  caustic = pow(caustic, 2.2);",
+        "  vec3 col = mix(uColor, uTint, clamp(d*0.35,0.0,1.0));",
+        "  col += caustic * 0.55 * uTint;",
+        // bright wavy surface line
+        "  float surf = smoothstep(0.12,0.0,d) * (0.6 + 0.4*sin(vWorld.x*6.0 + uTime*3.0));",
+        "  col += surf * vec3(0.7,0.92,1.0);",
+        "  float alpha = clamp(0.62 + d*0.25, 0.0, 0.94) * uOpacity;",
+        "  gl_FragColor = vec4(col, alpha);",
+        "}"
+      ].join("\n")
+    });
+    // large vertical billboard behind the bottle so the rising "fill" reads on screen
+    var water = new THREE.Mesh(new THREE.PlaneGeometry(40, 40, 1, 1), waterMat);
+    water.position.set(0, 0, 1.2);
+    scene.add(water);
+
+    // floating droplets that condense as the name forms
+    var DROPS = isMobile ? 90 : 180;
+    var dropGeo = new THREE.BufferGeometry();
+    var dpos = new Float32Array(DROPS * 3), dseed = new Float32Array(DROPS);
+    for (var i = 0; i < DROPS; i++) {
+      dpos[i*3]   = (Math.random()*2-1) * 3.2;
+      dpos[i*3+1] = (Math.random()*2-1) * 1.6 + 0.2;
+      dpos[i*3+2] = 1.6 + Math.random()*0.4;
+      dseed[i]    = Math.random();
+    }
+    dropGeo.setAttribute("position", new THREE.BufferAttribute(dpos, 3));
+    dropGeo.setAttribute("aSeed", new THREE.BufferAttribute(dseed, 1));
+    var dropUniforms = { uTime:{value:0}, uProg:{value:0}, uPR:{value:renderer.getPixelRatio()} };
+    var dropMat = new THREE.ShaderMaterial({
+      transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+      uniforms: dropUniforms,
+      vertexShader: [
+        "attribute float aSeed; uniform float uTime,uProg,uPR; varying float vA;",
+        "void main(){",
+        "  vec3 p = position;",
+        "  p.y += sin(uTime*1.5 + aSeed*6.28)*0.12;",
+        "  p.xy *= mix(1.0, 0.15, uProg);",         // condense toward center as name forms
+        "  vA = (0.4 + 0.6*sin(uTime*3.0+aSeed*9.0)) * uProg;",
+        "  vec4 mv = modelViewMatrix * vec4(p,1.0);",
+        "  gl_PointSize = (8.0 + 22.0*aSeed) * uPR / -mv.z;",
+        "  gl_Position = projectionMatrix * mv;",
+        "}"
+      ].join("\n"),
+      fragmentShader: [
+        "precision highp float; varying float vA;",
+        "void main(){",
+        "  vec2 c = gl_PointCoord-0.5; float r=length(c);",
+        "  float a = smoothstep(0.5,0.0,r)*vA;",
+        "  gl_FragColor = vec4(vec3(0.75,0.92,1.0), a);",
+        "}"
+      ].join("\n")
+    });
+    var drops = new THREE.Points(dropGeo, dropMat);
+    scene.add(drops);
+
+    // =======================================================================
+    //  BRAND NAME  (coalesces out of the water)
+    // =======================================================================
+    var brandCanvas = document.createElement("canvas");
+    var BW = 2048, BH = 512;
+    brandCanvas.width = BW; brandCanvas.height = BH;
+    var bctx = brandCanvas.getContext("2d");
+    bctx.clearRect(0, 0, BW, BH);
+    bctx.fillStyle = "#ffffff";
+    bctx.textAlign = "center"; bctx.textBaseline = "middle";
+    // fit font size to width
+    var fontSize = 220;
+    bctx.font = "300 " + fontSize + "px 'Helvetica Neue',Helvetica,Arial,sans-serif";
+    var label = BRAND.toUpperCase();
+    while (bctx.measureText(label).width > BW * 0.82 && fontSize > 40) {
+      fontSize -= 6;
+      bctx.font = "300 " + fontSize + "px 'Helvetica Neue',Helvetica,Arial,sans-serif";
+    }
+    // letter-spacing by drawing char by char
+    (function () {
+      var ls = fontSize * 0.12;
+      var chars = label.split("");
+      var widths = chars.map(function (c) { return bctx.measureText(c).width; });
+      var total = widths.reduce(function (a, b) { return a + b; }, 0) + ls * (chars.length - 1);
+      var x = (BW - total) / 2;
+      for (var k = 0; k < chars.length; k++) {
+        bctx.fillText(chars[k], x + widths[k] / 2, BH / 2);
+        x += widths[k] + ls;
+      }
+    })();
+    var brandTex = new THREE.CanvasTexture(brandCanvas);
+    brandTex.colorSpace = THREE.SRGBColorSpace;
+
+    var brandUniforms = {
+      uMap:   { value: brandTex },
+      uTime:  { value: 0 },
+      uProg:  { value: 0 }      // 0 = invisible, 1 = fully coalesced
+    };
+    var brandMat = new THREE.ShaderMaterial({
+      transparent: true, depthWrite: false, depthTest: false,
+      uniforms: brandUniforms,
+      vertexShader: [
+        "varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}"
+      ].join("\n"),
+      fragmentShader: [
+        "precision highp float; varying vec2 vUv;",
+        "uniform sampler2D uMap; uniform float uTime,uProg;",
+        "float hash(vec2 p){return fract(sin(dot(p,vec2(41.3,289.1)))*43758.5453);}",
+        "float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);",
+        "  return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);}",
+        "void main(){",
+        "  float mask = texture2D(uMap, vUv).a;",
+        "  if(mask < 0.04) discard;",
+        "  float n = noise(vUv*8.0) * 0.6 + noise(vUv*22.0 + uTime*0.3)*0.4;",
+        "  float thr = uProg * 1.35 - 0.18;",       // reveal front sweeps through noise
+        "  float reveal = smoothstep(thr-0.12, thr+0.02, n*-1.0 + 1.0);",
+        "  float edge = smoothstep(0.0,0.10,abs(n - (1.0-thr)));",
+        "  float wet = (1.0-edge) * reveal;",        // bright wet rim at the coalescing front
+        "  vec3 base = vec3(0.86,0.94,1.0);",
+        "  vec3 col = base + wet * vec3(0.4,0.7,1.0);",
+        "  float a = mask * reveal;",
+        "  gl_FragColor = vec4(col, a);",
+        "}"
+      ].join("\n")
+    });
+    var brandAspect = BW / BH;
+    var brandH = 0.9, brandW = brandH * brandAspect;
+    var brandMesh = new THREE.Mesh(new THREE.PlaneGeometry(brandW, brandH), brandMat);
+    brandMesh.position.set(0, 0.15, 2.2);
+    brandMesh.renderOrder = 10;
+    scene.add(brandMesh);
+
+    // =======================================================================
+    //  TIMELINE
+    // =======================================================================
+    var clock = new THREE.Clock();
+    var t = 0;
+    var T = DURATION / 1000;
+
+    // phase boundaries (fractions of total)
+    var P = {
+      fadeIn:   0.18,   // black -> bottle + LED on
+      water:    0.52,   // water rises & fills
+      brand:    0.84,   // name coalesces
+      through:  1.00    // dolly + dissolve into store
+    };
+
+    // reveal UI after first frame
+    requestAnimationFrame(function () {
+      root.classList.add("wb-lit");      // fade the black veil off the canvas
+      root.classList.add("wb-ready");    // show skip button
+    });
+
+    function ease(x){ return x<0.5 ? 4*x*x*x : 1-Math.pow(-2*x+2,3)/2; }
+    function clamp01(x){ return x<0?0:x>1?1:x; }
+
+    var startedThrough = false;
+
+    function frame() {
+      if (finished) { cleanup(); return; }
+      var dt = clock.getDelta();
+      t += dt;
+      var p = t / T;                       // global progress 0..1
+      var et = clock.elapsedTime;
+
+      // gentle hero turntable on the bottle
+      bottle.rotation.y = -0.5 + et * 0.18;
+      bottle.position.y = -0.15 + Math.sin(et * 0.8) * 0.015;
+
+      // ---- phase 1: LED power-on -----------------------------------------
+      var litP = clamp01(p / P.fadeIn);
+      if (litP > 0.35) {
+        // LED powers on and ramps a believable temperature readout (4° -> ~18°)
+        var temp = Math.round(4 + clamp01((p - 0.06) / 0.5) * 14);
+        drawLED(temp, true); ledTex.needsUpdate = true;
+      }
+      halo.intensity = clamp01((litP - 0.3) / 0.7) * 2.4 * (0.85 + 0.15*Math.sin(et*6.0));
+
+      // ---- phase 2: water rises & fills ----------------------------------
+      var wP = clamp01((p - P.fadeIn) / (P.water - P.fadeIn));
+      waterUniforms.uTime.value = et;
+      waterUniforms.uOpacity.value = clamp01(wP * 1.4) * (1.0 - clamp01((p - P.brand) / (1.0 - P.brand)));
+      waterUniforms.uLevel.value = -1.7 + ease(wP) * 3.6;  // sweep up the screen
+
+      // ---- phase 3: brand coalesces --------------------------------------
+      var bP = clamp01((p - P.water) / (P.brand - P.water));
+      brandUniforms.uTime.value = et;
+      brandUniforms.uProg.value = ease(bP);
+      dropUniforms.uTime.value = et;
+      dropUniforms.uProg.value = ease(clamp01((p - P.water*0.85) / (P.brand - P.water*0.85)));
+
+      // ---- phase 4: dolly through + dissolve ------------------------------
+      var thrP = clamp01((p - P.brand) / (1.0 - P.brand));
+      if (thrP > 0) {
+        camera.position.z = 6.4 - ease(thrP) * 5.2;     // push in
+        camera.position.y = 0.55 - ease(thrP) * 0.3;
+        renderer.toneMappingExposure = 1.05 + thrP * 0.9; // bloom toward white
+        brandMesh.position.z = 2.2 + ease(thrP) * 1.6;    // name rushes past camera
+        if (!startedThrough && thrP > 0.55) {
+          startedThrough = true;
+          root.classList.add("wb-done");   // CSS cross-fade to the store
+        }
+      }
+      camera.lookAt(0, 0.25, 0);
+
+      renderer.render(scene, camera);
+
+      if (p >= 1.05) { finish(); cleanup(); return; }
+      rafId = requestAnimationFrame(frame);
+    }
+    var rafId = requestAnimationFrame(frame);
+
+    // also force-finish slightly after the planned duration as a guarantee
+    var guard = setTimeout(finish, DURATION + 1400);
+
+    function onResize() {
+      W = root.clientWidth; H = root.clientHeight;
+      camera.aspect = W / H; camera.updateProjectionMatrix();
+      renderer.setSize(W, H, false);
+    }
+    window.addEventListener("resize", onResize);
+
+    function cleanup() {
+      if (rafId) cancelAnimationFrame(rafId);
+      clearTimeout(guard);
+      window.removeEventListener("resize", onResize);
+      try {
+        scene.traverse(function (o) {
+          if (o.geometry) o.geometry.dispose();
+          if (o.material) {
+            if (Array.isArray(o.material)) o.material.forEach(function(m){m.dispose&&m.dispose();});
+            else o.material.dispose && o.material.dispose();
+          }
+        });
+        envTex.dispose && envTex.dispose();
+        pmrem.dispose && pmrem.dispose();
+        brandTex.dispose && brandTex.dispose();
+        ledTex.dispose && ledTex.dispose();
+        renderer.dispose();
+      } catch (e) {}
+    }
+  }
+})();
+</script>
