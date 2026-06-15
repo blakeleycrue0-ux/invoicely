@@ -1139,6 +1139,10 @@ function goToStripe(){var p=[];if(currentUser&&currentUser.id)p.push('client_ref
 document.getElementById('payModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
 
 function checkUnlocked(callback){
+  // 1. Trust localStorage immediately — webhook already wrote the permanent Supabase record
+  var cached=localStorage.getItem('inv_unlocked')==='true';
+  if(cached){_unlocked=true;if(callback)callback(true);return;}
+  // 2. Not cached — check Supabase (new device / cleared browser)
   if(!(currentUser&&currentUser.id)){if(callback)callback(false);return;}
   fetch(SUPA_URL+'/rest/v1/unlocked_users?user_id=eq.'+encodeURIComponent(currentUser.id),{
     headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
@@ -1146,12 +1150,8 @@ function checkUnlocked(callback){
     var unlocked=Array.isArray(data)&&data.length>0;
     _unlocked=unlocked;
     if(unlocked)localStorage.setItem('inv_unlocked','true');
-    else localStorage.removeItem('inv_unlocked');
     if(callback)callback(unlocked);
-  }).catch(function(){
-    var cached=localStorage.getItem('inv_unlocked')==='true';
-    _unlocked=cached;if(callback)callback(cached);
-  });
+  }).catch(function(){if(callback)callback(false);});
 }
 
 function saveUnlockToSupabase(){
