@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Midnight Kitchen base ─────────────────────────────────────── */
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-char text-cream font-sans antialiased;
+    /* faint warm grain so the dark never reads as flat SaaS-black */
+    background-image: radial-gradient(
+      120% 80% at 50% -10%,
+      rgba(242, 104, 44, 0.07),
+      transparent 60%
+    );
+    background-attachment: fixed;
+    min-height: 100dvh;
+  }
+
+  ::selection {
+    background: theme('colors.ember.DEFAULT');
+    color: #0d0c0a;
+  }
+
+  /* tasteful scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: theme('colors.smoke');
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  h1, h2, h3 {
+    @apply font-display tracking-tightest;
+    text-wrap: balance;
+  }
+}
+
+/* ── Reusable pieces ───────────────────────────────────────────── */
+@layer components {
+  /* small uppercase editorial label */
+  .kicker {
+    @apply text-[0.7rem] font-semibold uppercase tracking-kicker text-ember;
+  }
+
+  /* primary action — big tap target, warm, confident */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3
+           text-sm font-semibold transition-all duration-200 select-none
+           active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-ember/70 focus-visible:ring-offset-2
+           focus-visible:ring-offset-char;
+  }
+  .btn-primary {
+    @apply btn bg-ember text-char hover:bg-ember-glow shadow-glow;
+  }
+  .btn-ghost {
+    @apply btn border border-smoke bg-ash/40 text-cream hover:border-ember/60 hover:text-white;
+  }
+
+  /* hairline divider that matches the palette */
+  .rule {
+    @apply h-px w-full bg-smoke;
+  }
+
+  /* editorial card frame — squared, not the floppy SaaS pill */
+  .frame {
+    @apply relative overflow-hidden bg-ash ring-1 ring-smoke;
+  }
+}
+
+@layer utilities {
+  .pad-safe-b {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 1rem);
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+}

@@ -1,0 +1,28 @@
+# Netlify config for the cooking PWA. This app lives in the `culinary/`
+# subfolder, so in the Netlify UI set the site's **Base directory** to
+# `culinary` — then this file and the build below apply.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# SPA fallback: every route serves index.html so client-side routing
+# (e.g. /dish/:id, /cook/:id) works on hard refresh and deep links.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# the service worker and manifest must never be cached aggressively
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Cache-Control = "no-cache"
+    Content-Type = "application/manifest+json"
