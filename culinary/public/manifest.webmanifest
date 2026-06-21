@@ -1,0 +1,26 @@
+{
+  "name": "[YOUR BRAND NAME] — Cook like a pro",
+  "short_name": "[YOUR BRAND NAME]",
+  "description": "Cook along with [@yourhandle]: recipes, pro technique notes, and a hands-free Cook Mode.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d0c0a",
+  "theme_color": "#0d0c0a",
+  "categories": ["food", "lifestyle", "education"],
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

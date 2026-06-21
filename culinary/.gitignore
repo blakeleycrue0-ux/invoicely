@@ -1,0 +1,11 @@
+node_modules
+dist
+dist-ssr
+*.local
+.DS_Store
+.vite
+
+# TypeScript build-info + files emitted by `tsc -b` for the node config
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts

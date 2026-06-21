@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="App icon">
+  <defs>
+    <radialGradient id="ember" cx="50%" cy="42%" r="60%">
+      <stop offset="0%" stop-color="#ff8a4c"/>
+      <stop offset="45%" stop-color="#f2682c"/>
+      <stop offset="100%" stop-color="#c44d18"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="#0d0c0a"/>
+  <!-- glowing "burner" / heat source: the spotlight on the food -->
+  <circle cx="256" cy="248" r="150" fill="none" stroke="#2a2622" stroke-width="14"/>
+  <circle cx="256" cy="248" r="96" fill="url(#ember)"/>
+  <circle cx="256" cy="248" r="96" fill="none" stroke="#ff8a4c" stroke-width="3" opacity="0.6"/>
+  <!-- a confident serif-style flame notch -->
+  <path d="M256 152c34 38 18 70 0 88-18-18-34-50 0-88z" fill="#0d0c0a" opacity="0.35"/>
+</svg>
