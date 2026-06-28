@@ -421,9 +421,26 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
     </div><!-- /form-panel -->
 
-    <div class="preview-panel">
-      <div class="preview-inner">
-        <div class="preview-doc" id="previewDoc"></div>
+    <div class="preview-panel" style="position:relative">
+      <!-- BLUR OVERLAY -->
+      <div id="blurOverlay" style="position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(15,23,41,0.55);backdrop-filter:blur(0px)">
+        <div style="background:white;border-radius:20px;padding:32px 40px;text-align:center;max-width:320px;box-shadow:0 24px 60px rgba(0,0,0,0.3)">
+          <div style="width:56px;height:56px;background:#eef2ff;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+            <svg width="26" height="26" fill="none" stroke="#4f46e5" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          </div>
+          <div style="font-family:Plus Jakarta Sans,sans-serif;font-size:1rem;font-weight:700;color:#0f1729;margin-bottom:8px">Vista previa bloqueada</div>
+          <div style="font-family:Plus Jakarta Sans,sans-serif;font-size:0.82rem;color:#6b7280;line-height:1.6;margin-bottom:20px">Paga €0,50 para desbloquear y descargar tu factura en PDF.</div>
+          <button onclick="handleDownload()" style="width:100%;background:#4f46e5;color:white;border:none;padding:12px;border-radius:9px;font-family:Plus Jakarta Sans,sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+            <svg width="15" height="15" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            Descargar PDF — €0,50
+          </button>
+        </div>
+      </div>
+      <!-- BLURRED PREVIEW -->
+      <div style="filter:blur(6px);pointer-events:none;user-select:none">
+        <div class="preview-inner">
+          <div class="preview-doc" id="previewDoc"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -793,20 +810,26 @@ function updatePreview(){
 
 // ─── STRIPE PAYMENT ───
 function handleDownload(){
-  // Guardar datos en sessionStorage para success.html
-  var d = collectData();
-  sessionStorage.setItem('inv_data', JSON.stringify(d));
-  sessionStorage.setItem('inv_logo', logoUrl || '');
-  sessionStorage.setItem('inv_type', docType);
-
   var btn = document.getElementById('dlBtn');
   btn.disabled = true;
-  btn.textContent = 'Redirigiendo a Stripe...';
+  btn.textContent = 'Preparando pago...';
 
-  // Payment Link directo — sin servidor, sin Stripe.js
-  var successUrl = window.location.origin + '/success.html';
+  // Collect data and encode into success URL
+  var d = collectData();
+  // Remove logo from URL data (too big) — store in sessionStorage
+  var logoBackup = d.logo;
+  d.logo = null;
+  sessionStorage.setItem('inv_logo', logoBackup || '');
+
+  // Compress data into base64 for URL
+  var encoded = btoa(unescape(encodeURIComponent(JSON.stringify(d))));
+
+  var successUrl = window.location.origin + '/success.html?d=' + encodeURIComponent(encoded);
   var paymentLink = 'https://buy.stripe.com/bJefZhgtw88cguC1vX1Jm02';
-  window.location.href = paymentLink;
+
+  // Set success_url on the payment link
+  // Stripe Payment Links support ?success_url= param
+  window.location.href = paymentLink + '?success_url=' + encodeURIComponent(successUrl);
 }
 
 // ─── DOWNLOAD PDF ───
@@ -845,6 +868,17 @@ function showToast(msg,type){
 }
 
 window.addEventListener('load', updatePreview);
+
+// Block right-click on preview
+document.querySelector('.preview-panel').addEventListener('contextmenu', function(e){ e.preventDefault(); });
+// Block common screenshot shortcuts
+document.addEventListener('keydown', function(e){
+  // Block PrintScreen, Ctrl+P, Ctrl+Shift+S, Win+Shift+S
+  if(e.key === 'PrintScreen' || (e.ctrlKey && e.key === 'p') || (e.ctrlKey && e.shiftKey && e.key === 's')){
+    e.preventDefault();
+    return false;
+  }
+});
 </script>
 </body>
 </html>
