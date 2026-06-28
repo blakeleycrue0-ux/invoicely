@@ -148,25 +148,25 @@ var FM = "font-family:'DM Mono',Courier,monospace";
 
 // ─── INIT ───
 window.addEventListener('load', function(){
-  // Try URL param first (d=base64), then sessionStorage fallback
-  var params = new URLSearchParams(window.location.search);
-  var encoded = params.get('d');
-  var d = null;
+  // Read from localStorage — persists across Stripe redirect
+  var raw  = localStorage.getItem('inv_data');
+  var logo = localStorage.getItem('inv_logo');
+  var pending = localStorage.getItem('inv_pending');
 
-  if(encoded){
-    try{
-      d = JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(encoded)))));
-    } catch(e){ d = null; }
-  }
-
-  // Restore logo from sessionStorage (too large for URL)
-  var logo = sessionStorage.getItem('inv_logo');
-  if(d && logo) d.logo = logo;
-
-  if(!d){
+  if(!raw || !pending){
     showFallback();
     return;
   }
+
+  // Clear so it doesn't re-trigger on refresh
+  localStorage.removeItem('inv_pending');
+
+  var d = null;
+  try{ d = JSON.parse(raw); } catch(e){ d = null; }
+  if(!d){ showFallback(); return; }
+
+  // Restore logo
+  if(logo) d.logo = logo;
 
   setTimeout(function(){
     generateAndDownload(d);
