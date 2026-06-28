@@ -172,6 +172,33 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   .preview-panel{max-height:none!important;background:white!important;padding:0!important}
   .preview-inner{padding:0!important}
 }
+/* SCREENSHOT PROTECTION */
+#previewPanel{position:relative}
+#previewPanel::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:transparent;
+  z-index:5;
+  pointer-events:none;
+}
+/* When screenshot is taken, show black via media query trick */
+@media print{
+  #previewPanel{display:none!important}
+  .no-print-msg{display:block!important}
+}
+.no-print-msg{display:none;text-align:center;padding:40px;font-family:Plus Jakarta Sans,sans-serif;font-size:1.2rem;color:#0f1729}
+/* Prevent text selection on preview */
+#previewDoc{
+  user-select:none;
+  -webkit-user-select:none;
+  pointer-events:none;
+}
+/* Force black on screenshot via CSS isolation */
+#previewDoc *{
+  -webkit-user-select:none;
+  user-select:none;
+}
 </style>
 </head>
 <body>
@@ -421,26 +448,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
     </div><!-- /form-panel -->
 
-    <div class="preview-panel" style="position:relative">
-      <!-- BLUR OVERLAY -->
-      <div id="blurOverlay" style="position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(15,23,41,0.55);backdrop-filter:blur(0px)">
-        <div style="background:white;border-radius:20px;padding:32px 40px;text-align:center;max-width:320px;box-shadow:0 24px 60px rgba(0,0,0,0.3)">
-          <div style="width:56px;height:56px;background:#eef2ff;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
-            <svg width="26" height="26" fill="none" stroke="#4f46e5" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-          </div>
-          <div style="font-family:Plus Jakarta Sans,sans-serif;font-size:1rem;font-weight:700;color:#0f1729;margin-bottom:8px">Vista previa bloqueada</div>
-          <div style="font-family:Plus Jakarta Sans,sans-serif;font-size:0.82rem;color:#6b7280;line-height:1.6;margin-bottom:20px">Paga €0,50 para desbloquear y descargar tu factura en PDF.</div>
-          <button onclick="handleDownload()" style="width:100%;background:#4f46e5;color:white;border:none;padding:12px;border-radius:9px;font-family:Plus Jakarta Sans,sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
-            <svg width="15" height="15" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-            Descargar PDF — €0,50
-          </button>
-        </div>
-      </div>
-      <!-- BLURRED PREVIEW -->
-      <div style="filter:blur(6px);pointer-events:none;user-select:none">
-        <div class="preview-inner">
-          <div class="preview-doc" id="previewDoc"></div>
-        </div>
+    <div class="preview-panel" id="previewPanel">
+      <div class="preview-inner">
+        <div class="preview-doc" id="previewDoc"></div>
       </div>
     </div>
   </div>
@@ -870,13 +880,50 @@ function showToast(msg,type){
 window.addEventListener('load', updatePreview);
 
 // Block right-click on preview
-document.querySelector('.preview-panel').addEventListener('contextmenu', function(e){ e.preventDefault(); });
-// Block common screenshot shortcuts
+document.getElementById('previewPanel').addEventListener('contextmenu', function(e){ e.preventDefault(); });
+
+// On PrintScreen key — replace preview with black for ~1 second
+document.addEventListener('keyup', function(e){
+  if(e.key === 'PrintScreen'){
+    blackout();
+  }
+});
 document.addEventListener('keydown', function(e){
-  // Block PrintScreen, Ctrl+P, Ctrl+Shift+S, Win+Shift+S
-  if(e.key === 'PrintScreen' || (e.ctrlKey && e.key === 'p') || (e.ctrlKey && e.shiftKey && e.key === 's')){
+  if(e.key === 'PrintScreen'){
+    blackout();
     e.preventDefault();
-    return false;
+  }
+  // Block Ctrl+P (print)
+  if(e.ctrlKey && e.key === 'p'){
+    e.preventDefault();
+  }
+  // Block Ctrl+Shift+S
+  if(e.ctrlKey && e.shiftKey && e.key === 's'){
+    e.preventDefault();
+  }
+});
+
+// Blackout: makes preview black for 800ms — screenshot captures black
+function blackout(){
+  var panel = document.getElementById('previewDoc');
+  var prev = panel.innerHTML;
+  panel.innerHTML = '<div style="background:#000;width:100%;height:800px"></div>';
+  panel.style.background = '#000';
+  setTimeout(function(){
+    panel.innerHTML = prev;
+    panel.style.background = '';
+  }, 800);
+}
+
+// Detect visibility change (Tab key, alt+tab) — used by some screenshot tools
+document.addEventListener('visibilitychange', function(){
+  if(document.hidden){
+    var panel = document.getElementById('previewDoc');
+    panel._savedContent = panel.innerHTML;
+    panel.innerHTML = '<div style="background:#000;width:100%;height:800px"></div>';
+  } else {
+    var panel = document.getElementById('previewDoc');
+    if(panel._savedContent) panel.innerHTML = panel._savedContent;
   }
 });
 </script>
