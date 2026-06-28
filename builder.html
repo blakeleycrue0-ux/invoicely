@@ -448,7 +448,17 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
     </div><!-- /form-panel -->
 
-    <div class="preview-panel" id="previewPanel">
+    <div class="preview-panel" id="previewPanel" style="position:relative">
+      <!-- WATERMARK OVERLAY -->
+      <div id="watermark" style="position:absolute;inset:0;z-index:20;pointer-events:none;overflow:hidden;display:flex;align-items:center;justify-content:center">
+        <div style="transform:rotate(-35deg);display:flex;flex-direction:column;gap:48px;align-items:center;width:200%">
+          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:52px;font-weight:800;color:rgba(79,70,229,0.18);letter-spacing:0.05em;white-space:nowrap;text-transform:uppercase">VISTA PREVIA · NO VÁLIDA · VISTA PREVIA · NO VÁLIDA</div>
+          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:52px;font-weight:800;color:rgba(79,70,229,0.18);letter-spacing:0.05em;white-space:nowrap;text-transform:uppercase">INVOICELY.APP · PAGA PARA DESCARGAR · INVOICELY.APP</div>
+          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:52px;font-weight:800;color:rgba(79,70,229,0.18);letter-spacing:0.05em;white-space:nowrap;text-transform:uppercase">VISTA PREVIA · NO VÁLIDA · VISTA PREVIA · NO VÁLIDA</div>
+          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:52px;font-weight:800;color:rgba(79,70,229,0.18);letter-spacing:0.05em;white-space:nowrap;text-transform:uppercase">INVOICELY.APP · PAGA PARA DESCARGAR · INVOICELY.APP</div>
+          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:52px;font-weight:800;color:rgba(79,70,229,0.18);letter-spacing:0.05em;white-space:nowrap;text-transform:uppercase">VISTA PREVIA · NO VÁLIDA · VISTA PREVIA · NO VÁLIDA</div>
+        </div>
+      </div>
       <div class="preview-inner">
         <div class="preview-doc" id="previewDoc"></div>
       </div>
