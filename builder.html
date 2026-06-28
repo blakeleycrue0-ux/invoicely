@@ -793,64 +793,20 @@ function updatePreview(){
 
 // ─── STRIPE PAYMENT ───
 function handleDownload(){
-  // Save form data to sessionStorage so success page can restore it
+  // Guardar datos en sessionStorage para success.html
   var d = collectData();
   sessionStorage.setItem('inv_data', JSON.stringify(d));
   sessionStorage.setItem('inv_logo', logoUrl || '');
   sessionStorage.setItem('inv_type', docType);
 
-  // Build success URL (current page + ?paid=true)
-  var successUrl = window.location.origin + window.location.pathname + '?type=' + docType + '&paid=true';
-  var cancelUrl  = window.location.href;
-
-  // Redirect to Stripe Checkout via URL (no server needed)
-  // We use Stripe Payment Links — redirect to a hosted checkout
-  // Build checkout URL with price and redirect
-  var checkoutUrl = 'https://buy.stripe.com/test_placeholder'; // replaced below
-
-  // Use Stripe.js to create checkout session redirect
-  // Since we have no backend, we redirect to the Stripe payment link
-  // with success_url as a query param (not supported by payment links directly)
-  // Instead we use the Stripe Checkout hosted page via publishable key + fetch
-  goToStripeCheckout(successUrl, cancelUrl);
-}
-
-function goToStripeCheckout(successUrl, cancelUrl){
   var btn = document.getElementById('dlBtn');
   btn.disabled = true;
   btn.textContent = 'Redirigiendo a Stripe...';
 
-  // Load Stripe.js dynamically
-  if(window.Stripe){
-    redirectToCheckout(successUrl, cancelUrl);
-    return;
-  }
-  var script = document.createElement('script');
-  script.src = 'https://js.stripe.com/v3/';
-  script.onload = function(){ redirectToCheckout(successUrl, cancelUrl); };
-  script.onerror = function(){
-    showToast('Error cargando Stripe. Comprueba tu conexión.','error');
-    btn.disabled = false;
-    btn.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Descargar PDF — €0,50';
-  };
-  document.head.appendChild(script);
-}
-
-function redirectToCheckout(successUrl, cancelUrl){
-  var stripe = Stripe(STRIPE_PK);
-  stripe.redirectToCheckout({
-    lineItems: [{ price: PRICE_ID, quantity: 1 }],
-    mode: 'payment',
-    successUrl: successUrl,
-    cancelUrl: cancelUrl,
-  }).then(function(result){
-    if(result.error){
-      showToast(result.error.message,'error');
-      var btn = document.getElementById('dlBtn');
-      btn.disabled = false;
-      btn.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Descargar PDF — €0,50';
-    }
-  });
+  // Payment Link directo — sin servidor, sin Stripe.js
+  var successUrl = window.location.origin + '/success.html';
+  var paymentLink = 'https://buy.stripe.com/dRm7sL2CGewA7Y64I91Jm00';
+  window.location.href = paymentLink;
 }
 
 // ─── DOWNLOAD PDF ───
