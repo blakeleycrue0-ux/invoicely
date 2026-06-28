@@ -834,22 +834,16 @@ function handleDownload(){
   btn.disabled = true;
   btn.textContent = 'Preparando pago...';
 
-  // Collect data and encode into success URL
+  // Save ALL data to localStorage — persists across redirects
   var d = collectData();
-  // Remove logo from URL data (too big) — store in sessionStorage
-  var logoBackup = d.logo;
-  d.logo = null;
-  sessionStorage.setItem('inv_logo', logoBackup || '');
+  localStorage.setItem('inv_data', JSON.stringify(d));
+  localStorage.setItem('inv_logo', logoUrl || '');
+  localStorage.setItem('inv_type', docType);
+  localStorage.setItem('inv_pending', 'true');
 
-  // Compress data into base64 for URL
-  var encoded = btoa(unescape(encodeURIComponent(JSON.stringify(d))));
-
-  var successUrl = window.location.origin + '/success.html?d=' + encodeURIComponent(encoded);
+  // Redirect to Payment Link — success URL configured in Stripe dashboard
   var paymentLink = 'https://buy.stripe.com/bJefZhgtw88cguC1vX1Jm02';
-
-  // Set success_url on the payment link
-  // Stripe Payment Links support ?success_url= param
-  window.location.href = paymentLink + '?success_url=' + encodeURIComponent(successUrl);
+  window.location.href = paymentLink;
 }
 
 // ─── DOWNLOAD PDF ───
