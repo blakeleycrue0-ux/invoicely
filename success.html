@@ -148,23 +148,29 @@ var FM = "font-family:'DM Mono',Courier,monospace";
 
 // ─── INIT ───
 window.addEventListener('load', function(){
-  var data = sessionStorage.getItem('inv_data');
-  var logo = sessionStorage.getItem('inv_logo');
-  var type = sessionStorage.getItem('inv_type') || 'invoice';
+  // Try URL param first (d=base64), then sessionStorage fallback
+  var params = new URLSearchParams(window.location.search);
+  var encoded = params.get('d');
+  var d = null;
 
-  if(!data){
-    // No data — show fallback
+  if(encoded){
+    try{
+      d = JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(encoded)))));
+    } catch(e){ d = null; }
+  }
+
+  // Restore logo from sessionStorage (too large for URL)
+  var logo = sessionStorage.getItem('inv_logo');
+  if(d && logo) d.logo = logo;
+
+  if(!d){
     showFallback();
     return;
   }
 
-  var d = JSON.parse(data);
-  if(logo) d.logo = logo;
-
-  // Small delay so the animation plays first
   setTimeout(function(){
     generateAndDownload(d);
-  }, 800);
+  }, 900);
 });
 
 function showFallback(){
