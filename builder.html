@@ -832,18 +832,45 @@ function updatePreview(){
 function handleDownload(){
   var btn = document.getElementById('dlBtn');
   btn.disabled = true;
-  btn.textContent = 'Preparando pago...';
+  btn.textContent = 'Generando PDF...';
 
-  // Save ALL data to localStorage — persists across redirects
+  // 1. Render the preview doc into a visible clone for html2pdf
   var d = collectData();
-  localStorage.setItem('inv_data', JSON.stringify(d));
-  localStorage.setItem('inv_logo', logoUrl || '');
-  localStorage.setItem('inv_type', docType);
-  localStorage.setItem('inv_pending', 'true');
+  var bg = (d.type==='receipt') ? '#ffffff' : (d.bg||'#faf9f6');
+  var fname = (d.bizName||'Documento').replace(/[^a-zA-Z0-9]/g,'-')+'-'+(d.docNum||'doc')+'.pdf';
 
-  // Redirect to Payment Link — success URL configured in Stripe dashboard
-  var paymentLink = 'https://buy.stripe.com/bJefZhgtw88cguC1vX1Jm02';
-  window.location.href = paymentLink;
+  // Use the live visible preview — it's already rendered correctly
+  var src = document.getElementById('previewDoc');
+
+  html2pdf().set({
+    margin: 0,
+    filename: fname,
+    image: {type:'jpeg', quality:0.98},
+    html2canvas: {scale:2, useCORS:true, allowTaint:true, backgroundColor:bg, logging:false},
+    jsPDF: {unit:'mm', format:'a4', orientation:'portrait'}
+  }).from(src).outputPdf('datauristring').then(function(pdfData){
+    // Save PDF as base64 in localStorage
+    try {
+      localStorage.setItem('inv_pdf', pdfData);
+      localStorage.setItem('inv_fname', fname);
+      localStorage.setItem('inv_pending', 'true');
+    } catch(e) {
+      // PDF too large for localStorage — store just the data
+      localStorage.setItem('inv_pdf', '');
+    }
+
+    btn.textContent = 'Redirigiendo a Stripe...';
+
+    // 2. Go to Stripe
+    setTimeout(function(){
+      window.location.href = 'https://buy.stripe.com/bJefZhgtw88cguC1vX1Jm02';
+    }, 300);
+
+  }).catch(function(e){
+    btn.disabled = false;
+    btn.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Descargar PDF — €0,50';
+    showToast('Error generando PDF. Inténtalo de nuevo.','error');
+  });
 }
 
 // ─── DOWNLOAD PDF ───
