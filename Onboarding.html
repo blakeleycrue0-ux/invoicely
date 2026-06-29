@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABAklEQVR4nMWXzQ3CMAyFnYgpyj70SDeq2Kgcyz50DTiApWDSxD+p845R4T1/sas6QEbXy/OVO7fq/jgHevZzcJRxKUj0Nqde0duchoi1B49W6FF9KhOBZR1u1gAn6x8kIeZp3PwCfI1n7e9RTZtwWQefAAl2cw80H0MpBXGATOebKJgJTOP214gSCqIAe3OvGT9VgIzx7hhyKTRrQi0FdoAWr11TAKoSfhTnGlgBuNVrrkFFgFM9qkahGkB691IKYgKS6lElCsUA2s6XUBAR0FSP2qNQ/CBJDTW9wBlD9heRtvradQSAPnsBwGdD6r4XREzibYyekR54mgOQ7RjluZ6/AS7/ZEyHlfg8AAAAAElFTkSuQmCC">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoicely — Configura tu cuenta</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#0f1729;--ink-2:#374151;--ink-3:#6b7280;--ink-4:#9ca3af;--bg:#f8f9fc;--white:#fff;--border:#e5e7eb;--accent:#4f46e5;--accent-2:#6366f1;--accent-light:#eef2ff;--accent-mid:#c7d2fe;--red:#dc2626;--red-bg:#fee2e2;--green:#16a34a}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,#eef2ff 0%,transparent 60%);z-index:0;pointer-events:none}
+
+.wrap{position:relative;z-index:1;width:100%;max-width:540px}
+
+.top{text-align:center;margin-bottom:28px;animation:up .5s cubic-bezier(.16,1,.3,1) both}
+@keyframes up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.logo{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:20px;text-decoration:none}
+.logo-icon{width:34px;height:34px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(79,70,229,0.3)}
+.logo-icon svg{width:18px;height:18px}
+.logo-text{font-family:'Instrument Serif',serif;font-size:1.3rem;font-style:italic;color:var(--ink)}
+.top h1{font-size:1.6rem;font-weight:700;color:var(--ink);margin-bottom:6px}
+.top p{font-size:0.85rem;color:var(--ink-4);line-height:1.6}
+
+/* PROGRESS */
+.progress-wrap{margin-bottom:24px}
+.progress-labels{display:flex;justify-content:space-between;margin-bottom:8px}
+.progress-label{font-size:0.7rem;font-weight:600;color:var(--ink-4);letter-spacing:0.04em;text-transform:uppercase;transition:color .3s}
+.progress-label.active{color:var(--accent)}
+.progress-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .4s cubic-bezier(.22,1,.36,1)}
+
+/* CARD */
+.card{background:var(--white);border-radius:16px;padding:36px;box-shadow:0 4px 6px rgba(0,0,0,0.04),0 20px 60px rgba(0,0,0,0.08);animation:up .5s .08s cubic-bezier(.16,1,.3,1) both}
+
+.step{display:none}
+.step.active{display:block}
+
+.step-eyebrow{font-size:0.7rem;font-weight:700;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.step-title{font-size:1.2rem;font-weight:700;color:var(--ink);margin-bottom:4px}
+.step-sub{font-size:0.84rem;color:var(--ink-4);margin-bottom:24px;line-height:1.55}
+
+/* FIELDS */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{margin-bottom:14px}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:0.7rem;font-weight:700;color:var(--ink-2);margin-bottom:5px;letter-spacing:0.04em;text-transform:uppercase}
+.field label .opt{color:var(--ink-4);font-weight:400;text-transform:none;letter-spacing:0}
+.field input,.field select,.field textarea{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;color:var(--ink);outline:none;transition:all .2s;background:var(--white)}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,70,229,0.08)}
+.field textarea{resize:vertical;min-height:68px;line-height:1.5}
+
+/* TYPE SELECTOR */
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0}
+.type-opt{border:1.5px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;transition:all .2s}
+.type-opt:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.type-opt.selected{border-color:var(--accent);background:var(--accent-light)}
+.type-opt-name{font-size:0.88rem;font-weight:700;color:var(--ink);margin-bottom:2px}
+.type-opt-desc{font-size:0.74rem;color:var(--ink-4)}
+
+/* MSG */
+.msg{border-radius:8px;padding:10px 14px;font-size:0.82rem;font-weight:500;margin-bottom:16px;display:none}
+.msg.error{background:var(--red-bg);color:var(--red)}
+.msg.success{background:#dcfce7;color:var(--green)}
+
+/* BTNS */
+.btn-row{display:flex;gap:10px;margin-top:24px}
+.btn{flex:1;padding:12px;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;border:none;transition:all .2s}
+.btn.primary{background:var(--accent);color:white}
+.btn.primary:hover{background:var(--accent-2);transform:translateY(-1px);box-shadow:0 8px 24px rgba(79,70,229,0.3)}
+.btn.primary:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none}
+.btn.secondary{background:var(--white);color:var(--ink-2);border:1.5px solid var(--border)}
+.btn.secondary:hover{border-color:var(--accent);color:var(--accent)}
+.skip-wrap{text-align:center;margin-top:12px}
+.skip{font-size:0.78rem;color:var(--ink-4);cursor:pointer;background:none;border:none;font-family:'Plus Jakarta Sans',sans-serif}
+.skip:hover{color:var(--accent);text-decoration:underline}
+
+@media(max-width:480px){.form-grid{grid-template-columns:1fr}.type-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a href="index.html" class="logo">
+      <div class="logo-icon"><svg fill="none" viewBox="0 0 120 120"><path d="M60 32 L26 88" stroke="white" stroke-opacity="0.5" stroke-width="18" stroke-linecap="round"/><path d="M60 32 L94 88" stroke="white" stroke-width="18" stroke-linecap="round"/></svg></div>
+      <span class="logo-text">Invoicely</span>
+    </a>
+    <h1>Configura tu cuenta</h1>
+    <p>Tarda menos de 2 minutos. Usaremos estos datos<br>para rellenar tus facturas automáticamente.</p>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-labels">
+      <span class="progress-label active" id="pl0">Tipo de negocio</span>
+      <span class="progress-label" id="pl1">Tu empresa</span>
+      <span class="progress-label" id="pl2">Preferencias</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:33%"></div></div>
+  </div>
+
+  <div class="card">
+    <div id="msgBox" class="msg"></div>
+
+    <!-- STEP 0 -->
+    <div class="step active" id="step0">
+      <div class="step-eyebrow">Paso 1 de 3</div>
+      <div class="step-title">¿Cómo ejerces tu actividad?</div>
+      <div class="step-sub">Lo usaremos para personalizar tu experiencia.</div>
+      <div class="type-grid">
+        <div class="type-opt" id="t-autonomo" onclick="selectType('autonomo')">
+          <div class="type-opt-name">Autónomo</div>
+          <div class="type-opt-desc">Trabajo por cuenta propia</div>
+        </div>
+        <div class="type-opt" id="t-empresa" onclick="selectType('empresa')">
+          <div class="type-opt-name">Empresa</div>
+          <div class="type-opt-desc">SL, SA u otra sociedad</div>
+        </div>
+        <div class="type-opt" id="t-freelance" onclick="selectType('freelance')">
+          <div class="type-opt-name">Freelance</div>
+          <div class="type-opt-desc">Diseño, desarrollo, creativos</div>
+        </div>
+        <div class="type-opt" id="t-otro" onclick="selectType('otro')">
+          <div class="type-opt-name">Otro</div>
+          <div class="type-opt-desc">Otro tipo de actividad</div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn primary" onclick="goStep(1)">Siguiente</button>
+      </div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="step" id="step1">
+      <div class="step-eyebrow">Paso 2 de 3</div>
+      <div class="step-title">Datos de tu empresa</div>
+      <div class="step-sub">Aparecerán en el encabezado de todas tus facturas.</div>
+      <div class="form-grid">
+        <div class="field"><label>Nombre / Empresa</label><input type="text" id="bizName" placeholder="Studio Norte S.L."></div>
+        <div class="field"><label>NIF / CIF</label><input type="text" id="bizNif" placeholder="B-12345678"></div>
+      </div>
+      <div class="form-grid">
+        <div class="field"><label>Email de facturación</label><input type="email" id="bizEmail" placeholder="facturas@empresa.com"></div>
+        <div class="field"><label>Teléfono <span class="opt">(opcional)</span></label><input type="tel" id="bizPhone" placeholder="+34 600 000 000"></div>
+      </div>
+      <div class="field"><label>Dirección</label><input type="text" id="bizAddress" placeholder="Calle Gran Vía, 28"></div>
+      <div class="form-grid">
+        <div class="field"><label>Ciudad</label><input type="text" id="bizCity" placeholder="Madrid"></div>
+        <div class="field"><label>Código postal</label><input type="text" id="bizPostal" placeholder="28013"></div>
+      </div>
+      <div class="form-grid">
+        <div class="field"><label>País</label>
+          <select id="bizCountry">
+            <option value="España" selected>España</option>
+            <option value="México">México</option>
+            <option value="Argentina">Argentina</option>
+            <option value="Colombia">Colombia</option>
+            <option value="Chile">Chile</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+        <div class="field"><label>Número VAT <span class="opt">(opcional)</span></label><input type="text" id="bizVat" placeholder="ESB12345678"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn secondary" onclick="goStep(0)">Atrás</button>
+        <button class="btn primary" onclick="goStep(2)">Siguiente</button>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step" id="step2">
+      <div class="step-eyebrow">Paso 3 de 3</div>
+      <div class="step-title">Preferencias de facturación</div>
+      <div class="step-sub">Valores por defecto para nuevas facturas. Puedes cambiarlos en cualquier momento.</div>
+      <div class="form-grid">
+        <div class="field"><label>Moneda</label>
+          <select id="defCurrency">
+            <option value="€" selected>€ Euro</option>
+            <option value="$">$ Dólar</option>
+            <option value="£">£ Libra</option>
+            <option value="MXN">MXN Peso mexicano</option>
+            <option value="ARS">ARS Peso argentino</option>
+          </select>
+        </div>
+        <div class="field"><label>IVA por defecto (%)</label><input type="number" id="defTax" placeholder="21" value="21" min="0" max="100"></div>
+      </div>
+      <div class="field"><label>IRPF por defecto (%) <span class="opt">(opcional)</span></label><input type="number" id="defIrpf" placeholder="15" min="0" max="100"></div>
+      <div class="field"><label>Datos bancarios <span class="opt">(opcional)</span></label><textarea id="defBank" placeholder="IBAN: ES91 2100 0418 4502 0005 1332&#10;Banco: CaixaBank · SWIFT: CAIXESBBXXX"></textarea></div>
+      <div class="field"><label>Notas por defecto <span class="opt">(opcional)</span></label><textarea id="defNotes" placeholder="Pago en 14 días naturales. Gracias por su confianza."></textarea></div>
+      <div class="btn-row">
+        <button class="btn secondary" onclick="goStep(1)">Atrás</button>
+        <button class="btn primary" id="btnFinish" onclick="finish(false)">Entrar al panel</button>
+      </div>
+      <div class="skip-wrap"><button class="skip" onclick="finish(true)">Saltar y configurar después</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+var SUPA_URL='https://ihrloxoilbutrraddynw.supabase.co';
+var SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlocmxveG9pbGJ1dHJyYWRkeW53Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3NTA1MzIsImV4cCI6MjA5ODMyNjUzMn0.Br0ht6CwfJEwmakTc9_qL9B0uauBrBq5b9cLrLVx3js';
+var sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
+var currentUser=null,selectedType=null,currentStep=0;
+var progWidths=['33%','66%','100%'];
+
+sb.auth.getSession().then(function(r){
+  if(!r.data||!r.data.session){window.location.href='login.html';return;}
+  currentUser=r.data.session.user;
+  var name=(currentUser.user_metadata&&currentUser.user_metadata.full_name)||'';
+  if(name) document.getElementById('bizName').value=name;
+  if(currentUser.email) document.getElementById('bizEmail').value=currentUser.email;
+});
+
+function selectType(t){
+  selectedType=t;
+  document.querySelectorAll('.type-opt').forEach(function(c){c.classList.remove('selected')});
+  document.getElementById('t-'+t).classList.add('selected');
+}
+
+function goStep(step){
+  if(step===1&&!selectedType){showMsg('Selecciona tu tipo de actividad.','error');return;}
+  if(step===2){
+    var biz=document.getElementById('bizName').value.trim();
+    var nif=document.getElementById('bizNif').value.trim();
+    var email=document.getElementById('bizEmail').value.trim();
+    if(!biz||!nif||!email){showMsg('El nombre, NIF y email son obligatorios.','error');return;}
+  }
+  clearMsg();
+  document.getElementById('step'+currentStep).classList.remove('active');
+  document.getElementById('pl'+currentStep).classList.remove('active');
+  currentStep=step;
+  document.getElementById('step'+currentStep).classList.add('active');
+  document.getElementById('pl'+currentStep).classList.add('active');
+  document.getElementById('progFill').style.width=progWidths[step];
+}
+
+function finish(skip){
+  if(!currentUser) return;
+  var btn=document.getElementById('btnFinish');
+  if(btn){btn.disabled=true;btn.textContent='Guardando...';}
+  var payload={
+    id:currentUser.id,
+    full_name:(currentUser.user_metadata&&currentUser.user_metadata.full_name)||'',
+    email:currentUser.email,
+    company_name:skip?'Mi empresa':document.getElementById('bizName').value.trim(),
+    nif:skip?'':document.getElementById('bizNif').value.trim(),
+    address:skip?'':document.getElementById('bizAddress').value.trim(),
+    city:skip?'':document.getElementById('bizCity').value.trim(),
+    postal_code:skip?'':document.getElementById('bizPostal').value.trim(),
+    country:skip?'España':document.getElementById('bizCountry').value,
+    phone:skip?'':document.getElementById('bizPhone').value.trim(),
+    vat:skip?'':document.getElementById('bizVat').value.trim(),
+    plan:'free'
+  };
+  if(!skip){
+    payload.data={
+      currency:document.getElementById('defCurrency').value,
+      tax:document.getElementById('defTax').value,
+      irpf:document.getElementById('defIrpf').value,
+      notes:document.getElementById('defNotes').value,
+      bank:document.getElementById('defBank').value,
+      business_type:selectedType
+    };
+  }
+  sb.from('profiles').upsert(payload).then(function(r){
+    if(r.error){
+      if(btn){btn.disabled=false;btn.textContent='Entrar al panel';}
+      showMsg('Error: '+r.error.message,'error');return;
+    }
+    window.location.href='dashboard.html';
+  });
+}
+
+function showMsg(m,t){var e=document.getElementById('msgBox');e.textContent=m;e.className='msg '+t;e.style.display='block'}
+function clearMsg(){document.getElementById('msgBox').style.display='none'}
+</script>
+</body>
+</html>
