@@ -53,7 +53,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <button class="tab" id="tabRegister" onclick="switchTab('register')">Crear cuenta</button>
   </div>
 
-  <div id="msgBox" class="msg"></div>
+  <div id="msgBox" class="msg" style="display:none"></div>
 
   <!-- LOGIN -->
   <div id="formLogin">
@@ -93,9 +93,16 @@ var SUPA_URL='https://ihrloxoilbutrraddynw.supabase.co';
 var SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlocmxveG9pbGJ1dHJyYWRkeW53Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3NTA1MzIsImV4cCI6MjA5ODMyNjUzMn0.Br0ht6CwfJEwmakTc9_qL9B0uauBrBq5b9cLrLVx3js';
 var sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
 
+// Always hide msg on load
+document.getElementById('msgBox').style.display='none';
+
 sb.auth.getSession().then(function(r){
   if(r.data&&r.data.session) checkOnboarding(r.data.session.user);
-}).catch(function(){});
+}).catch(function(){
+  // Clear any bad session silently
+  sb.auth.signOut().catch(function(){});
+});
+
 if(new URLSearchParams(window.location.search).get('signup')==='true') switchTab('register');
 
 function checkOnboarding(user){
