@@ -96,7 +96,7 @@ hr{border:none;border-top:1px solid var(--border);margin:20px 0}
     <div class="state" id="stateSuccess">
       <div class="big-icon">📄</div>
       <h3>PDF descargado</h3>
-      <p>Tu documento está en la carpeta de descargas.</p>
+      <p>Tu documento se ha descargado.<br><span style="font-size:0.78rem;color:var(--ink-4)">En iPhone puede abrirse en el navegador — pulsa el icono de compartir para guardarlo.</span></p>
     </div>
 
     <!-- ERROR -->
@@ -157,13 +157,25 @@ function triggerDownload(){
   }
 
   try{
-    // Create download link from base64 data URI
+    // Convert base64 data URI to Blob — works on iOS and Android
+    var base64 = pdfData.split(',')[1];
+    var binary = atob(base64);
+    var bytes = new Uint8Array(binary.length);
+    for(var i = 0; i < binary.length; i++){
+      bytes[i] = binary.charCodeAt(i);
+    }
+    var blob = new Blob([bytes], {type: 'application/pdf'});
+    var blobUrl = URL.createObjectURL(blob);
+
     var link = document.createElement('a');
-    link.href = pdfData;
+    link.href = blobUrl;
     link.download = fname;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+
+    // Revoke blob URL after short delay
+    setTimeout(function(){ URL.revokeObjectURL(blobUrl); }, 3000);
 
     // Clear storage
     localStorage.removeItem('inv_pdf');
@@ -172,9 +184,25 @@ function triggerDownload(){
 
     showState('stateSuccess');
     document.getElementById('retryBtn').style.display = 'none';
+
   } catch(e){
-    showState('stateError');
-    document.getElementById('retryBtn').style.display = 'flex';
+    // iOS Safari fallback — open PDF in new tab
+    try{
+      var base64 = pdfData.split(',')[1];
+      var binary = atob(base64);
+      var bytes = new Uint8Array(binary.length);
+      for(var i = 0; i < binary.length; i++){ bytes[i] = binary.charCodeAt(i); }
+      var blob = new Blob([bytes], {type: 'application/pdf'});
+      var blobUrl = URL.createObjectURL(blob);
+      window.open(blobUrl, '_blank');
+      localStorage.removeItem('inv_pdf');
+      localStorage.removeItem('inv_fname');
+      localStorage.removeItem('inv_pending');
+      showState('stateSuccess');
+    } catch(e2){
+      showState('stateError');
+      document.getElementById('retryBtn').style.display = 'flex';
+    }
   }
 }
 
