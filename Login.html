@@ -3,124 +3,120 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Invoicely</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+<title>Invoicely — Entrar</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Plus Jakarta Sans',sans-serif;background:#f8f9fc;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-.card{background:#fff;border-radius:18px;padding:40px 36px;width:100%;max-width:400px;box-shadow:0 2px 4px rgba(0,0,0,.04),0 16px 48px rgba(0,0,0,.08)}
-.logo{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:28px}
-.logo-box{width:34px;height:34px;background:#4f46e5;border-radius:8px;display:flex;align-items:center;justify-content:center}
-.logo-box svg{width:18px;height:18px}
-.logo-name{font-family:'Instrument Serif',serif;font-style:italic;font-size:1.3rem;color:#0f1729}
-.tabs{display:flex;background:#f8f9fc;border-radius:9px;padding:3px;margin-bottom:24px;gap:3px}
-.tab{flex:1;padding:8px;border:none;background:none;border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.83rem;font-weight:600;color:#9ca3af;cursor:pointer}
-.tab.on{background:#fff;color:#0f1729;box-shadow:0 1px 3px rgba(0,0,0,.08)}
-.title{font-size:1.4rem;font-weight:700;color:#0f1729;margin-bottom:4px}
-.sub{font-size:0.83rem;color:#9ca3af;margin-bottom:22px;line-height:1.5}
-.err{background:#fee2e2;color:#dc2626;border-radius:7px;padding:9px 13px;font-size:0.8rem;font-weight:500;margin-bottom:14px}
-.ok{background:#dcfce7;color:#16a34a;border-radius:7px;padding:9px 13px;font-size:0.8rem;font-weight:500;margin-bottom:14px}
-.field{margin-bottom:13px}
-.field label{display:block;font-size:0.68rem;font-weight:700;color:#374151;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
-.field input{width:100%;padding:10px 13px;border:1.5px solid #e5e7eb;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;color:#0f1729;outline:none}
-.field input:focus{border-color:#4f46e5;box-shadow:0 0 0 3px rgba(79,70,229,.08)}
-.btn{width:100%;padding:12px;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;border:none;background:#4f46e5;color:#fff;margin-top:2px}
-.btn:disabled{opacity:.6;cursor:not-allowed}
-.link{text-align:center;margin-top:14px;font-size:0.8rem;color:#9ca3af}
-.link a{color:#4f46e5;text-decoration:none;font-weight:600}
-.back{text-align:center;margin-top:18px;font-size:0.78rem;color:#9ca3af}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f4f5f9; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.card { background: #fff; border-radius: 16px; padding: 40px; width: 100%; max-width: 380px; box-shadow: 0 4px 40px rgba(0,0,0,0.10); }
+.logo { display: flex; align-items: center; gap: 10px; justify-content: center; margin-bottom: 28px; }
+.logo-icon { width: 32px; height: 32px; background: #4f46e5; border-radius: 7px; display: flex; align-items: center; justify-content: center; }
+.logo-icon svg { width: 17px; height: 17px; }
+.logo-text { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 1.25rem; color: #111; }
+.tabs { display: flex; background: #f4f5f9; border-radius: 8px; padding: 3px; margin-bottom: 24px; }
+.tab { flex: 1; padding: 8px; border: none; background: none; border-radius: 6px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.82rem; font-weight: 600; color: #aaa; cursor: pointer; transition: all .15s; }
+.tab.active { background: #fff; color: #111; box-shadow: 0 1px 3px rgba(0,0,0,.09); }
+h2 { font-size: 1.3rem; font-weight: 700; color: #111; margin-bottom: 4px; }
+p { font-size: 0.82rem; color: #aaa; margin-bottom: 20px; line-height: 1.5; }
+label { display: block; font-size: 0.68rem; font-weight: 700; color: #333; margin-bottom: 4px; text-transform: uppercase; letter-spacing: .04em; }
+input { width: 100%; padding: 10px 12px; border: 1.5px solid #e5e7eb; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.88rem; color: #111; outline: none; margin-bottom: 12px; }
+input:focus { border-color: #4f46e5; }
+.btn { width: 100%; padding: 12px; border-radius: 8px; border: none; background: #4f46e5; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem; font-weight: 700; cursor: pointer; margin-top: 4px; }
+.btn:disabled { opacity: .6; cursor: not-allowed; }
+.msg { display: none; padding: 9px 13px; border-radius: 7px; font-size: 0.8rem; font-weight: 500; margin-bottom: 14px; }
+.msg.red { background: #fee2e2; color: #dc2626; }
+.msg.green { background: #dcfce7; color: #16a34a; }
+.foot { text-align: center; margin-top: 14px; font-size: 0.78rem; color: #aaa; }
+.foot a { color: #4f46e5; text-decoration: none; font-weight: 600; }
 </style>
 </head>
 <body>
 <div class="card">
+
   <div class="logo">
-    <div class="logo-box"><svg fill="none" viewBox="0 0 120 120"><path d="M60 32L26 88" stroke="white" stroke-opacity=".5" stroke-width="18" stroke-linecap="round"/><path d="M60 32L94 88" stroke="white" stroke-width="18" stroke-linecap="round"/></svg></div>
-    <span class="logo-name">Invoicely</span>
+    <div class="logo-icon">
+      <svg fill="none" viewBox="0 0 120 120">
+        <path d="M60 32L26 88" stroke="white" stroke-opacity=".5" stroke-width="18" stroke-linecap="round"/>
+        <path d="M60 32L94 88" stroke="white" stroke-width="18" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="logo-text">Invoicely</span>
   </div>
 
   <div class="tabs">
-    <button class="tab on" id="t1" onclick="show('login')">Entrar</button>
-    <button class="tab" id="t2" onclick="show('register')">Crear cuenta</button>
+    <button class="tab active" onclick="showTab('login',this)">Entrar</button>
+    <button class="tab" onclick="showTab('register',this)">Crear cuenta</button>
   </div>
 
   <!-- LOGIN -->
   <div id="login">
-    <div class="title">Bienvenido</div>
-    <div class="sub">Entra para gestionar tus facturas.</div>
-    <div id="login-msg"></div>
-    <div class="field"><label>Email</label><input type="email" id="le" placeholder="tu@email.com"></div>
-    <div class="field"><label>Contraseña</label><input type="password" id="lp" placeholder="Tu contraseña"></div>
-    <button class="btn" id="lb" onclick="doLogin()">Entrar</button>
-    <div class="link"><a href="#" onclick="show('forgot');return false">¿Olvidaste tu contraseña?</a></div>
+    <h2>Bienvenido</h2>
+    <p>Entra para gestionar tus facturas.</p>
+    <div class="msg" id="lmsg"></div>
+    <label>Email</label>
+    <input type="email" id="lemail" placeholder="tu@email.com">
+    <label>Contraseña</label>
+    <input type="password" id="lpass" placeholder="Tu contraseña">
+    <button class="btn" id="lbtn" onclick="doLogin()">Entrar</button>
+    <div class="foot"><a href="#" onclick="showTab('forgot');return false">¿Olvidaste tu contraseña?</a></div>
   </div>
 
   <!-- REGISTER -->
   <div id="register" style="display:none">
-    <div class="title">Crea tu cuenta</div>
-    <div class="sub">Gratis para siempre. Sin tarjeta.</div>
-    <div id="reg-msg"></div>
-    <div class="field"><label>Nombre</label><input type="text" id="rn" placeholder="Tu nombre"></div>
-    <div class="field"><label>Email</label><input type="email" id="re" placeholder="tu@email.com"></div>
-    <div class="field"><label>Contraseña</label><input type="password" id="rp" placeholder="Mínimo 6 caracteres"></div>
-    <button class="btn" id="rb" onclick="doRegister()">Crear cuenta gratis</button>
-    <div class="link">Al registrarte aceptas los <a href="#">Términos</a>.</div>
+    <h2>Crea tu cuenta</h2>
+    <p>Gratis para siempre. Sin tarjeta de crédito.</p>
+    <div class="msg" id="rmsg"></div>
+    <label>Nombre</label>
+    <input type="text" id="rname" placeholder="Tu nombre">
+    <label>Email</label>
+    <input type="email" id="remail" placeholder="tu@email.com">
+    <label>Contraseña</label>
+    <input type="password" id="rpass" placeholder="Mínimo 6 caracteres">
+    <button class="btn" id="rbtn" onclick="doRegister()">Crear cuenta gratis</button>
   </div>
 
   <!-- FORGOT -->
   <div id="forgot" style="display:none">
-    <div class="title">Recuperar contraseña</div>
-    <div class="sub">Te enviamos un enlace a tu email.</div>
-    <div id="fgt-msg"></div>
-    <div class="field"><label>Email</label><input type="email" id="fe" placeholder="tu@email.com"></div>
-    <button class="btn" id="fb" onclick="doForgot()">Enviar enlace</button>
-    <div class="link"><a href="#" onclick="show('login');return false">← Volver</a></div>
+    <h2>Recuperar contraseña</h2>
+    <p>Te enviamos un enlace a tu email.</p>
+    <div class="msg" id="fmsg"></div>
+    <label>Email</label>
+    <input type="email" id="femail" placeholder="tu@email.com">
+    <button class="btn" id="fbtn" onclick="doForgot()">Enviar enlace</button>
+    <div class="foot"><a href="#" onclick="showTab('login');return false">← Volver</a></div>
   </div>
 
-  <div class="back"><a href="index.html" style="color:#9ca3af;text-decoration:none">← Volver al inicio</a></div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-var sb = window.supabase.createClient(
+var client = window.supabase.createClient(
   'https://ihrloxoilbutrraddynw.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlocmxveG9pbGJ1dHJyYWRkeW53Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3NTA1MzIsImV4cCI6MjA5ODMyNjUzMn0.Br0ht6CwfJEwmakTc9_qL9B0uauBrBq5b9cLrLVx3js'
 );
 
-// Check session silently on load - NO errors shown here ever
-sb.auth.getSession().then(function(r){
-  if (r && r.data && r.data.session) {
-    redirect(r.data.session.user);
+// Check existing session - no errors shown
+client.auth.getSession().then(function(res) {
+  if (res && res.data && res.data.session) {
+    window.location.href = 'onboarding.html';
   }
 });
 
-function redirect(user) {
-  sb.from('profiles').select('company_name').eq('id', user.id).maybeSingle().then(function(r){
-    if (r && r.data && r.data.company_name) {
-      window.location.href = 'dashboard.html';
-    } else {
-      window.location.href = 'onboarding.html';
-    }
-  }).catch(function(){
-    window.location.href = 'onboarding.html';
-  });
+function showTab(id, btn) {
+  ['login','register','forgot'].forEach(function(t){ document.getElementById(t).style.display = 'none'; });
+  document.getElementById(id).style.display = '';
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
 }
 
-function show(tab) {
-  document.getElementById('login').style.display = tab==='login' ? '' : 'none';
-  document.getElementById('register').style.display = tab==='register' ? '' : 'none';
-  document.getElementById('forgot').style.display = tab==='forgot' ? '' : 'none';
-  document.getElementById('t1').className = 'tab' + (tab==='login' ? ' on' : '');
-  document.getElementById('t2').className = 'tab' + (tab==='register' ? ' on' : '');
-}
-
-function msg(id, text, type) {
+function setMsg(id, text, type) {
   var el = document.getElementById(id);
-  if (!text) { el.innerHTML = ''; return; }
-  var safe = String(text).replace(/</g,'&lt;');
-  el.innerHTML = '<div class="'+(type==='ok'?'ok':'err')+'">'+safe+'</div>';
+  el.textContent = text || '';
+  el.className = 'msg' + (text ? (' ' + (type || 'red')) : '');
+  el.style.display = text ? 'block' : 'none';
 }
 
-function getErr(e) {
+function errText(e) {
   if (!e) return 'Error. Inténtalo de nuevo.';
   if (typeof e === 'string') return e;
   if (e.message) return e.message;
@@ -128,67 +124,61 @@ function getErr(e) {
 }
 
 function doLogin() {
-  var email = document.getElementById('le').value.trim();
-  var pass = document.getElementById('lp').value;
-  msg('login-msg','');
-  if (!email || !pass) { msg('login-msg','Rellena todos los campos.'); return; }
-  var btn = document.getElementById('lb');
+  var email = document.getElementById('lemail').value.trim();
+  var pass  = document.getElementById('lpass').value;
+  setMsg('lmsg', '');
+  if (!email || !pass) { setMsg('lmsg', 'Rellena todos los campos.'); return; }
+  var btn = document.getElementById('lbtn');
   btn.disabled = true; btn.textContent = 'Entrando...';
-  sb.auth.signInWithPassword({email:email, password:pass}).then(function(r){
-    btn.disabled = false; btn.textContent = 'Entrar';
-    if (r.error) { msg('login-msg', getErr(r.error)); return; }
-    redirect(r.data.user);
-  }).catch(function(e){
-    btn.disabled = false; btn.textContent = 'Entrar';
-    msg('login-msg', getErr(e));
-  });
+  client.auth.signInWithPassword({ email: email, password: pass })
+    .then(function(res) {
+      btn.disabled = false; btn.textContent = 'Entrar';
+      if (res.error) { setMsg('lmsg', errText(res.error)); return; }
+      window.location.href = 'dashboard.html';
+    })
+    .catch(function(e) {
+      btn.disabled = false; btn.textContent = 'Entrar';
+      setMsg('lmsg', errText(e));
+    });
 }
 
 function doRegister() {
-  var name = document.getElementById('rn').value.trim();
-  var email = document.getElementById('re').value.trim();
-  var pass = document.getElementById('rp').value;
-  msg('reg-msg','');
-  if (!name || !email || !pass) { msg('reg-msg','Rellena todos los campos.'); return; }
-  if (pass.length < 6) { msg('reg-msg','La contraseña debe tener al menos 6 caracteres.'); return; }
-  var btn = document.getElementById('rb');
+  var name  = document.getElementById('rname').value.trim();
+  var email = document.getElementById('remail').value.trim();
+  var pass  = document.getElementById('rpass').value;
+  setMsg('rmsg', '');
+  if (!name || !email || !pass) { setMsg('rmsg', 'Rellena todos los campos.'); return; }
+  if (pass.length < 6) { setMsg('rmsg', 'La contraseña debe tener al menos 6 caracteres.'); return; }
+  var btn = document.getElementById('rbtn');
   btn.disabled = true; btn.textContent = 'Creando cuenta...';
-  sb.auth.signUp({email:email, password:pass, options:{data:{full_name:name}}}).then(function(r){
-    btn.disabled = false; btn.textContent = 'Crear cuenta gratis';
-    if (r.error) { msg('reg-msg', getErr(r.error)); return; }
-    // Sign in immediately after signup
-    sb.auth.signInWithPassword({email:email, password:pass}).then(function(r2){
-      if (r2.data && r2.data.session) {
-        window.location.href = 'onboarding.html';
-      } else {
-        msg('reg-msg', 'Cuenta creada. Entra con tu email y contraseña.', 'ok');
-        show('login');
-        document.getElementById('le').value = email;
-      }
-    }).catch(function(){
-      msg('reg-msg', 'Cuenta creada. Entra con tu email y contraseña.', 'ok');
-      show('login');
+  client.auth.signUp({ email: email, password: pass, options: { data: { full_name: name } } })
+    .then(function(res) {
+      btn.disabled = false; btn.textContent = 'Crear cuenta gratis';
+      if (res.error) { setMsg('rmsg', errText(res.error)); return; }
+      window.location.href = 'onboarding.html';
+    })
+    .catch(function(e) {
+      btn.disabled = false; btn.textContent = 'Crear cuenta gratis';
+      setMsg('rmsg', errText(e));
     });
-  }).catch(function(e){
-    btn.disabled = false; btn.textContent = 'Crear cuenta gratis';
-    msg('reg-msg', getErr(e));
-  });
 }
 
 function doForgot() {
-  var email = document.getElementById('fe').value.trim();
-  msg('fgt-msg','');
-  if (!email) { msg('fgt-msg','Introduce tu email.'); return; }
-  var btn = document.getElementById('fb');
+  var email = document.getElementById('femail').value.trim();
+  setMsg('fmsg', '');
+  if (!email) { setMsg('fmsg', 'Introduce tu email.'); return; }
+  var btn = document.getElementById('fbtn');
   btn.disabled = true; btn.textContent = 'Enviando...';
-  sb.auth.resetPasswordForEmail(email).then(function(r){
-    btn.disabled = false; btn.textContent = 'Enviar enlace';
-    if (r.error) { msg('fgt-msg', getErr(r.error)); return; }
-    msg('fgt-msg', 'Enlace enviado. Revisa tu email.', 'ok');
-  }).catch(function(e){
-    btn.disabled = false; btn.textContent = 'Enviar enlace';
-    msg('fgt-msg', getErr(e));
-  });
+  client.auth.resetPasswordForEmail(email)
+    .then(function(res) {
+      btn.disabled = false; btn.textContent = 'Enviar enlace';
+      if (res.error) { setMsg('fmsg', errText(res.error)); return; }
+      setMsg('fmsg', 'Enlace enviado. Revisa tu email.', 'green');
+    })
+    .catch(function(e) {
+      btn.disabled = false; btn.textContent = 'Enviar enlace';
+      setMsg('fmsg', errText(e));
+    });
 }
 </script>
 </body>
