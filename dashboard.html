@@ -1,187 +1,781 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<!-- Meta Pixel Code -->
-<script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1022285556838233');
-fbq('track', 'PageView');
-</script>
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=1022285556838233&ev=PageView&noscript=1"
-/></noscript>
-<!-- End Meta Pixel Code -->
-<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABAklEQVR4nMWXzQ3CMAyFnYgpyj70SDeq2Kgcyz50DTiApWDSxD+p845R4T1/sas6QEbXy/OVO7fq/jgHevZzcJRxKUj0Nqde0duchoi1B49W6FF9KhOBZR1u1gAn6x8kIeZp3PwCfI1n7e9RTZtwWQefAAl2cw80H0MpBXGATOebKJgJTOP214gSCqIAe3OvGT9VgIzx7hhyKTRrQi0FdoAWr11TAKoSfhTnGlgBuNVrrkFFgFM9qkahGkB691IKYgKS6lElCsUA2s6XUBAR0FSP2qNQ/CBJDTW9wBlD9heRtvradQSAPnsBwGdD6r4XREzibYyekR54mgOQ7RjluZ6/AS7/ZEyHlfg8AAAAAElFTkSuQmCC">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Invoicely — ¿Qué quieres crear?</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Instrument+Serif:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<title>Invoicely — Panel</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--ink:#0f1729;--ink-2:#374151;--ink-3:#6b7280;--ink-4:#9ca3af;--bg:#f8f9fc;--white:#fff;--border:#e5e7eb;--accent:#4f46e5;--accent-2:#6366f1;--accent-light:#eef2ff;--accent-mid:#c7d2fe;--green:#16a34a;--green-bg:#dcfce7;--yellow:#d97706;--yellow-bg:#fef3c7}
-body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:flex;flex-direction:column}
+:root{--ink:#0f1729;--ink-2:#374151;--ink-3:#6b7280;--ink-4:#9ca3af;--bg:#f8f9fc;--white:#fff;--border:#e5e7eb;--accent:#4f46e5;--accent-2:#6366f1;--accent-light:#eef2ff;--accent-mid:#c7d2fe;--green:#16a34a;--green-bg:#dcfce7;--yellow:#d97706;--yellow-bg:#fef3c7;--red:#dc2626;--red-bg:#fee2e2;--blue:#2563eb;--blue-bg:#dbeafe;--purple:#7c3aed;--purple-bg:#f3e8ff;--sb:240px}
+html,body{height:100%;font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--ink)}
+body{display:flex}
 
-/* NAV */
-nav{background:var(--white);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;padding:0 32px;gap:16px;position:sticky;top:0;z-index:10}
-.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex:1}
-.nav-logo-icon{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center}
-.nav-logo-icon svg{width:18px;height:18px}
-.nav-logo-text{font-family:'Instrument Serif',serif;font-size:1.2rem;font-style:italic;color:var(--ink)}
-.nav-back{font-size:0.82rem;color:var(--ink-4);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s}
-.nav-back:hover{color:var(--ink)}
-.nav-back svg{width:14px;height:14px;stroke:currentColor}
+/* LOADING */
+.loading{position:fixed;inset:0;background:var(--white);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .4s}
+.loading.gone{opacity:0;pointer-events:none}
+.ld-logo{font-family:'Instrument Serif',serif;font-size:2rem;font-style:italic;color:var(--ink);margin-bottom:20px}
+.ld-bar{width:140px;height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.ld-fill{height:100%;background:var(--accent);animation:lb 1.1s ease-in-out infinite}
+@keyframes lb{0%{width:0;margin-left:0}50%{width:60%}100%{width:0;margin-left:100%}}
+
+/* SIDEBAR */
+.sb{width:var(--sb);background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;position:fixed;left:0;top:0;overflow-y:auto;flex-shrink:0}
+.sb-top{padding:18px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px}
+.sb-icon{width:28px;height:28px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-icon svg{width:15px;height:15px}
+.sb-wordmark{font-family:'Instrument Serif',serif;font-style:italic;font-size:1.15rem;color:var(--ink)}
+.nav{flex:1;padding:8px}
+.nav-lbl{font-size:0.58rem;font-weight:700;color:var(--ink-4);letter-spacing:.1em;text-transform:uppercase;padding:0 8px;margin:12px 0 3px}
+.ni{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;color:var(--ink-3);font-size:0.8rem;font-weight:500;margin-bottom:1px;transition:all .15s;text-decoration:none;cursor:pointer;border:none;background:none;width:100%;font-family:'Plus Jakarta Sans',sans-serif;text-align:left}
+.ni:hover{background:var(--bg);color:var(--ink-2)}
+.ni.on{background:var(--accent-light);color:var(--accent);font-weight:600}
+.ni svg{width:14px;height:14px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2}
+.ni .nbadge{margin-left:auto;background:var(--accent);color:#fff;font-size:0.55rem;font-weight:700;padding:1px 5px;border-radius:8px}
+.ni-new{color:var(--accent)!important;font-weight:600!important}
+.sb-foot{padding:10px;border-top:1px solid var(--border)}
+.sb-user{display:flex;align-items:center;gap:8px;padding:8px;border-radius:7px;margin-bottom:4px}
+.av{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.74rem;font-weight:700;flex-shrink:0}
+.sb-info .n{font-size:0.78rem;font-weight:600;color:var(--ink)}
+.sb-info .e{font-size:0.62rem;color:var(--ink-4);max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.plan-tag{display:inline-block;font-size:0.55rem;font-weight:700;padding:1px 5px;border-radius:3px;background:var(--accent-light);color:var(--accent);margin-top:2px}
+.plan-tag.pro{background:var(--yellow-bg);color:var(--yellow)}
+.plan-tag.biz{background:var(--purple-bg);color:var(--purple)}
+.logout-btn{width:100%;display:flex;align-items:center;gap:6px;padding:7px 8px;border-radius:6px;background:none;border:none;color:var(--ink-4);font-size:0.76rem;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all .15s}
+.logout-btn:hover{background:var(--red-bg);color:var(--red)}
+.logout-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
 
 /* MAIN */
-.main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px}
-.header{text-align:center;margin-bottom:56px}
-.header-eyebrow{font-size:0.75rem;font-weight:700;color:var(--accent);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:12px}
-.header h1{font-family:'Instrument Serif',serif;font-size:clamp(2rem,4vw,3rem);font-weight:400;color:var(--ink);line-height:1.15;margin-bottom:12px}
-.header p{font-size:0.95rem;color:var(--ink-3);line-height:1.6}
-.price-badge{display:inline-flex;align-items:center;gap:8px;background:var(--green-bg);color:var(--green);font-size:0.82rem;font-weight:700;padding:6px 14px;border-radius:20px;margin-top:14px}
+.main{margin-left:var(--sb);flex:1;display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden}
+.topbar{height:52px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:8px;position:sticky;top:0;z-index:10}
+.tb-title{font-size:0.9rem;font-weight:700;color:var(--ink);flex:1}
+.tbtn{display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:6px;font-size:0.78rem;font-weight:600;cursor:pointer;border:none;font-family:'Plus Jakarta Sans',sans-serif;transition:all .15s}
+.tbtn.p{background:var(--accent);color:#fff}
+.tbtn.p:hover{background:var(--accent-2)}
+.tbtn.s{background:var(--white);color:var(--ink-2);border:1px solid var(--border)}
+.tbtn.s:hover{border-color:var(--accent);color:var(--accent)}
+.tbtn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
 
-/* CARDS GRID */
-.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:760px;width:100%}
-.card{background:var(--white);border:2px solid var(--border);border-radius:20px;padding:36px 32px;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden;text-decoration:none;display:block}
-.card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(79,70,229,0.04),transparent);opacity:0;transition:opacity 0.25s}
-.card:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 16px 48px rgba(79,70,229,0.12)}
-.card:hover::before{opacity:1}
-.card-icon{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;transition:all 0.25s}
-.card:hover .card-icon{transform:scale(1.08)}
-.card-icon svg{width:26px;height:26px}
-.card-tag{position:absolute;top:20px;right:20px;font-size:0.62rem;font-weight:700;padding:3px 10px;border-radius:8px}
-.card h2{font-size:1.2rem;font-weight:700;color:var(--ink);margin-bottom:8px}
-.card p{font-size:0.84rem;color:var(--ink-3);line-height:1.6;margin-bottom:16px}
-.card-examples{display:flex;flex-wrap:wrap;gap:6px}
-.card-ex{font-size:0.68rem;font-weight:600;padding:3px 8px;border-radius:6px;background:var(--bg);color:var(--ink-4);border:1px solid var(--border)}
-.card-arrow{position:absolute;bottom:28px;right:28px;width:32px;height:32px;border-radius:50%;background:var(--accent-light);display:flex;align-items:center;justify-content:center;transition:all 0.25s}
-.card:hover .card-arrow{background:var(--accent)}
-.card-arrow svg{width:14px;height:14px;stroke:var(--accent);transition:stroke 0.25s}
-.card:hover .card-arrow svg{stroke:white}
+/* PAGES */
+.pg{display:none;padding:20px;animation:fadeIn .25s ease}
+.pg.on{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.ph{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px}
+.pt{font-family:'Instrument Serif',serif;font-size:1.5rem;font-style:italic;color:var(--ink)}
+.ps{font-size:0.8rem;color:var(--ink-4);margin-top:2px}
 
-/* FOOTER NOTE */
-.footer-note{margin-top:40px;text-align:center;font-size:0.78rem;color:var(--ink-4);display:flex;align-items:center;gap:8px;justify-content:center}
-.footer-note svg{width:14px;height:14px;stroke:var(--ink-4)}
+/* STATS */
+.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.sc{background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:16px}
+.sc.hl{border-color:var(--accent-mid);background:var(--accent-light)}
+.sc-i{width:28px;height:28px;border-radius:6px;background:var(--bg);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.sc.hl .sc-i{background:#fff}
+.sc-i svg{width:14px;height:14px;stroke:var(--ink-3);fill:none;stroke-width:2}
+.sc.hl .sc-i svg{stroke:var(--accent)}
+.sc-v{font-size:1.4rem;font-weight:800;color:var(--ink);line-height:1;margin-bottom:3px}
+.sc.hl .sc-v{color:var(--accent)}
+.sc-l{font-size:0.62rem;color:var(--ink-4);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.sc-s{font-size:0.64rem;color:var(--ink-4)}
 
-@media(max-width:600px){
-  .cards{grid-template-columns:1fr}
-  .main{padding:32px 16px}
-  .header{margin-bottom:36px}
-}
+/* LAYOUT */
+.lay{display:grid;grid-template-columns:1fr 270px;gap:14px}
+
+/* CARDS */
+.cd{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px}
+.cd:last-child{margin-bottom:0}
+.cd-h{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cd-t{font-size:0.84rem;font-weight:700;color:var(--ink)}
+.cd-a{font-size:0.72rem;color:var(--accent);font-weight:600;background:none;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif}
+
+/* TABS */
+.tabs{display:flex;border-bottom:1px solid var(--border);padding:0 16px;overflow-x:auto;gap:0}
+.tab{padding:8px 10px;font-size:0.74rem;font-weight:600;color:var(--ink-4);cursor:pointer;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;background:none;font-family:'Plus Jakarta Sans',sans-serif;white-space:nowrap;transition:all .15s}
+.tab.on{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* TABLE */
+.th{display:grid;grid-template-columns:2fr 1.2fr .9fr .9fr 1fr;padding:8px 16px;background:var(--bg);border-bottom:1px solid var(--border)}
+.th span{font-size:0.58rem;font-weight:700;color:var(--ink-4);text-transform:uppercase;letter-spacing:.08em}
+.tr{display:grid;grid-template-columns:2fr 1.2fr .9fr .9fr 1fr;padding:10px 16px;border-bottom:1px solid var(--border);align-items:center;cursor:pointer;transition:background .1s}
+.tr:last-child{border-bottom:none}
+.tr:hover{background:var(--bg)}
+.d-name{font-size:0.78rem;font-weight:600;color:var(--ink)}
+.d-sub{font-size:0.65rem;color:var(--ink-4);margin-top:1px}
+.d-client{font-size:0.76rem;color:var(--ink-2)}
+.d-amt{font-size:0.78rem;font-weight:700;color:var(--ink)}
+.d-date{font-size:0.7rem;color:var(--ink-4)}
+
+/* BADGES */
+.bg{display:inline-flex;padding:2px 7px;border-radius:4px;font-size:0.6rem;font-weight:700;cursor:pointer;border:none;font-family:'Plus Jakarta Sans',sans-serif}
+.bg.paid{background:var(--green-bg);color:var(--green)}
+.bg.unpaid{background:var(--yellow-bg);color:var(--yellow)}
+.bg.sent{background:var(--blue-bg);color:var(--blue)}
+.bg.draft{background:var(--bg);color:var(--ink-4);border:1px solid var(--border)}
+.bg.quote{background:var(--purple-bg);color:var(--purple)}
+.bg.receipt{background:var(--green-bg);color:var(--green)}
+.bg.proforma{background:var(--yellow-bg);color:#92400e}
+
+/* SIDE */
+.side-c{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px}
+.side-c:last-child{margin-bottom:0}
+.side-t{font-size:0.82rem;font-weight:700;color:var(--ink);margin-bottom:12px}
+.side-r{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:0.76rem}
+.side-r:last-child{border-bottom:none}
+.side-l{color:var(--ink-3)}
+.side-v{font-weight:700;color:var(--ink)}
+.side-v.g{color:var(--green)}
+.side-v.r{color:var(--red)}
+.chart-box{height:110px;padding:4px 0}
+
+/* EMPTY */
+.empty{text-align:center;padding:36px 20px}
+.empty h3{font-size:0.88rem;font-weight:600;color:var(--ink-3);margin-bottom:5px}
+.empty p{font-size:0.76rem;color:var(--ink-4);margin-bottom:14px}
+.empty-btn{background:var(--accent);color:#fff;border:none;padding:8px 18px;border-radius:6px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer}
+
+/* UPGRADE BANNER */
+.upbanner{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 18px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));margin-bottom:16px}
+.upbanner strong{display:block;font-size:0.86rem;color:#fff;margin-bottom:2px}
+.upbanner span{font-size:0.74rem;color:rgba(255,255,255,.8)}
+.up-btn{background:#fff;color:var(--accent);border:none;padding:7px 14px;border-radius:6px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0}
+
+/* CLIENTS */
+.cl-th{display:grid;grid-template-columns:2fr 1.5fr 1fr .9fr;padding:8px 16px;background:var(--bg);border-bottom:1px solid var(--border)}
+.cl-th span{font-size:0.58rem;font-weight:700;color:var(--ink-4);text-transform:uppercase;letter-spacing:.08em}
+.cl-tr{display:grid;grid-template-columns:2fr 1.5fr 1fr .9fr;padding:11px 16px;border-bottom:1px solid var(--border);align-items:center}
+.cl-tr:last-child{border-bottom:none}
+.cl-av{width:26px;height:26px;border-radius:50%;background:var(--accent-light);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;margin-right:8px;flex-shrink:0}
+.cl-name{font-size:0.8rem;font-weight:600;color:var(--ink);display:flex;align-items:center}
+.cl-email{font-size:0.7rem;color:var(--ink-4)}
+.cl-nif{font-size:0.72rem;color:var(--ink-3)}
+.cl-acts{display:flex;gap:4px}
+.cl-btn{background:none;border:none;cursor:pointer;color:var(--ink-4);font-size:0.7rem;font-family:'Plus Jakarta Sans',sans-serif;padding:3px 7px;border-radius:4px;transition:all .15s}
+.cl-btn:hover{color:var(--accent);background:var(--accent-light)}
+.cl-btn.del:hover{color:var(--red);background:var(--red-bg)}
+
+/* SETTINGS */
+.set-sec{margin-bottom:24px}
+.set-head{font-size:0.8rem;font-weight:700;color:var(--ink);padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.set-r{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.set-r:last-child{border-bottom:none}
+.set-lbl{font-size:0.82rem;font-weight:500;color:var(--ink)}
+.set-sub{font-size:0.7rem;color:var(--ink-4);margin-top:2px}
+.set-in{border:1.5px solid var(--border);border-radius:7px;padding:8px 11px;font-size:0.82rem;color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;outline:none;transition:border-color .2s;width:220px;background:var(--white)}
+.set-in:focus{border-color:var(--accent)}
+.save-btn{background:var(--accent);color:#fff;border:none;padding:8px 18px;border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;font-weight:600;cursor:pointer}
+.save-btn:hover{background:var(--accent-2)}
+.del-btn{background:var(--red-bg);color:var(--red);border:1.5px solid var(--red);padding:8px 18px;border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;font-weight:600;cursor:pointer}
+.del-btn:hover{background:var(--red);color:#fff}
+.set-profile{display:flex;align-items:center;gap:14px;padding:16px;background:var(--accent-light);border-radius:10px;border:1px solid var(--accent-mid);margin-bottom:20px}
+.set-av-big{width:48px;height:48px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;flex-shrink:0}
+
+/* PLANS */
+.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:860px}
+.plan-cd{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:24px}
+.plan-cd.featured{border-color:var(--accent);box-shadow:0 8px 32px rgba(79,70,229,.1)}
+.plan-eyebrow{font-size:0.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.plan-tagline{font-family:'Instrument Serif',serif;font-style:italic;font-size:1.2rem;color:var(--ink);margin-bottom:12px}
+.plan-price{font-size:2.2rem;font-weight:800;line-height:1;margin-bottom:3px}
+.plan-period{font-size:0.72rem;color:var(--ink-4);margin-bottom:18px}
+.plan-list{list-style:none;margin-bottom:18px}
+.plan-list li{font-size:0.79rem;color:var(--ink-3);padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:7px;align-items:center}
+.plan-list li:last-child{border-bottom:none}
+.plan-list li .ck{font-weight:700}
+.plan-btn{width:100%;padding:10px;border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.84rem;font-weight:700;cursor:pointer;border:none;transition:all .15s}
+.plan-btn.curr{background:var(--bg);color:var(--ink-3)}
+.plan-btn.acc{background:var(--accent);color:#fff}
+.plan-btn.acc:hover{background:var(--accent-2)}
+.plan-btn.pur{background:var(--purple);color:#fff}
+.plan-btn.pur:hover{background:#6d28d9}
+
+/* ANALYTICS */
+.an-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.bch{height:170px}
+
+/* MODAL */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(3px)}
+.mo.open{opacity:1;pointer-events:all}
+.mo-box{background:var(--white);border-radius:12px;width:100%;max-width:420px;padding:28px;position:relative;transform:translateY(10px);transition:transform .25s;box-shadow:0 20px 60px rgba(0,0,0,.12)}
+.mo.open .mo-box{transform:none}
+.mo-x{position:absolute;top:12px;right:14px;background:none;border:none;color:var(--ink-4);font-size:1.2rem;cursor:pointer}
+.mo-title{font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:16px}
+.mf{margin-bottom:10px}
+.mf label{display:block;font-size:0.66rem;font-weight:700;color:var(--ink-2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.mf input{width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.84rem;color:var(--ink);outline:none;transition:all .2s}
+.mf input:focus{border-color:var(--accent)}
+.mfrow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mo-btns{display:flex;gap:8px;margin-top:16px}
+.mo-btn{flex:1;padding:10px;border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.84rem;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.mo-btn.p{background:var(--accent);color:#fff}
+.mo-btn.p:hover{background:var(--accent-2)}
+.mo-btn.s{background:var(--bg);color:var(--ink-2);border:1.5px solid var(--border)}
+.mo-btn.s:hover{border-color:var(--accent);color:var(--accent)}
+
+/* TOAST */
+.toast{position:fixed;bottom:18px;right:18px;padding:9px 16px;border-radius:8px;font-size:0.78rem;font-weight:500;z-index:9999;transform:translateY(60px);transition:transform .3s;box-shadow:0 8px 24px rgba(0,0,0,.12);font-family:'Plus Jakarta Sans',sans-serif}
+.toast.show{transform:translateY(0)}
+.toast.ok{background:var(--green);color:#fff}
+.toast.err{background:var(--red);color:#fff}
+.toast.inf{background:var(--ink);color:#fff}
+
+/* PENDING ITEM */
+.pend-r{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
+.pend-r:last-child{border-bottom:none}
+.pend-doc{font-size:0.76rem;font-weight:600;color:var(--ink)}
+.pend-cl{font-size:0.66rem;color:var(--ink-4)}
+.pend-amt{font-size:0.78rem;font-weight:700;color:var(--yellow)}
+.pend-days{font-size:0.62rem;color:var(--ink-4)}
+
+@media(max-width:1000px){.lay{grid-template-columns:1fr}.an-grid{grid-template-columns:1fr}.plans-grid{grid-template-columns:1fr}}
+@media(max-width:800px){.sb{display:none}.main{margin-left:0}.sg{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
 
-<nav>
-  <a href="index.html" class="nav-logo">
-    <div class="nav-logo-icon"><svg fill="none" viewBox="0 0 120 120"><path d="M60 32 L26 88" stroke="white" stroke-opacity="0.5" stroke-width="18" stroke-linecap="round"/><path d="M60 32 L94 88" stroke="white" stroke-width="18" stroke-linecap="round"/></svg></div>
-    <span class="nav-logo-text">Invoicely</span>
-  </a>
-  <a href="index.html" class="nav-back">
-    <svg fill="none" viewBox="0 0 24 24" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-    Volver al inicio
-  </a>
-</nav>
+<div class="loading" id="ld">
+  <div class="ld-logo">Invoicely</div>
+  <div class="ld-bar"><div class="ld-fill"></div></div>
+</div>
 
-<div class="main">
-  <div class="header">
-    <div class="header-eyebrow">Nuevo documento</div>
-    <h1>¿Qué quieres crear?</h1>
-    <p>Elige el tipo de documento. Lo rellenas, lo previsualizas<br>y lo descargas en PDF por solo €0,50.</p>
-    <div class="price-badge">✓ €0,50 por descarga · Sin cuenta · Sin suscripción</div>
+<!-- SIDEBAR -->
+<aside class="sb">
+  <div class="sb-top">
+    <div class="sb-icon"><svg fill="none" viewBox="0 0 120 120"><path d="M60 32L26 88" stroke="white" stroke-opacity=".5" stroke-width="18" stroke-linecap="round"/><path d="M60 32L94 88" stroke="white" stroke-width="18" stroke-linecap="round"/></svg></div>
+    <div class="sb-wordmark">Invoicely</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-lbl">Panel</div>
+    <button class="ni on" id="ni-dash" onclick="go('dash',this)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Resumen</button>
+    <button class="ni" id="ni-reports" onclick="go('reports',this)"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Informes</button>
+    <div class="nav-lbl">Documentos</div>
+    <button class="ni" id="ni-invoices" onclick="go('invoices',this)"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Facturas<span class="nbadge" id="inv-badge" style="display:none">0</span></button>
+    <button class="ni" id="ni-quotes" onclick="go('quotes',this)"><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Presupuestos</button>
+    <button class="ni" id="ni-receipts" onclick="go('receipts',this)"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Recibos</button>
+    <button class="ni" id="ni-proforma" onclick="go('proforma',this)"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/></svg>Proforma</button>
+    <button class="ni ni-new" onclick="location.href='builder.html'"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nuevo documento</button>
+    <div class="nav-lbl">Gestión</div>
+    <button class="ni" id="ni-clients" onclick="go('clients',this)"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Clientes</button>
+    <button class="ni" id="ni-settings" onclick="go('settings',this)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Configuración</button>
+    <button class="ni" id="ni-plans" onclick="go('plans',this)"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Planes</button>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-user"><div class="av" id="sbav">?</div><div class="sb-info"><div class="n" id="sbn">—</div><div class="e" id="sbe">—</div><div class="plan-tag" id="sbt">Gratis</div></div></div>
+    <button class="logout-btn" onclick="doLogout()"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>Cerrar sesión</button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div class="tb-title" id="tb-title">Resumen</div>
+    <button class="tbtn s" onclick="go('settings',null)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Ajustes</button>
+    <button class="tbtn p" onclick="location.href='builder.html'"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nuevo documento</button>
   </div>
 
-  <div class="cards">
-
-    <!-- FACTURA -->
-    <a class="card" href="builder.html?type=invoice">
-      <div class="card-tag" style="background:var(--accent-light);color:var(--accent)">Más popular</div>
-      <div class="card-icon" style="background:var(--accent-light)">
-        <svg fill="none" stroke="#4f46e5" viewBox="0 0 24 24" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+  <!-- RESUMEN -->
+  <div class="pg on" id="pg-dash">
+    <div class="ph"><div><div class="pt">Resumen</div><div class="ps" id="date-str">Tu actividad de un vistazo</div></div></div>
+    <div id="up-banner" style="display:none"><div class="upbanner"><div><strong>Actualiza tu plan</strong><span>Desbloquea clientes ilimitados, informes y más desde €4,99/mes.</span></div><button class="up-btn" onclick="go('plans',null)">Ver planes</button></div></div>
+    <div class="sg">
+      <div class="sc hl"><div class="sc-i"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg></div><div class="sc-v" id="stat-rev">€0</div><div class="sc-l">Ingresos totales</div><div class="sc-s" id="stat-rev-s">Facturas cobradas</div></div>
+      <div class="sc"><div class="sc-i"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="sc-v" id="stat-month">€0</div><div class="sc-l">Este mes</div><div class="sc-s">Ingresos cobrados</div></div>
+      <div class="sc"><div class="sc-i"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="sc-v" id="stat-docs">0</div><div class="sc-l">Documentos</div><div class="sc-s" id="stat-docs-s">Total</div></div>
+      <div class="sc"><div class="sc-i"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="sc-v" id="stat-pend">€0</div><div class="sc-l">Pendiente</div><div class="sc-s" id="stat-pend-s">Por cobrar</div></div>
+    </div>
+    <div class="lay">
+      <div>
+        <div class="cd">
+          <div class="cd-h"><div class="cd-t">Documentos recientes</div><button class="cd-a" onclick="location.href='builder.html'">+ Nuevo</button></div>
+          <div class="tabs">
+            <button class="tab on" onclick="filterDocs('all',this)">Todos</button>
+            <button class="tab" onclick="filterDocs('invoice',this)">Facturas</button>
+            <button class="tab" onclick="filterDocs('quote',this)">Presupuestos</button>
+            <button class="tab" onclick="filterDocs('receipt',this)">Recibos</button>
+            <button class="tab" onclick="filterDocs('paid',this)">Cobradas</button>
+            <button class="tab" onclick="filterDocs('unpaid',this)">Pendientes</button>
+          </div>
+          <div id="docs-table"></div>
+        </div>
       </div>
-      <h2>Factura</h2>
-      <p>Cobra tus servicios con una factura profesional. Diseño clásico, moderno o mínimal.</p>
-      <div class="card-examples">
-        <span class="card-ex">Diseño web</span>
-        <span class="card-ex">Consultoría</span>
-        <span class="card-ex">Fotografía</span>
-        <span class="card-ex">Servicios</span>
+      <div>
+        <div class="side-c">
+          <div class="side-t">Este mes</div>
+          <div class="side-r"><span class="side-l">Ingresos cobrados</span><span class="side-v g" id="m-rev">€0</span></div>
+          <div class="side-r"><span class="side-l">Facturas emitidas</span><span class="side-v" id="m-inv">0</span></div>
+          <div class="side-r"><span class="side-l">Presupuestos</span><span class="side-v" id="m-quo">0</span></div>
+          <div class="side-r"><span class="side-l">Pendiente de cobro</span><span class="side-v r" id="m-pend">€0</span></div>
+          <div class="side-r"><span class="side-l">Facturas cobradas</span><span class="side-v g" id="m-paid">0</span></div>
+        </div>
+        <div class="side-c"><div class="side-t">Ingresos (6 meses)</div><div class="chart-box"><canvas id="mini-chart"></canvas></div></div>
+        <div class="side-c"><div class="side-t">Pendiente de cobro</div><div id="pend-list"></div></div>
       </div>
-      <div class="card-arrow">
-        <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-      </div>
-    </a>
-
-    <!-- PRESUPUESTO -->
-    <a class="card" href="builder.html?type=quote">
-      <div class="card-tag" style="background:#1e293b;color:#c9a84c">Premium</div>
-      <div class="card-icon" style="background:#eef2ff">
-        <svg fill="none" stroke="#4f46e5" viewBox="0 0 24 24" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/><polyline points="9 12 11 14 15 10"/></svg>
-      </div>
-      <h2>Presupuesto</h2>
-      <p>Envía una propuesta profesional antes de empezar el trabajo. Incluye firma del cliente.</p>
-      <div class="card-examples">
-        <span class="card-ex">Proyectos</span>
-        <span class="card-ex">Propuestas</span>
-        <span class="card-ex">Reformas</span>
-        <span class="card-ex">Marketing</span>
-      </div>
-      <div class="card-arrow">
-        <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-      </div>
-    </a>
-
-    <!-- RECIBO -->
-    <a class="card" href="builder.html?type=receipt">
-      <div class="card-tag" style="background:var(--green-bg);color:var(--green)">Pago confirmado</div>
-      <div class="card-icon" style="background:var(--green-bg)">
-        <svg fill="none" stroke="#16a34a" viewBox="0 0 24 24" stroke-width="2"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
-      </div>
-      <h2>Recibo</h2>
-      <p>Confirma que has recibido el pago. Diseño limpio con sello de pago confirmado.</p>
-      <div class="card-examples">
-        <span class="card-ex">Transferencia</span>
-        <span class="card-ex">Efectivo</span>
-        <span class="card-ex">Tarjeta</span>
-        <span class="card-ex">Bizum</span>
-      </div>
-      <div class="card-arrow">
-        <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-      </div>
-    </a>
-
-    <!-- PROFORMA -->
-    <a class="card" href="builder.html?type=proforma">
-      <div class="card-tag" style="background:var(--yellow-bg);color:var(--yellow)">Muy usado en España</div>
-      <div class="card-icon" style="background:var(--yellow-bg)">
-        <svg fill="none" stroke="#d97706" viewBox="0 0 24 24" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="10" y2="17"/></svg>
-      </div>
-      <h2>Proforma</h2>
-      <p>Factura previa no vinculante. Muy usada en España para anticipos y pedidos de importación.</p>
-      <div class="card-examples">
-        <span class="card-ex">Anticipos</span>
-        <span class="card-ex">Importación</span>
-        <span class="card-ex">Pedidos</span>
-        <span class="card-ex">Estimaciones</span>
-      </div>
-      <div class="card-arrow">
-        <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-      </div>
-    </a>
-
+    </div>
   </div>
 
-  <div class="footer-note">
-    <svg fill="none" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-    Pago seguro con Stripe · Apple Pay aceptado · Tus datos no se guardan
+  <!-- INFORMES -->
+  <div class="pg" id="pg-reports">
+    <div class="ph"><div><div class="pt">Informes</div><div class="ps">Rendimiento de tu negocio</div></div></div>
+    <div class="sg">
+      <div class="sc hl"><div class="sc-i"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg></div><div class="sc-v" id="r-rev">€0</div><div class="sc-l">Ingresos totales</div><div class="sc-s">Todo el tiempo</div></div>
+      <div class="sc"><div class="sc-i"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div class="sc-v" id="r-paid">0</div><div class="sc-l">Facturas cobradas</div><div class="sc-s">Todo el tiempo</div></div>
+      <div class="sc"><div class="sc-i"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="sc-v" id="r-unpaid">0</div><div class="sc-l">Sin cobrar</div><div class="sc-s">Requieren atención</div></div>
+      <div class="sc"><div class="sc-i"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="sc-v" id="r-cl">0</div><div class="sc-l">Clientes activos</div><div class="sc-s">Con facturas</div></div>
+    </div>
+    <div class="an-grid">
+      <div class="cd"><div class="cd-h"><div class="cd-t">Ingresos mensuales</div></div><div style="padding:16px"><div class="bch"><canvas id="big-chart"></canvas></div></div></div>
+      <div class="cd"><div class="cd-h"><div class="cd-t">Tipos de documento</div></div><div style="padding:16px"><div style="height:170px"><canvas id="pie-chart"></canvas></div></div></div>
+    </div>
+    <div class="cd"><div class="cd-h"><div class="cd-t">Mejores clientes</div></div><div id="top-clients" style="padding:16px"></div></div>
+  </div>
+
+  <!-- FACTURAS -->
+  <div class="pg" id="pg-invoices">
+    <div class="ph"><div><div class="pt">Facturas</div><div class="ps">Todas tus facturas</div></div><button class="tbtn p" onclick="location.href='builder.html'">+ Nueva factura</button></div>
+    <div class="cd"><div id="t-invoices"></div></div>
+  </div>
+
+  <!-- PRESUPUESTOS -->
+  <div class="pg" id="pg-quotes">
+    <div class="ph"><div><div class="pt">Presupuestos</div><div class="ps">Tus propuestas comerciales</div></div><button class="tbtn p" onclick="location.href='builder.html?type=quote'">+ Nuevo presupuesto</button></div>
+    <div class="cd"><div id="t-quotes"></div></div>
+  </div>
+
+  <!-- RECIBOS -->
+  <div class="pg" id="pg-receipts">
+    <div class="ph"><div><div class="pt">Recibos</div><div class="ps">Confirmaciones de pago</div></div><button class="tbtn p" onclick="location.href='builder.html?type=receipt'">+ Nuevo recibo</button></div>
+    <div class="cd"><div id="t-receipts"></div></div>
+  </div>
+
+  <!-- PROFORMA -->
+  <div class="pg" id="pg-proforma">
+    <div class="ph"><div><div class="pt">Proforma</div><div class="ps">Facturas proforma</div></div><button class="tbtn p" onclick="location.href='builder.html?type=proforma'">+ Nueva proforma</button></div>
+    <div class="cd"><div id="t-proforma"></div></div>
+  </div>
+
+  <!-- CLIENTES -->
+  <div class="pg" id="pg-clients">
+    <div class="ph"><div><div class="pt">Clientes</div><div class="ps">Gestiona tus clientes guardados</div></div><button class="tbtn p" onclick="openCM()">+ Añadir cliente</button></div>
+    <div class="cd"><div class="cl-th"><span>Cliente</span><span>Email</span><span>NIF</span><span>Acciones</span></div><div id="clients-table"></div></div>
+  </div>
+
+  <!-- CONFIGURACIÓN -->
+  <div class="pg" id="pg-settings">
+    <div class="ph"><div><div class="pt">Configuración</div><div class="ps">Datos de empresa y preferencias</div></div></div>
+    <div class="cd" style="overflow:visible;padding:24px">
+      <div class="set-profile"><div class="set-av-big" id="set-av">?</div><div><div style="font-size:1rem;font-weight:700;color:var(--ink)" id="set-name">—</div><div style="font-size:0.8rem;color:var(--ink-3);margin-top:2px" id="set-email">—</div></div></div>
+      <div class="set-sec">
+        <div class="set-head">Datos de empresa</div>
+        <div class="set-r"><div><div class="set-lbl">Nombre / Empresa</div></div><input class="set-in" id="s-name" placeholder="Tu empresa"></div>
+        <div class="set-r"><div><div class="set-lbl">NIF / CIF</div></div><input class="set-in" id="s-nif" placeholder="B-12345678"></div>
+        <div class="set-r"><div><div class="set-lbl">Email</div></div><input class="set-in" id="s-email" placeholder="facturas@empresa.com"></div>
+        <div class="set-r"><div><div class="set-lbl">Teléfono</div></div><input class="set-in" id="s-phone" placeholder="+34 600 000 000"></div>
+        <div class="set-r"><div><div class="set-lbl">Dirección</div></div><input class="set-in" id="s-addr" placeholder="Calle Mayor, 1"></div>
+        <div class="set-r"><div><div class="set-lbl">Ciudad</div></div><input class="set-in" id="s-city" placeholder="Madrid"></div>
+      </div>
+      <div class="set-sec">
+        <div class="set-head">Preferencias de facturación</div>
+        <div class="set-r"><div><div class="set-lbl">Moneda</div></div><select class="set-in" id="s-cur"><option value="€">€ Euro</option><option value="$">$ Dólar</option><option value="£">£ Libra</option></select></div>
+        <div class="set-r"><div><div class="set-lbl">IVA por defecto (%)</div></div><input class="set-in" id="s-tax" type="number" placeholder="21"></div>
+        <div class="set-r"><div><div class="set-lbl">IRPF por defecto (%)</div></div><input class="set-in" id="s-irpf" type="number" placeholder="15"></div>
+      </div>
+      <div class="set-sec">
+        <div class="set-head">Plan</div>
+        <div class="set-r"><div><div class="set-lbl">Plan actual</div><div class="set-sub" id="s-plan-lbl">Gratis — 3 descargas/mes</div></div><button class="save-btn" onclick="go('plans',null)">Ver planes</button></div>
+      </div>
+      <div class="set-sec">
+        <div class="set-head">Zona de peligro</div>
+        <div class="set-r"><div><div class="set-lbl">Cerrar sesión</div><div class="set-sub">Salir en este dispositivo</div></div><button class="del-btn" onclick="doLogout()">Cerrar sesión</button></div>
+      </div>
+      <div style="display:flex;justify-content:flex-end"><button class="save-btn" onclick="saveSettings()">Guardar cambios</button></div>
+    </div>
+  </div>
+
+  <!-- PLANES -->
+  <div class="pg" id="pg-plans">
+    <div class="ph"><div><div class="pt">Planes</div><div class="ps">Elige el plan que mejor se adapta a tu negocio</div></div></div>
+    <div class="plans-grid">
+      <div class="plan-cd">
+        <div class="plan-eyebrow" style="color:var(--ink-4)">Gratis</div>
+        <div class="plan-tagline">Para empezar</div>
+        <div class="plan-price" style="color:var(--ink)">€0</div>
+        <div class="plan-period">Para siempre</div>
+        <ul class="plan-list">
+          <li><span class="ck" style="color:var(--accent)">✓</span>3 descargas al mes</li>
+          <li><span class="ck" style="color:var(--accent)">✓</span>Todos los tipos de documento</li>
+          <li><span class="ck" style="color:var(--accent)">✓</span>5 clientes guardados</li>
+          <li><span style="color:var(--ink-4)">—</span>Informes avanzados</li>
+          <li><span style="color:var(--ink-4)">—</span>Logo en documentos</li>
+        </ul>
+        <button class="plan-btn curr">Plan actual</button>
+      </div>
+      <div class="plan-cd featured">
+        <div class="plan-eyebrow" style="color:var(--accent)">Pro</div>
+        <div class="plan-tagline">Para autónomos</div>
+        <div class="plan-price" style="color:var(--accent)">€4,99</div>
+        <div class="plan-period">al mes · Sin permanencia</div>
+        <ul class="plan-list">
+          <li><span class="ck" style="color:var(--accent)">✓</span>Descargas ilimitadas</li>
+          <li><span class="ck" style="color:var(--accent)">✓</span>Clientes ilimitados</li>
+          <li><span class="ck" style="color:var(--accent)">✓</span>Informes completos</li>
+          <li><span class="ck" style="color:var(--accent)">✓</span>Logo en documentos</li>
+          <li><span class="ck" style="color:var(--accent)">✓</span>Soporte prioritario</li>
+        </ul>
+        <button class="plan-btn acc" onclick="subPro()">Suscribirse — €4,99/mes</button>
+      </div>
+      <div class="plan-cd">
+        <div class="plan-eyebrow" style="color:var(--purple)">Business</div>
+        <div class="plan-tagline">Para empresas</div>
+        <div class="plan-price" style="color:var(--ink)">€15,99</div>
+        <div class="plan-period">al mes · Sin permanencia</div>
+        <ul class="plan-list">
+          <li><span class="ck" style="color:var(--accent)">✓</span>Todo lo del plan Pro</li>
+          <li><span class="ck" style="color:var(--accent)">✓</span>Múltiples empresas</li>
+          <li><span class="ck" style="color:var(--accent)">✓</span>Hasta 5 usuarios</li>
+          <li><span class="ck" style="color:var(--accent)">✓</span>Exportar informes</li>
+          <li><span class="ck" style="color:var(--accent)">✓</span>Soporte prioritario</li>
+        </ul>
+        <button class="plan-btn pur" onclick="subBiz()">Suscribirse — €15,99/mes</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- CLIENT MODAL -->
+<div class="mo" id="cm">
+  <div class="mo-box">
+    <button class="mo-x" onclick="closeCM()">×</button>
+    <div class="mo-title" id="cm-title">Añadir cliente</div>
+    <input type="hidden" id="cm-id">
+    <div class="mfrow"><div class="mf"><label>Nombre / Empresa</label><input id="cm-name" placeholder="Acme S.L."></div><div class="mf"><label>NIF / CIF</label><input id="cm-nif" placeholder="A-87654321"></div></div>
+    <div class="mf"><label>Email</label><input id="cm-email" type="email" placeholder="cliente@empresa.com"></div>
+    <div class="mfrow"><div class="mf"><label>Teléfono</label><input id="cm-phone" placeholder="+34 600 000 000"></div><div class="mf"><label>Ciudad</label><input id="cm-city" placeholder="Barcelona"></div></div>
+    <div class="mf"><label>Dirección</label><input id="cm-addr" placeholder="Calle Provença, 123"></div>
+    <div class="mfrow"><div class="mf"><label>Código postal</label><input id="cm-postal" placeholder="08001"></div><div class="mf"><label>País</label><input id="cm-country" placeholder="España" value="España"></div></div>
+    <div class="mo-btns"><button class="mo-btn s" onclick="closeCM()">Cancelar</button><button class="mo-btn p" id="cm-save" onclick="saveClient()">Guardar cliente</button></div>
   </div>
 </div>
 
+<div class="toast" id="toast"></div>
+
+<script>
+var SB_URL='https://ihrloxoilbutrraddynw.supabase.co';
+var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlocmxveG9pbGJ1dHJyYWRkeW53Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3NTA1MzIsImV4cCI6MjA5ODMyNjUzMn0.Br0ht6CwfJEwmakTc9_qL9B0uauBrBq5b9cLrLVx3js';
+var sb=window.supabase.createClient(SB_URL,SB_KEY);
+var user=null,profile=null,docs=[],clients=[],filtered=[];
+var charts={};
+var PAGE_TITLES={dash:'Resumen',reports:'Informes',invoices:'Facturas',quotes:'Presupuestos',receipts:'Recibos',proforma:'Proforma',clients:'Clientes',settings:'Configuración',plans:'Planes'};
+
+sb.auth.getSession().then(function(r){
+  if(!r.data||!r.data.session){location.href='login.html';return;}
+  user=r.data.session.user;
+  init();
+});
+sb.auth.onAuthStateChange(function(e){if(e==='SIGNED_OUT')location.href='login.html';});
+function doLogout(){sb.auth.signOut();}
+
+function init(){
+  var h=new Date().getHours();
+  var mn=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  var now=new Date();
+  document.getElementById('date-str').textContent=now.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  sb.from('profiles').select('*').eq('id',user.id).single().then(function(r){
+    profile=r.data||{};
+    var name=profile.full_name||profile.company_name||user.email.split('@')[0];
+    var ini=name.charAt(0).toUpperCase();
+    ['sbav','set-av'].forEach(function(id){var e=document.getElementById(id);if(e)e.textContent=ini;});
+    document.getElementById('sbn').textContent=name;
+    document.getElementById('sbe').textContent=user.email;
+    document.getElementById('set-name').textContent=profile.company_name||name;
+    document.getElementById('set-email').textContent=user.email;
+    var plan=profile.plan||'free';
+    var pt=document.getElementById('sbt');
+    if(plan==='pro'){pt.textContent='Pro';pt.className='plan-tag pro';}
+    else if(plan==='business'){pt.textContent='Business';pt.className='plan-tag biz';}
+    if(plan==='free')document.getElementById('up-banner').style.display='block';
+    document.getElementById('s-plan-lbl').textContent=plan==='pro'?'Pro — Descargas ilimitadas':plan==='business'?'Business — Todo incluido':'Gratis — 3 descargas/mes';
+    // Settings prefill
+    document.getElementById('s-name').value=profile.company_name||'';
+    document.getElementById('s-nif').value=profile.nif||'';
+    document.getElementById('s-email').value=profile.email||user.email;
+    document.getElementById('s-phone').value=profile.phone||'';
+    document.getElementById('s-addr').value=profile.address||'';
+    document.getElementById('s-city').value=profile.city||'';
+    if(profile.data){
+      if(profile.data.currency)document.getElementById('s-cur').value=profile.data.currency;
+      if(profile.data.tax)document.getElementById('s-tax').value=profile.data.tax;
+      if(profile.data.irpf)document.getElementById('s-irpf').value=profile.data.irpf;
+    }
+    loadDocs();loadClients();
+  });
+}
+
+function go(id,el){
+  document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
+  document.getElementById('pg-'+id).classList.add('on');
+  document.querySelectorAll('.ni').forEach(function(i){i.classList.remove('on');});
+  if(el)el.classList.add('on');
+  else{var ni=document.getElementById('ni-'+id);if(ni)ni.classList.add('on');}
+  document.getElementById('tb-title').textContent=PAGE_TITLES[id]||'';
+  if(id==='reports')renderReports();
+}
+
+function loadDocs(){
+  sb.from('documents').select('*').eq('user_id',user.id).order('created_at',{ascending:false}).then(function(r){
+    docs=r.data||[];filtered=docs;
+    renderAll();
+    setTimeout(function(){document.getElementById('ld').classList.add('gone');},400);
+  }).catch(function(){
+    docs=[];filtered=[];renderAll();
+    setTimeout(function(){document.getElementById('ld').classList.add('gone');},400);
+  });
+}
+
+function loadClients(){
+  sb.from('clients').select('*').eq('user_id',user.id).order('name').then(function(r){
+    clients=r.data||[];renderClients();
+  });
+}
+
+function renderAll(){
+  renderStats();
+  renderTable(filtered,'docs-table');
+  renderTable(docs.filter(function(d){return d.type==='invoice'||!d.type;}),'t-invoices');
+  renderTable(docs.filter(function(d){return d.type==='quote';}),'t-quotes');
+  renderTable(docs.filter(function(d){return d.type==='receipt';}),'t-receipts');
+  renderTable(docs.filter(function(d){return d.type==='proforma';}),'t-proforma');
+  renderMiniChart();renderPending();renderMonthSide();
+  var inv=docs.filter(function(d){return d.type==='invoice'||!d.type;}).length;
+  var b=document.getElementById('inv-badge');
+  if(inv>0){b.textContent=inv;b.style.display='block';}else{b.style.display='none';}
+}
+
+function renderStats(){
+  var paid=docs.filter(function(d){return d.status==='paid';});
+  var unpaid=docs.filter(function(d){return(d.type==='invoice'||!d.type)&&(d.status==='unpaid'||d.status==='sent');});
+  var rev=paid.reduce(function(s,d){return s+(parseFloat(d.total)||0);},0);
+  var pend=unpaid.reduce(function(s,d){return s+(parseFloat(d.total)||0);},0);
+  var now=new Date();
+  var tm=paid.filter(function(d){var dt=new Date(d.updated_at||d.created_at);return dt.getMonth()===now.getMonth()&&dt.getFullYear()===now.getFullYear();});
+  var mrev=tm.reduce(function(s,d){return s+(parseFloat(d.total)||0);},0);
+  document.getElementById('stat-rev').textContent='€'+rev.toFixed(2);
+  document.getElementById('stat-month').textContent='€'+mrev.toFixed(2);
+  document.getElementById('stat-docs').textContent=docs.length;
+  document.getElementById('stat-pend').textContent='€'+pend.toFixed(2);
+  document.getElementById('stat-rev-s').textContent=paid.length+' factura'+(paid.length!==1?'s':'')+' cobrada'+(paid.length!==1?'s':'');
+  document.getElementById('stat-pend-s').textContent=unpaid.length+' pendiente'+(unpaid.length!==1?'s':'');
+  document.getElementById('stat-docs-s').textContent=docs.filter(function(d){return d.type==='invoice'||!d.type;}).length+' fact. · '+docs.filter(function(d){return d.type==='quote';}).length+' pres.';
+}
+
+function renderMonthSide(){
+  var now=new Date();
+  var m=docs.filter(function(d){var dt=new Date(d.created_at);return dt.getMonth()===now.getMonth()&&dt.getFullYear()===now.getFullYear();});
+  var mp=m.filter(function(d){return d.status==='paid';});
+  var mr=mp.reduce(function(s,d){return s+(parseFloat(d.total)||0);},0);
+  var mpd=m.filter(function(d){return d.status==='unpaid'||d.status==='sent';});
+  var mpa=mpd.reduce(function(s,d){return s+(parseFloat(d.total)||0);},0);
+  document.getElementById('m-rev').textContent='€'+mr.toFixed(2);
+  document.getElementById('m-inv').textContent=m.filter(function(d){return d.type==='invoice'||!d.type;}).length;
+  document.getElementById('m-quo').textContent=m.filter(function(d){return d.type==='quote';}).length;
+  document.getElementById('m-pend').textContent='€'+mpa.toFixed(2);
+  document.getElementById('m-paid').textContent=mp.length;
+}
+
+function filterDocs(type,btn){
+  document.querySelectorAll('#pg-dash .tab').forEach(function(t){t.classList.remove('on');});
+  btn.classList.add('on');
+  if(type==='all')filtered=docs;
+  else if(type==='paid')filtered=docs.filter(function(d){return d.status==='paid';});
+  else if(type==='unpaid')filtered=docs.filter(function(d){return d.status==='unpaid'||d.status==='sent';});
+  else filtered=docs.filter(function(d){return d.type===type||(type==='invoice'&&!d.type);});
+  renderTable(filtered,'docs-table');
+}
+
+function renderTable(list,tid){
+  var el=document.getElementById(tid);if(!el)return;
+  if(!list.length){el.innerHTML='<div class="empty"><h3>Sin documentos</h3><p>Crea tu primer documento para empezar</p><button class="empty-btn" onclick="location.href=\'builder.html\'">Crear documento</button></div>';return;}
+  var h='<div class="th"><span>Documento</span><span>Cliente</span><span>Importe</span><span>Fecha</span><span>Estado</span></div>';
+  list.forEach(function(d){
+    var t=d.type||'invoice',bc,bt;
+    if(t==='receipt'){bc='receipt';bt='Recibo';}
+    else if(t==='proforma'){bc='proforma';bt='Proforma';}
+    else if(t==='quote'){bc='quote';bt='Presupuesto';}
+    else if(d.status==='paid'){bc='paid';bt='Cobrada';}
+    else if(d.status==='sent'){bc='sent';bt='Enviada';}
+    else if(d.status==='draft'){bc='draft';bt='Borrador';}
+    else{bc='unpaid';bt='Pendiente';}
+    var date=d.created_at?new Date(d.created_at).toLocaleDateString('es-ES',{day:'numeric',month:'short'}):'—';
+    h+='<div class="tr"><div><div class="d-name">'+(d.doc_number||'—')+'</div><div class="d-sub">'+(d.title||'Sin título')+'</div></div>'
+      +'<div class="d-client">'+(d.client_name||'—')+'</div>'
+      +'<div class="d-amt">€'+(parseFloat(d.total)||0).toFixed(2)+'</div>'
+      +'<div class="d-date">'+date+'</div>'
+      +'<div style="display:flex;align-items:center;gap:4px">'
+      +'<button class="bg '+bc+'" onclick="event.stopPropagation();cycleStatus(\''+d.id+'\',\''+d.status+'\',\''+t+'\')">'+bt+'</button>'
+      +'<button onclick="event.stopPropagation();delDoc(\''+d.id+'\')" style="background:none;border:none;cursor:pointer;color:var(--ink-4);line-height:0;padding:3px;border-radius:4px" onmouseover="this.style.color=\'var(--red)\'" onmouseout="this.style.color=\'var(--ink-4)\'">'
+      +'<svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M9 6V4h6v2"/></svg>'
+      +'</button></div></div>';
+  });
+  el.innerHTML=h;
+}
+
+function cycleStatus(id,status,type){
+  if(type==='quote'||type==='receipt'||type==='proforma')return;
+  var order=['draft','sent','paid','unpaid'];
+  var next=order[(order.indexOf(status)+1)%order.length];
+  sb.from('documents').update({status:next,updated_at:new Date().toISOString()}).eq('id',id).eq('user_id',user.id).then(function(){
+    var d=docs.find(function(x){return x.id===id;});if(d){d.status=next;}
+    renderAll();
+  });
+}
+
+function delDoc(id){
+  if(!confirm('¿Eliminar este documento?'))return;
+  sb.from('documents').delete().eq('id',id).eq('user_id',user.id).then(function(){
+    docs=docs.filter(function(d){return d.id!==id;});
+    filtered=filtered.filter(function(d){return d.id!==id;});
+    renderAll();toast('Documento eliminado.','inf');
+  });
+}
+
+function renderPending(){
+  var el=document.getElementById('pend-list');
+  var p=docs.filter(function(d){return(d.type==='invoice'||!d.type)&&(d.status==='unpaid'||d.status==='sent');}).slice(0,5);
+  if(!p.length){el.innerHTML='<p style="font-size:0.76rem;color:var(--ink-4);text-align:center;padding:10px 0">Sin facturas pendientes</p>';return;}
+  el.innerHTML=p.map(function(d){
+    var days=Math.floor((new Date()-new Date(d.created_at||Date.now()))/86400000);
+    return '<div class="pend-r"><div><div class="pend-doc">'+(d.doc_number||'—')+'</div><div class="pend-cl">'+(d.client_name||'—')+'</div></div>'
+      +'<div style="text-align:right"><div class="pend-amt">€'+(parseFloat(d.total)||0).toFixed(2)+'</div>'
+      +'<div class="pend-days" style="color:'+(days>14?'var(--red)':'var(--ink-4)')+'">'+days+'d</div></div></div>';
+  }).join('');
+}
+
+function renderMiniChart(){
+  var mn=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  var now=new Date(),data=new Array(6).fill(0);
+  docs.filter(function(d){return d.status==='paid';}).forEach(function(d){
+    var dt=new Date(d.updated_at||d.created_at);
+    var diff=((now.getMonth()-dt.getMonth())+12+(now.getFullYear()-dt.getFullYear())*12)%12;
+    if(diff<6)data[5-diff]+=(parseFloat(d.total)||0);
+  });
+  var lbl=[];for(var i=5;i>=0;i--)lbl.push(mn[(now.getMonth()-i+12)%12]);
+  var ctx=document.getElementById('mini-chart').getContext('2d');
+  if(charts.mini)charts.mini.destroy();
+  charts.mini=new Chart(ctx,{type:'bar',data:{labels:lbl,datasets:[{data:data,backgroundColor:data.map(function(v,i){return i===5?'rgba(79,70,229,.85)':'rgba(79,70,229,.2)';}),borderRadius:3,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return'€'+c.raw.toFixed(2);}}}},scales:{y:{display:false,beginAtZero:true},x:{grid:{display:false},ticks:{font:{size:8},color:'#9ca3af'}}}}});
+}
+
+function renderReports(){
+  var paid=docs.filter(function(d){return d.status==='paid';});
+  var unpaid=docs.filter(function(d){return(d.type==='invoice'||!d.type)&&(d.status==='unpaid'||d.status==='sent');});
+  var rev=paid.reduce(function(s,d){return s+(parseFloat(d.total)||0);},0);
+  var cls=new Set(docs.filter(function(d){return d.client_name;}).map(function(d){return d.client_name;}));
+  document.getElementById('r-rev').textContent='€'+rev.toFixed(2);
+  document.getElementById('r-paid').textContent=paid.length;
+  document.getElementById('r-unpaid').textContent=unpaid.length;
+  document.getElementById('r-cl').textContent=cls.size;
+  var mn=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  var now=new Date(),data12=new Array(12).fill(0);
+  paid.forEach(function(d){
+    var dt=new Date(d.updated_at||d.created_at);
+    var diff=((now.getMonth()-dt.getMonth())+12+(now.getFullYear()-dt.getFullYear())*12)%12;
+    if(diff<12)data12[11-diff]+=(parseFloat(d.total)||0);
+  });
+  var lbl12=[];for(var i=11;i>=0;i--)lbl12.push(mn[(now.getMonth()-i+12)%12]);
+  var bc=document.getElementById('big-chart').getContext('2d');
+  if(charts.big)charts.big.destroy();
+  charts.big=new Chart(bc,{type:'line',data:{labels:lbl12,datasets:[{data:data12,borderColor:'rgba(79,70,229,1)',backgroundColor:'rgba(79,70,229,.08)',borderWidth:2,fill:true,tension:.4,pointBackgroundColor:'rgba(79,70,229,1)',pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,.04)'},ticks:{callback:function(v){return'€'+v;},font:{size:8}}},x:{grid:{display:false},ticks:{font:{size:8},color:'#9ca3af'}}}}});
+  var inv=docs.filter(function(d){return d.type==='invoice'||!d.type;}).length;
+  var q=docs.filter(function(d){return d.type==='quote';}).length;
+  var r=docs.filter(function(d){return d.type==='receipt';}).length;
+  var p=docs.filter(function(d){return d.type==='proforma';}).length;
+  var pc=document.getElementById('pie-chart').getContext('2d');
+  if(charts.pie)charts.pie.destroy();
+  charts.pie=new Chart(pc,{type:'doughnut',data:{labels:['Facturas','Presupuestos','Recibos','Proforma'],datasets:[{data:[inv||1,q||0,r||0,p||0],backgroundColor:['rgba(79,70,229,.8)','rgba(124,58,237,.7)','rgba(22,163,74,.7)','rgba(217,119,6,.7)'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:8},padding:8}}}}});
+  var cm={};
+  paid.forEach(function(d){var c=d.client_name||'Desconocido';cm[c]=(cm[c]||0)+(parseFloat(d.total)||0);});
+  var sorted=Object.entries(cm).sort(function(a,b){return b[1]-a[1];}).slice(0,5);
+  var tc=document.getElementById('top-clients');
+  if(!sorted.length){tc.innerHTML='<p style="color:var(--ink-4);font-size:0.8rem">Aún no hay facturas cobradas.</p>';return;}
+  var mx=sorted[0][1];
+  tc.innerHTML=sorted.map(function(c){var pct=Math.round((c[1]/mx)*100);return'<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:0.8rem;font-weight:600;color:var(--ink)">'+c[0]+'</span><span style="font-size:0.8rem;font-weight:700;color:var(--accent)">€'+c[1].toFixed(2)+'</span></div><div style="height:4px;background:var(--bg);border-radius:2px"><div style="height:100%;width:'+pct+'%;background:var(--accent);border-radius:2px"></div></div></div>';}).join('');
+}
+
+// CLIENTS
+function renderClients(){
+  var el=document.getElementById('clients-table');
+  if(!clients.length){el.innerHTML='<div class="empty"><h3>Sin clientes guardados</h3><p>Añade clientes para rellenar facturas más rápido</p><button class="empty-btn" onclick="openCM()">Añadir cliente</button></div>';return;}
+  el.innerHTML=clients.map(function(c){
+    return '<div class="cl-tr"><div class="cl-name"><div class="cl-av">'+((c.name||'?').charAt(0).toUpperCase())+'</div>'+c.name+'</div>'
+      +'<div class="cl-email">'+(c.email||'—')+'</div>'
+      +'<div class="cl-nif">'+(c.nif||'—')+'</div>'
+      +'<div class="cl-acts"><button class="cl-btn" onclick="editClient(\''+c.id+'\')">Editar</button><button class="cl-btn del" onclick="delClient(\''+c.id+'\')">Eliminar</button></div></div>';
+  }).join('');
+}
+
+function openCM(){
+  document.getElementById('cm-id').value='';
+  document.getElementById('cm-title').textContent='Añadir cliente';
+  ['cm-name','cm-nif','cm-email','cm-phone','cm-city','cm-addr','cm-postal'].forEach(function(f){document.getElementById(f).value='';});
+  document.getElementById('cm-country').value='España';
+  document.getElementById('cm').classList.add('open');
+}
+function closeCM(){document.getElementById('cm').classList.remove('open');}
+
+function editClient(id){
+  var c=clients.find(function(x){return x.id===id;});if(!c)return;
+  document.getElementById('cm-id').value=id;
+  document.getElementById('cm-title').textContent='Editar cliente';
+  document.getElementById('cm-name').value=c.name||'';
+  document.getElementById('cm-nif').value=c.nif||'';
+  document.getElementById('cm-email').value=c.email||'';
+  document.getElementById('cm-phone').value=c.phone||'';
+  document.getElementById('cm-city').value=c.city||'';
+  document.getElementById('cm-addr').value=c.address||'';
+  document.getElementById('cm-postal').value=c.postal_code||'';
+  document.getElementById('cm-country').value=c.country||'España';
+  document.getElementById('cm').classList.add('open');
+}
+
+function saveClient(){
+  var name=document.getElementById('cm-name').value.trim();
+  if(!name){toast('El nombre es obligatorio.','err');return;}
+  var btn=document.getElementById('cm-save');
+  btn.disabled=true;btn.textContent='Guardando...';
+  var payload={user_id:user.id,name:name,nif:document.getElementById('cm-nif').value.trim(),email:document.getElementById('cm-email').value.trim(),phone:document.getElementById('cm-phone').value.trim(),address:document.getElementById('cm-addr').value.trim(),city:document.getElementById('cm-city').value.trim(),postal_code:document.getElementById('cm-postal').value.trim(),country:document.getElementById('cm-country').value||'España'};
+  var eid=document.getElementById('cm-id').value;
+  var p=eid?sb.from('clients').update(payload).eq('id',eid).eq('user_id',user.id):sb.from('clients').insert(payload).select().single();
+  p.then(function(r){
+    btn.disabled=false;btn.textContent='Guardar cliente';
+    if(r.error){toast('Error: '+r.error.message,'err');return;}
+    closeCM();loadClients();toast(eid?'Cliente actualizado.':'Cliente añadido.','ok');
+  });
+}
+
+function delClient(id){
+  if(!confirm('¿Eliminar este cliente?'))return;
+  sb.from('clients').delete().eq('id',id).eq('user_id',user.id).then(function(){
+    clients=clients.filter(function(c){return c.id!==id;});renderClients();toast('Cliente eliminado.','inf');
+  });
+}
+
+// SETTINGS
+function saveSettings(){
+  var p={company_name:document.getElementById('s-name').value,nif:document.getElementById('s-nif').value,email:document.getElementById('s-email').value,phone:document.getElementById('s-phone').value,address:document.getElementById('s-addr').value,city:document.getElementById('s-city').value,data:{currency:document.getElementById('s-cur').value,tax:document.getElementById('s-tax').value,irpf:document.getElementById('s-irpf').value}};
+  sb.from('profiles').update(p).eq('id',user.id).then(function(r){
+    if(r.error){toast('Error al guardar.','err');return;}
+    toast('Cambios guardados.','ok');
+  });
+}
+
+// STRIPE
+function subPro(){location.href='https://buy.stripe.com/dRm28r2CG4VS9ce8wJ?prefilled_email='+encodeURIComponent(user.email)+'&client_reference_id='+user.id;}
+function subBiz(){location.href='https://buy.stripe.com/dRm28r2CG4VS9ce8wJ?prefilled_email='+encodeURIComponent(user.email)+'&client_reference_id='+user.id;}
+
+// TOAST
+function toast(msg,type){var t=document.getElementById('toast');t.textContent=msg;t.className='toast '+(type||'inf');t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2800);}
+
+// Modal close on overlay click
+document.getElementById('cm').addEventListener('click',function(e){if(e.target===this)closeCM();});
+</script>
 </body>
 </html>
