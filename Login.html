@@ -1,223 +1,195 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABAklEQVR4nMWXzQ3CMAyFnYgpyj70SDeq2Kgcyz50DTiApWDSxD+p845R4T1/sas6QEbXy/OVO7fq/jgHevZzcJRxKUj0Nqde0duchoi1B49W6FF9KhOBZR1u1gAn6x8kIeZp3PwCfI1n7e9RTZtwWQefAAl2cw80H0MpBXGATOebKJgJTOP214gSCqIAe3OvGT9VgIzx7hhyKTRrQi0FdoAWr11TAKoSfhTnGlgBuNVrrkFFgFM9qkahGkB691IKYgKS6lElCsUA2s6XUBAR0FSP2qNQ/CBJDTW9wBlD9heRtvradQSAPnsBwGdD6r4XREzibYyekR54mgOQ7RjluZ6/AS7/ZEyHlfg8AAAAAElFTkSuQmCC">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Invoicely — Entrar</title>
+<title>Invoicely</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--ink:#0f1729;--ink-2:#374151;--ink-3:#6b7280;--ink-4:#9ca3af;--bg:#f8f9fc;--white:#fff;--border:#e5e7eb;--accent:#4f46e5;--accent-2:#6366f1;--accent-light:#eef2ff;--red:#dc2626;--red-bg:#fee2e2;--green:#16a34a}
-body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,#eef2ff 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,#f0fdf4 0%,transparent 60%);z-index:0;pointer-events:none}
-.card{position:relative;z-index:1;background:var(--white);border-radius:20px;padding:44px 40px;width:100%;max-width:420px;box-shadow:0 4px 6px rgba(0,0,0,0.04),0 20px 60px rgba(0,0,0,0.08);animation:up .5s cubic-bezier(.16,1,.3,1) both}
-@keyframes up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
-.logo{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:32px;text-decoration:none}
-.logo-icon{width:36px;height:36px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(79,70,229,0.3)}
-.logo-icon svg{width:20px;height:20px}
-.logo-text{font-family:'Instrument Serif',serif;font-size:1.4rem;font-style:italic;color:var(--ink)}
-.tabs{display:flex;background:var(--bg);border-radius:10px;padding:4px;margin-bottom:28px;gap:4px}
-.tab{flex:1;padding:9px;border:none;background:none;border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.85rem;font-weight:600;color:var(--ink-4);cursor:pointer;transition:all .2s}
-.tab.active{background:var(--white);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,0.08)}
-.form-title{font-size:1.5rem;font-weight:700;color:var(--ink);margin-bottom:6px}
-.form-sub{font-size:0.85rem;color:var(--ink-4);margin-bottom:24px;line-height:1.6}
-.field{margin-bottom:14px}
-.field label{display:block;font-size:0.72rem;font-weight:700;color:var(--ink-2);margin-bottom:5px;letter-spacing:0.02em;text-transform:uppercase}
-.field input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:9px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.9rem;color:var(--ink);outline:none;transition:all .2s;background:var(--white)}
-.field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,70,229,0.08)}
-.msg{border-radius:8px;padding:10px 14px;font-size:0.82rem;font-weight:500;margin-bottom:14px;display:none}
-.msg.error{background:var(--red-bg);color:var(--red)}
-.msg.success{background:#dcfce7;color:var(--green)}
-.btn{width:100%;padding:13px;border-radius:9px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.92rem;font-weight:700;cursor:pointer;border:none;background:var(--accent);color:white;transition:all .2s;margin-top:4px}
-.btn:hover{background:var(--accent-2);transform:translateY(-1px);box-shadow:0 8px 24px rgba(79,70,229,0.3)}
-.btn:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none}
-.link-row{text-align:center;margin-top:16px;font-size:0.82rem;color:var(--ink-4)}
-.link-row a{color:var(--accent);text-decoration:none;font-weight:600}
-.link-row a:hover{text-decoration:underline}
-.back{margin-top:20px;text-align:center;font-size:0.82rem;color:var(--ink-4)}
-.back a{color:var(--ink-4);text-decoration:none}
-.back a:hover{color:var(--ink)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#f8f9fc;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:#fff;border-radius:18px;padding:40px 36px;width:100%;max-width:400px;box-shadow:0 2px 4px rgba(0,0,0,.04),0 16px 48px rgba(0,0,0,.08)}
+.logo{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:28px}
+.logo-box{width:34px;height:34px;background:#4f46e5;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.logo-box svg{width:18px;height:18px}
+.logo-name{font-family:'Instrument Serif',serif;font-style:italic;font-size:1.3rem;color:#0f1729}
+.tabs{display:flex;background:#f8f9fc;border-radius:9px;padding:3px;margin-bottom:24px;gap:3px}
+.tab{flex:1;padding:8px;border:none;background:none;border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.83rem;font-weight:600;color:#9ca3af;cursor:pointer}
+.tab.on{background:#fff;color:#0f1729;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.title{font-size:1.4rem;font-weight:700;color:#0f1729;margin-bottom:4px}
+.sub{font-size:0.83rem;color:#9ca3af;margin-bottom:22px;line-height:1.5}
+.err{background:#fee2e2;color:#dc2626;border-radius:7px;padding:9px 13px;font-size:0.8rem;font-weight:500;margin-bottom:14px}
+.ok{background:#dcfce7;color:#16a34a;border-radius:7px;padding:9px 13px;font-size:0.8rem;font-weight:500;margin-bottom:14px}
+.field{margin-bottom:13px}
+.field label{display:block;font-size:0.68rem;font-weight:700;color:#374151;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.field input{width:100%;padding:10px 13px;border:1.5px solid #e5e7eb;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;color:#0f1729;outline:none}
+.field input:focus{border-color:#4f46e5;box-shadow:0 0 0 3px rgba(79,70,229,.08)}
+.btn{width:100%;padding:12px;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;border:none;background:#4f46e5;color:#fff;margin-top:2px}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.link{text-align:center;margin-top:14px;font-size:0.8rem;color:#9ca3af}
+.link a{color:#4f46e5;text-decoration:none;font-weight:600}
+.back{text-align:center;margin-top:18px;font-size:0.78rem;color:#9ca3af}
 </style>
 </head>
 <body>
 <div class="card">
-  <a href="index.html" class="logo">
-    <div class="logo-icon"><svg fill="none" viewBox="0 0 120 120"><path d="M60 32 L26 88" stroke="white" stroke-opacity="0.5" stroke-width="18" stroke-linecap="round"/><path d="M60 32 L94 88" stroke="white" stroke-width="18" stroke-linecap="round"/></svg></div>
-    <span class="logo-text">Invoicely</span>
-  </a>
-
-  <div class="tabs">
-    <button class="tab active" id="tabLogin" onclick="switchTab('login')">Entrar</button>
-    <button class="tab" id="tabRegister" onclick="switchTab('register')">Crear cuenta</button>
+  <div class="logo">
+    <div class="logo-box"><svg fill="none" viewBox="0 0 120 120"><path d="M60 32L26 88" stroke="white" stroke-opacity=".5" stroke-width="18" stroke-linecap="round"/><path d="M60 32L94 88" stroke="white" stroke-width="18" stroke-linecap="round"/></svg></div>
+    <span class="logo-name">Invoicely</span>
   </div>
 
-  <div id="msgBox" class="msg" style="display:none"></div>
+  <div class="tabs">
+    <button class="tab on" id="t1" onclick="show('login')">Entrar</button>
+    <button class="tab" id="t2" onclick="show('register')">Crear cuenta</button>
+  </div>
 
   <!-- LOGIN -->
-  <div id="formLogin">
-    <div class="form-title">Bienvenido de nuevo</div>
-    <div class="form-sub">Entra para gestionar tus facturas y clientes.</div>
-    <div class="field"><label>Email</label><input type="email" id="loginEmail" placeholder="tu@email.com" autocomplete="email"></div>
-    <div class="field"><label>Contraseña</label><input type="password" id="loginPass" placeholder="Tu contraseña" autocomplete="current-password"></div>
-    <button class="btn" id="btnLogin" onclick="doLogin()">Entrar</button>
-    <div class="link-row"><a href="#" onclick="showForgot();return false">¿Olvidaste tu contraseña?</a></div>
+  <div id="login">
+    <div class="title">Bienvenido</div>
+    <div class="sub">Entra para gestionar tus facturas.</div>
+    <div id="login-msg"></div>
+    <div class="field"><label>Email</label><input type="email" id="le" placeholder="tu@email.com"></div>
+    <div class="field"><label>Contraseña</label><input type="password" id="lp" placeholder="Tu contraseña"></div>
+    <button class="btn" id="lb" onclick="doLogin()">Entrar</button>
+    <div class="link"><a href="#" onclick="show('forgot');return false">¿Olvidaste tu contraseña?</a></div>
   </div>
 
   <!-- REGISTER -->
-  <div id="formRegister" style="display:none">
-    <div class="form-title">Crea tu cuenta</div>
-    <div class="form-sub">Gratis para siempre. Sin tarjeta de crédito.</div>
-    <div class="field"><label>Nombre completo</label><input type="text" id="regName" placeholder="Alex García" autocomplete="name"></div>
-    <div class="field"><label>Email</label><input type="email" id="regEmail" placeholder="tu@email.com" autocomplete="email"></div>
-    <div class="field"><label>Contraseña</label><input type="password" id="regPass" placeholder="Mínimo 6 caracteres" autocomplete="new-password"></div>
-    <button class="btn" id="btnRegister" onclick="doRegister()">Crear cuenta gratis</button>
-    <div class="link-row">Al registrarte aceptas nuestros <a href="#">Términos</a> y <a href="#">Privacidad</a>.</div>
+  <div id="register" style="display:none">
+    <div class="title">Crea tu cuenta</div>
+    <div class="sub">Gratis para siempre. Sin tarjeta.</div>
+    <div id="reg-msg"></div>
+    <div class="field"><label>Nombre</label><input type="text" id="rn" placeholder="Tu nombre"></div>
+    <div class="field"><label>Email</label><input type="email" id="re" placeholder="tu@email.com"></div>
+    <div class="field"><label>Contraseña</label><input type="password" id="rp" placeholder="Mínimo 6 caracteres"></div>
+    <button class="btn" id="rb" onclick="doRegister()">Crear cuenta gratis</button>
+    <div class="link">Al registrarte aceptas los <a href="#">Términos</a>.</div>
   </div>
 
   <!-- FORGOT -->
-  <div id="formForgot" style="display:none">
-    <div class="form-title">Recuperar contraseña</div>
-    <div class="form-sub">Te enviamos un enlace para restablecer tu contraseña.</div>
-    <div class="field"><label>Email</label><input type="email" id="forgotEmail" placeholder="tu@email.com"></div>
-    <button class="btn" id="btnForgot" onclick="doForgot()">Enviar enlace</button>
-    <div class="link-row"><a href="#" onclick="switchTab('login');return false">← Volver al login</a></div>
+  <div id="forgot" style="display:none">
+    <div class="title">Recuperar contraseña</div>
+    <div class="sub">Te enviamos un enlace a tu email.</div>
+    <div id="fgt-msg"></div>
+    <div class="field"><label>Email</label><input type="email" id="fe" placeholder="tu@email.com"></div>
+    <button class="btn" id="fb" onclick="doForgot()">Enviar enlace</button>
+    <div class="link"><a href="#" onclick="show('login');return false">← Volver</a></div>
   </div>
 
-  <div class="back"><a href="index.html">← Volver al inicio</a></div>
+  <div class="back"><a href="index.html" style="color:#9ca3af;text-decoration:none">← Volver al inicio</a></div>
 </div>
 
 <script>
-var SB_URL='https://ihrloxoilbutrraddynw.supabase.co';
-var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlocmxveG9pbGJ1dHJyYWRkeW53Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3NTA1MzIsImV4cCI6MjA5ODMyNjUzMn0.Br0ht6CwfJEwmakTc9_qL9B0uauBrBq5b9cLrLVx3js';
-var sb=window.supabase.createClient(SB_URL,SB_KEY);
+var sb = window.supabase.createClient(
+  'https://ihrloxoilbutrraddynw.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlocmxveG9pbGJ1dHJyYWRkeW53Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3NTA1MzIsImV4cCI6MjA5ODMyNjUzMn0.Br0ht6CwfJEwmakTc9_qL9B0uauBrBq5b9cLrLVx3js'
+);
 
-// Always start clean
-document.getElementById('msgBox').style.display='none';
-document.getElementById('msgBox').textContent='';
+// Check session silently on load - NO errors shown here ever
+sb.auth.getSession().then(function(r){
+  if (r && r.data && r.data.session) {
+    redirect(r.data.session.user);
+  }
+});
 
-// Check existing session silently - never show errors here
-try {
-  sb.auth.getSession().then(function(r){
-    try {
-      if(r && r.data && r.data.session && r.data.session.user) {
-        goToDashboard(r.data.session.user);
-      }
-    } catch(e){}
-  }).catch(function(){});
-} catch(e){}
-
-if(new URLSearchParams(window.location.search).get('signup')==='true') switchTab('register');
-
-function goToDashboard(user){
-  sb.from('profiles').select('company_name').eq('id',user.id).maybeSingle().then(function(res){
-    try {
-      if(res && res.data && res.data.company_name) window.location.href='dashboard.html';
-      else window.location.href='onboarding.html';
-    } catch(e){ window.location.href='onboarding.html'; }
-  }).catch(function(){ window.location.href='onboarding.html'; });
-}
-
-function switchTab(tab){
-  document.getElementById('formLogin').style.display=tab==='login'?'':'none';
-  document.getElementById('formRegister').style.display=tab==='register'?'':'none';
-  document.getElementById('formForgot').style.display='none';
-  document.getElementById('tabLogin').classList.toggle('active',tab==='login');
-  document.getElementById('tabRegister').classList.toggle('active',tab==='register');
-  clearMsg();
-}
-function showForgot(){
-  document.getElementById('formLogin').style.display='none';
-  document.getElementById('formForgot').style.display='';
-  document.getElementById('tabLogin').classList.remove('active');
-  clearMsg();
-}
-function showMsg(m,t){
-  var e=document.getElementById('msgBox');
-  var txt = (typeof m==='string') ? m : (m && m.message) ? m.message : 'Error. Inténtalo de nuevo.';
-  e.textContent=txt;
-  e.className='msg '+(t||'error');
-  e.style.display='block';
-}
-function clearMsg(){
-  var e=document.getElementById('msgBox');
-  e.style.display='none';
-  e.textContent='';
-}
-
-function doLogin(){
-  var email=document.getElementById('loginEmail').value.trim();
-  var pass=document.getElementById('loginPass').value;
-  if(!email||!pass){showMsg('Rellena todos los campos.');return;}
-  clearMsg();
-  var btn=document.getElementById('btnLogin');
-  btn.disabled=true;btn.textContent='Entrando...';
-  sb.auth.signInWithPassword({email:email,password:pass}).then(function(r){
-    btn.disabled=false;btn.textContent='Entrar';
-    if(r.error){showMsg(r.error.message||'Email o contraseña incorrectos.');return;}
-    goToDashboard(r.data.user);
-  }).catch(function(e){
-    btn.disabled=false;btn.textContent='Entrar';
-    showMsg(e.message||'Error al entrar.');
+function redirect(user) {
+  sb.from('profiles').select('company_name').eq('id', user.id).maybeSingle().then(function(r){
+    if (r && r.data && r.data.company_name) {
+      window.location.href = 'dashboard.html';
+    } else {
+      window.location.href = 'onboarding.html';
+    }
+  }).catch(function(){
+    window.location.href = 'onboarding.html';
   });
 }
 
-function doRegister(){
-  var name=document.getElementById('regName').value.trim();
-  var email=document.getElementById('regEmail').value.trim();
-  var pass=document.getElementById('regPass').value;
-  if(!name||!email||!pass){showMsg('Rellena todos los campos.');return;}
-  if(pass.length<6){showMsg('La contraseña debe tener al menos 6 caracteres.');return;}
-  clearMsg();
-  var btn=document.getElementById('btnRegister');
-  btn.disabled=true;btn.textContent='Creando cuenta...';
-  sb.auth.signUp({
-    email:email,
-    password:pass,
-    options:{data:{full_name:name}}
-  }).then(function(r){
-    btn.disabled=false;btn.textContent='Crear cuenta gratis';
-    if(r.error){showMsg(r.error.message||'Error al crear la cuenta.');return;}
-    // Try immediate login
-    sb.auth.signInWithPassword({email:email,password:pass}).then(function(r2){
-      if(r2.data&&r2.data.session){
-        window.location.href='onboarding.html';
+function show(tab) {
+  document.getElementById('login').style.display = tab==='login' ? '' : 'none';
+  document.getElementById('register').style.display = tab==='register' ? '' : 'none';
+  document.getElementById('forgot').style.display = tab==='forgot' ? '' : 'none';
+  document.getElementById('t1').className = 'tab' + (tab==='login' ? ' on' : '');
+  document.getElementById('t2').className = 'tab' + (tab==='register' ? ' on' : '');
+}
+
+function msg(id, text, type) {
+  var el = document.getElementById(id);
+  if (!text) { el.innerHTML = ''; return; }
+  var safe = String(text).replace(/</g,'&lt;');
+  el.innerHTML = '<div class="'+(type==='ok'?'ok':'err')+'">'+safe+'</div>';
+}
+
+function getErr(e) {
+  if (!e) return 'Error. Inténtalo de nuevo.';
+  if (typeof e === 'string') return e;
+  if (e.message) return e.message;
+  return 'Error. Inténtalo de nuevo.';
+}
+
+function doLogin() {
+  var email = document.getElementById('le').value.trim();
+  var pass = document.getElementById('lp').value;
+  msg('login-msg','');
+  if (!email || !pass) { msg('login-msg','Rellena todos los campos.'); return; }
+  var btn = document.getElementById('lb');
+  btn.disabled = true; btn.textContent = 'Entrando...';
+  sb.auth.signInWithPassword({email:email, password:pass}).then(function(r){
+    btn.disabled = false; btn.textContent = 'Entrar';
+    if (r.error) { msg('login-msg', getErr(r.error)); return; }
+    redirect(r.data.user);
+  }).catch(function(e){
+    btn.disabled = false; btn.textContent = 'Entrar';
+    msg('login-msg', getErr(e));
+  });
+}
+
+function doRegister() {
+  var name = document.getElementById('rn').value.trim();
+  var email = document.getElementById('re').value.trim();
+  var pass = document.getElementById('rp').value;
+  msg('reg-msg','');
+  if (!name || !email || !pass) { msg('reg-msg','Rellena todos los campos.'); return; }
+  if (pass.length < 6) { msg('reg-msg','La contraseña debe tener al menos 6 caracteres.'); return; }
+  var btn = document.getElementById('rb');
+  btn.disabled = true; btn.textContent = 'Creando cuenta...';
+  sb.auth.signUp({email:email, password:pass, options:{data:{full_name:name}}}).then(function(r){
+    btn.disabled = false; btn.textContent = 'Crear cuenta gratis';
+    if (r.error) { msg('reg-msg', getErr(r.error)); return; }
+    // Sign in immediately after signup
+    sb.auth.signInWithPassword({email:email, password:pass}).then(function(r2){
+      if (r2.data && r2.data.session) {
+        window.location.href = 'onboarding.html';
       } else {
-        showMsg('Cuenta creada. Entra con tu email y contraseña.','success');
-        switchTab('login');
-        document.getElementById('loginEmail').value=email;
+        msg('reg-msg', 'Cuenta creada. Entra con tu email y contraseña.', 'ok');
+        show('login');
+        document.getElementById('le').value = email;
       }
     }).catch(function(){
-      showMsg('Cuenta creada. Entra con tu email y contraseña.','success');
-      switchTab('login');
+      msg('reg-msg', 'Cuenta creada. Entra con tu email y contraseña.', 'ok');
+      show('login');
     });
   }).catch(function(e){
-    btn.disabled=false;btn.textContent='Crear cuenta gratis';
-    showMsg(e.message||'Error al crear la cuenta.');
+    btn.disabled = false; btn.textContent = 'Crear cuenta gratis';
+    msg('reg-msg', getErr(e));
   });
 }
 
-function doForgot(){
-  var email=document.getElementById('forgotEmail').value.trim();
-  if(!email){showMsg('Introduce tu email.');return;}
-  clearMsg();
-  var btn=document.getElementById('btnForgot');
-  btn.disabled=true;btn.textContent='Enviando...';
-  sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/login.html'}).then(function(r){
-    btn.disabled=false;btn.textContent='Enviar enlace';
-    if(r.error){showMsg(r.error.message||'Error.');return;}
-    showMsg('Enlace enviado. Revisa tu bandeja de entrada.','success');
+function doForgot() {
+  var email = document.getElementById('fe').value.trim();
+  msg('fgt-msg','');
+  if (!email) { msg('fgt-msg','Introduce tu email.'); return; }
+  var btn = document.getElementById('fb');
+  btn.disabled = true; btn.textContent = 'Enviando...';
+  sb.auth.resetPasswordForEmail(email).then(function(r){
+    btn.disabled = false; btn.textContent = 'Enviar enlace';
+    if (r.error) { msg('fgt-msg', getErr(r.error)); return; }
+    msg('fgt-msg', 'Enlace enviado. Revisa tu email.', 'ok');
   }).catch(function(e){
-    btn.disabled=false;btn.textContent='Enviar enlace';
-    showMsg(e.message||'Error.');
+    btn.disabled = false; btn.textContent = 'Enviar enlace';
+    msg('fgt-msg', getErr(e));
   });
 }
-
-document.addEventListener('keydown',function(e){
-  if(e.key!=='Enter') return;
-  if(document.getElementById('formLogin').style.display!=='none') doLogin();
-  else if(document.getElementById('formRegister').style.display!=='none') doRegister();
-  else if(document.getElementById('formForgot').style.display!=='none') doForgot();
-});
 </script>
+</body>
+</html>
