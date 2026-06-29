@@ -1,1074 +1,602 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<!-- Meta Pixel Code -->
-<script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1022285556838233');
-fbq('track', 'PageView');
-</script>
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=1022285556838233&ev=PageView&noscript=1"
-/></noscript>
-<!-- End Meta Pixel Code -->
-<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABAklEQVR4nMWXzQ3CMAyFnYgpyj70SDeq2Kgcyz50DTiApWDSxD+p845R4T1/sas6QEbXy/OVO7fq/jgHevZzcJRxKUj0Nqde0duchoi1B49W6FF9KhOBZR1u1gAn6x8kIeZp3PwCfI1n7e9RTZtwWQefAAl2cw80H0MpBXGATOebKJgJTOP214gSCqIAe3OvGT9VgIzx7hhyKTRrQi0FdoAWr11TAKoSfhTnGlgBuNVrrkFFgFM9qkahGkB691IKYgKS6lElCsUA2s6XUBAR0FSP2qNQ/CBJDTW9wBlD9heRtvradQSAPnsBwGdD6r4XREzibYyekR54mgOQ7RjluZ6/AS7/ZEyHlfg8AAAAAElFTkSuQmCC">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Invoicely — Crear documento</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Instrument+Serif:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --ink:#0f1729;--ink-2:#374151;--ink-3:#6b7280;--ink-4:#9ca3af;
-  --bg:#f8f9fc;--white:#fff;--border:#e5e7eb;
-  --accent:#4f46e5;--accent-2:#6366f1;--accent-light:#eef2ff;--accent-mid:#c7d2fe;
-  --green:#16a34a;--green-bg:#dcfce7;--yellow:#d97706;--yellow-bg:#fef3c7;
-  --red:#dc2626;--red-bg:#fee2e2;--sidebar:240px
-}
-body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--ink);display:flex;min-height:100vh}
+:root{--ink:#0f1729;--ink2:#374151;--ink3:#6b7280;--ink4:#9ca3af;--bg:#f8f9fc;--white:#fff;--border:#e5e7eb;--accent:#4f46e5;--accent2:#6366f1;--alight:#eef2ff;--green:#16a34a;--red:#dc2626;--redbg:#fee2e2}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--ink);height:100vh;overflow:hidden;display:flex;flex-direction:column}
 
-/* SIDEBAR */
-.sidebar{width:var(--sidebar);background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;position:fixed;left:0;top:0;overflow-y:auto}
-.sb-logo{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.sb-logo-icon{width:30px;height:30px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.sb-logo-icon svg{width:16px;height:16px}
-.sb-logo-text{font-family:'Instrument Serif',serif;font-size:1.15rem;font-style:italic;color:var(--ink)}
-.sb-nav{flex:1;padding:10px}
-.sb-lbl{font-size:0.6rem;font-weight:700;color:var(--ink-4);letter-spacing:0.1em;text-transform:uppercase;padding:0 10px;margin:14px 0 4px}
-.sb-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:7px;color:var(--ink-3);font-size:0.8rem;font-weight:500;margin-bottom:2px;transition:all 0.15s;text-decoration:none;cursor:pointer;border:none;background:none;width:100%;font-family:'Plus Jakarta Sans',sans-serif}
-.sb-item:hover{background:var(--bg);color:var(--ink-2)}
-.sb-item.active{background:var(--accent-light);color:var(--accent);font-weight:600}
-.sb-item svg{width:15px;height:15px;flex-shrink:0}
-.sb-back{padding:12px;border-top:1px solid var(--border)}
-.sb-back a{display:flex;align-items:center;gap:8px;font-size:0.78rem;color:var(--ink-4);text-decoration:none;padding:8px 10px;border-radius:7px;transition:all 0.15s}
-.sb-back a:hover{background:var(--bg);color:var(--ink)}
-.sb-back svg{width:14px;height:14px;stroke:currentColor}
-
-/* MAIN */
-.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh}
-
-/* TOPBAR */
-.topbar{height:54px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:10px;position:sticky;top:0;z-index:10}
-.topbar-title{font-size:0.88rem;font-weight:600;color:var(--ink);flex:1}
-.tb-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:7px;font-size:0.8rem;font-weight:600;cursor:pointer;border:none;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.15s}
-.tb-btn.primary{background:var(--accent);color:white}
-.tb-btn.primary:hover{background:var(--accent-2)}
-.tb-btn.secondary{background:var(--white);color:var(--ink-2);border:1px solid var(--border)}
-.tb-btn.secondary:hover{border-color:var(--accent);color:var(--accent)}
-.tb-btn svg{width:13px;height:13px}
-
-/* DOC TYPE BAR */
-.type-bar{background:var(--white);border-bottom:1px solid var(--border);padding:0 20px;display:flex;gap:2px;overflow-x:auto}
-.type-btn{display:flex;align-items:center;gap:7px;padding:11px 14px;font-size:0.8rem;font-weight:500;color:var(--ink-4);cursor:pointer;border:none;background:none;font-family:'Plus Jakarta Sans',sans-serif;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s;white-space:nowrap}
-.type-btn:hover{color:var(--ink-2)}
-.type-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
-.type-btn svg{width:14px;height:14px;stroke:currentColor}
+/* TOP BAR */
+.topbar{height:52px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;z-index:10}
+.tb-logo{display:flex;align-items:center;gap:8px;text-decoration:none}
+.tb-icon{width:26px;height:26px;background:var(--accent);border-radius:5px;display:flex;align-items:center;justify-content:center}
+.tb-icon svg{width:14px;height:14px}
+.tb-name{font-family:'Instrument Serif',serif;font-style:italic;font-size:1.1rem;color:var(--ink)}
+.tb-sep{width:1px;height:20px;background:var(--border)}
+.type-sel{display:flex;gap:4px;flex:1;overflow-x:auto}
+.type-btn{padding:5px 12px;border-radius:6px;border:1.5px solid var(--border);background:var(--white);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.76rem;font-weight:600;color:var(--ink3);cursor:pointer;transition:all .15s;white-space:nowrap}
+.type-btn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.tb-actions{display:flex;gap:6px;flex-shrink:0}
+.tb-btn{display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;border:none;transition:all .15s;white-space:nowrap}
+.tb-btn.sec{background:var(--white);color:var(--ink2);border:1px solid var(--border)}
+.tb-btn.sec:hover{border-color:var(--accent);color:var(--accent)}
+.tb-btn.pri{background:var(--accent);color:#fff}
+.tb-btn.pri:hover{background:var(--accent2)}
+.tb-btn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
 
 /* LAYOUT */
-.builder-layout{display:grid;grid-template-columns:380px 1fr;flex:1;min-height:0}
+.layout{display:flex;flex:1;overflow:hidden}
 
 /* FORM PANEL */
-.form-panel{background:var(--white);border-right:1px solid var(--border);overflow-y:auto;max-height:calc(100vh - 96px)}
-.form-section{padding:18px 20px;border-bottom:1px solid var(--border)}
-.form-section:last-child{border-bottom:none}
-.fs-head{display:flex;align-items:center;gap:9px;margin-bottom:14px}
-.fs-icon{width:26px;height:26px;border-radius:6px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.fs-icon svg{width:13px;height:13px;stroke:var(--accent)}
-.fs-title{font-size:0.8rem;font-weight:700;color:var(--ink)}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.fg{margin-bottom:10px}
-.fg:last-child{margin-bottom:0}
-.fg label{display:block;font-size:0.68rem;font-weight:600;color:var(--ink-3);margin-bottom:4px;letter-spacing:0.01em}
-.fg input,.fg textarea,.fg select{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:7px;padding:9px 11px;color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.85rem;transition:all 0.2s;outline:none}
-.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--accent);background:var(--white)}
-.fg textarea{resize:vertical;min-height:64px;line-height:1.5}
-.fg input[type="file"]{padding:6px 11px;cursor:pointer;font-size:0.78rem}
-.fg input[type="color"]{padding:3px;cursor:pointer;height:36px}
+.form-panel{width:400px;flex-shrink:0;background:var(--white);border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column}
+.form-inner{padding:16px;flex:1}
+.section{margin-bottom:20px}
+.sec-title{font-size:0.7rem;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.field{margin-bottom:10px}
+.field label{display:block;font-size:0.68rem;font-weight:700;color:var(--ink2);margin-bottom:3px;letter-spacing:.02em}
+.field input,.field select,.field textarea{width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.83rem;color:var(--ink);outline:none;transition:border-color .15s;background:var(--white)}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent)}
+.field textarea{resize:vertical;min-height:54px;line-height:1.4}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 
-/* LOGO */
-.logo-area{border:2px dashed var(--border);border-radius:9px;padding:16px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative}
-.logo-area:hover{border-color:var(--accent);background:var(--accent-light)}
-.logo-area input{position:absolute;inset:0;opacity:0;cursor:pointer}
-.logo-area-icon{width:36px;height:36px;border-radius:8px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;margin:0 auto 8px}
-.logo-area-icon svg{width:17px;height:17px;stroke:var(--accent)}
-.logo-area-text{font-size:0.78rem;font-weight:600;color:var(--ink-3)}
-.logo-area-sub{font-size:0.68rem;color:var(--ink-4);margin-top:2px}
-.logo-preview{display:none;align-items:center;gap:10px;padding:10px;background:var(--bg);border-radius:7px;border:1px solid var(--border)}
-.logo-preview img{max-height:40px;max-width:100px;object-fit:contain}
-.logo-preview button{background:none;border:none;color:var(--red);cursor:pointer;font-size:0.75rem;font-family:'Plus Jakarta Sans',sans-serif;padding:3px 7px;border-radius:4px;transition:all 0.15s}
-.logo-preview button:hover{background:var(--red-bg)}
-
-/* LOGO POS */
-.logo-pos{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:7px}
-.lp-btn{padding:7px;border-radius:5px;border:1.5px solid var(--border);background:var(--white);color:var(--ink-4);font-size:0.68rem;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.15s;text-align:center}
-.lp-btn.active{border-color:var(--accent);background:var(--accent-light);color:var(--accent)}
-
-/* BG SWATCHES */
-.swatches{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
-.sw{width:28px;height:28px;border-radius:5px;cursor:pointer;border:2px solid transparent;transition:all 0.2s}
-.sw:hover{transform:scale(1.1)}
-.sw.active{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-mid)}
+/* CLIENT SELECTOR */
+.client-sel{display:flex;gap:6px;margin-bottom:8px}
+.client-sel select{flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;color:var(--ink);outline:none}
+.client-sel select:focus{border-color:var(--accent)}
+.cs-btn{padding:7px 10px;border-radius:7px;border:1.5px solid var(--border);background:var(--white);color:var(--ink3);font-size:0.75rem;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .15s}
+.cs-btn:hover{border-color:var(--accent);color:var(--accent)}
 
 /* LINE ITEMS */
-.line-mode{display:flex;background:var(--bg);border-radius:7px;padding:3px;margin-bottom:10px;gap:3px}
-.lm-btn{flex:1;padding:6px;border-radius:5px;border:none;font-size:0.68rem;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s;color:var(--ink-4);background:none}
-.lm-btn.active{background:var(--white);color:var(--accent);box-shadow:0 1px 4px rgba(0,0,0,0.08)}
-.line-item{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px;transition:border-color 0.15s}
-.line-item:hover{border-color:var(--accent-mid)}
-.li-top{display:flex;gap:7px;align-items:flex-start;margin-bottom:7px}
-.li-desc{flex:1;background:var(--white);border:1.5px solid var(--border);border-radius:6px;padding:8px 10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;color:var(--ink);outline:none;transition:all 0.2s}
-.li-desc:focus{border-color:var(--accent)}
-.li-remove{background:none;border:none;color:var(--ink-4);cursor:pointer;padding:7px;border-radius:5px;transition:all 0.15s;flex-shrink:0}
-.li-remove:hover{background:var(--red-bg);color:var(--red)}
-.li-remove svg{width:13px;height:13px}
-.li-nums{display:grid;gap:5px}
-.li-nums.simple{grid-template-columns:1fr}
-.li-nums.calc{grid-template-columns:1fr 1fr 1fr}
-.num-input{background:var(--white);border:1.5px solid var(--border);border-radius:5px;padding:7px 10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;color:var(--ink);outline:none;transition:all 0.2s;width:100%}
-.num-input:focus{border-color:var(--accent)}
-.num-input.total-field{background:var(--accent-light);color:var(--accent);font-weight:700;cursor:default}
-.num-lbl{font-size:0.6rem;color:var(--ink-4);margin-bottom:2px;font-weight:600}
-.add-line{width:100%;padding:9px;border-radius:7px;border:2px dashed var(--border);background:none;color:var(--ink-4);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:5px}
-.add-line:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
-.add-line svg{width:13px;height:13px}
+.lines-head{display:grid;grid-template-columns:1fr 60px 80px 24px;gap:6px;padding:0 0 4px;margin-bottom:4px;border-bottom:1px solid var(--border)}
+.lines-head span{font-size:0.62rem;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.06em}
+.line-item{display:grid;grid-template-columns:1fr 60px 80px 24px;gap:6px;margin-bottom:6px;align-items:center}
+.line-item input{padding:7px 8px;border:1.5px solid var(--border);border-radius:6px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.8rem;color:var(--ink);outline:none;width:100%;transition:border-color .15s}
+.line-item input:focus{border-color:var(--accent)}
+.del-line{background:none;border:none;cursor:pointer;color:var(--ink4);padding:4px;border-radius:4px;line-height:0;transition:color .15s}
+.del-line:hover{color:var(--red)}
+.del-line svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
+.add-line{width:100%;padding:7px;border-radius:7px;border:1.5px dashed var(--border);background:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;font-weight:600;color:var(--ink4);cursor:pointer;transition:all .15s;margin-top:4px}
+.add-line:hover{border-color:var(--accent);color:var(--accent)}
 
-/* DOWNLOAD SECTION */
-.dl-section{padding:18px 20px;background:var(--bg);border-top:1px solid var(--border);position:sticky;bottom:0}
-.dl-btn{width:100%;padding:14px;border-radius:9px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;border:none;background:var(--accent);color:white;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px}
-.dl-btn:hover{background:var(--accent-2);box-shadow:0 8px 24px rgba(79,70,229,0.35);transform:translateY(-1px)}
-.dl-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none}
-.dl-btn svg{width:16px;height:16px}
-.dl-note{font-size:0.68rem;color:var(--ink-4);text-align:center;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:5px}
-.dl-note svg{width:11px;height:11px;stroke:var(--ink-4)}
-.print-btn{width:100%;padding:10px;border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--ink-2);transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:8px}
-.print-btn:hover{border-color:var(--accent);color:var(--accent)}
+/* TOTALS */
+.totals-box{background:var(--bg);border-radius:8px;padding:10px 12px;margin-top:6px}
+.tot-row{display:flex;justify-content:space-between;font-size:0.78rem;padding:3px 0}
+.tot-row.main{font-weight:800;font-size:0.9rem;color:var(--accent);border-top:1px solid var(--border);padding-top:6px;margin-top:4px}
 
 /* PREVIEW PANEL */
-.preview-panel{background:#e8e8e8;overflow-y:auto;max-height:calc(100vh - 96px)}
-.preview-inner{min-height:100%;display:flex;align-items:flex-start;justify-content:center;padding:28px}
-.preview-doc{width:100%;max-width:660px}
+.preview-panel{flex:1;overflow:auto;background:#e8e8e8;display:flex;align-items:flex-start;justify-content:center;padding:20px}
+.preview-page{width:794px;min-height:1123px;background:#fff;box-shadow:0 4px 24px rgba(0,0,0,.15);padding:48px 52px;position:relative;font-family:'Plus Jakarta Sans',sans-serif}
+
+/* PREVIEW CONTENT */
+.pv-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;padding-bottom:24px;border-bottom:2px solid var(--accent)}
+.pv-logo{display:flex;align-items:center;gap:10px}
+.pv-logo-icon{width:36px;height:36px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.pv-logo-icon svg{width:20px;height:20px}
+.pv-brand{font-family:'Instrument Serif',serif;font-style:italic;font-size:1.4rem;color:var(--ink)}
+.pv-doctype{text-align:right}
+.pv-doctype-name{font-size:1.8rem;font-weight:800;color:var(--ink);letter-spacing:-.02em;line-height:1}
+.pv-doctype-num{font-size:0.82rem;color:var(--ink3);margin-top:4px}
+.pv-doctype-date{font-size:0.82rem;color:var(--ink3)}
+.pv-parties{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:28px}
+.pv-party-lbl{font-size:0.62rem;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.pv-party-name{font-size:0.92rem;font-weight:700;color:var(--ink);margin-bottom:2px}
+.pv-party-detail{font-size:0.78rem;color:var(--ink3);line-height:1.55}
+.pv-table{width:100%;border-collapse:collapse;margin-bottom:20px}
+.pv-table th{font-size:0.65rem;font-weight:700;color:var(--ink4);text-align:left;padding:8px 6px;border-bottom:1.5px solid var(--border);text-transform:uppercase;letter-spacing:.06em}
+.pv-table th:not(:first-child){text-align:right}
+.pv-table td{padding:10px 6px;border-bottom:1px solid var(--bg);font-size:0.84rem;color:var(--ink2);vertical-align:top}
+.pv-table td:not(:first-child){text-align:right}
+.pv-totals{margin-left:auto;width:220px;margin-bottom:28px}
+.pv-tot-row{display:flex;justify-content:space-between;padding:5px 0;font-size:0.82rem;color:var(--ink3)}
+.pv-tot-row.grand{border-top:2px solid var(--accent);padding-top:8px;margin-top:4px;font-weight:800;font-size:1rem;color:var(--ink)}
+.pv-notes{background:var(--bg);border-radius:8px;padding:14px 16px;margin-bottom:20px}
+.pv-notes-lbl{font-size:0.62rem;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px}
+.pv-notes-text{font-size:0.78rem;color:var(--ink3);line-height:1.6}
+.pv-bank{margin-bottom:20px}
+.pv-bank-lbl{font-size:0.62rem;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px}
+.pv-bank-text{font-size:0.78rem;color:var(--ink3);line-height:1.6}
+.pv-footer{position:absolute;bottom:32px;left:52px;right:52px;border-top:1px solid var(--border);padding-top:10px;font-size:0.72rem;color:var(--ink4);text-align:center}
 
 /* TOAST */
-.toast{position:fixed;bottom:24px;right:24px;padding:11px 18px;border-radius:9px;font-size:0.8rem;font-weight:500;z-index:9999;transform:translateY(80px);transition:transform 0.3s;box-shadow:0 8px 24px rgba(0,0,0,0.15);font-family:'Plus Jakarta Sans',sans-serif}
+.toast{position:fixed;bottom:18px;right:18px;padding:9px 16px;border-radius:8px;font-size:0.78rem;font-weight:600;z-index:9999;transform:translateY(60px);transition:transform .3s;box-shadow:0 8px 24px rgba(0,0,0,.12)}
 .toast.show{transform:translateY(0)}
-.toast.success{background:var(--green);color:white}
-.toast.error{background:var(--red);color:white}
-.toast.info{background:var(--ink);color:white}
+.toast.ok{background:var(--green);color:#fff}
+.toast.err{background:var(--red);color:#fff}
+.toast.inf{background:var(--ink);color:#fff}
 
-/* ═══ DOCUMENT DESIGNS ═══ */
-
-/* INVOICE — Classic */
-.doc-classic{font-family:'Plus Jakarta Sans',Arial,sans-serif;color:#1a1a1a;padding:48px;min-height:600px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-
-/* QUOTE — Modern indigo header */
-.doc-quote{font-family:'Plus Jakarta Sans',Arial,sans-serif;color:#0f1729;min-height:600px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-
-/* RECEIPT — Green */
-.doc-receipt{font-family:'Plus Jakarta Sans',Arial,sans-serif;color:#1a1a1a;min-height:400px;max-width:500px;margin:0 auto;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-
-/* PROFORMA — Amber */
-.doc-proforma{font-family:'Plus Jakarta Sans',Arial,sans-serif;color:#1a1a1a;padding:48px;min-height:600px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+/* LOADING */
+.ld{position:fixed;inset:0;background:var(--white);display:flex;align-items:center;justify-content:center;z-index:999;transition:opacity .3s}
+.ld.gone{opacity:0;pointer-events:none}
 
 @media(max-width:900px){
-  .sidebar{display:none}
-  .main{margin-left:0}
-  .builder-layout{grid-template-columns:1fr}
+  .form-panel{width:100%;border-right:none;border-bottom:1px solid var(--border);max-height:50vh}
+  .layout{flex-direction:column}
   .preview-panel{display:none}
-}
-@media print{
-  .sidebar,.topbar,.type-bar,.form-panel,.toast,.dl-section{display:none!important}
-  .main{margin-left:0!important}
-  .preview-panel{max-height:none!important;background:white!important;padding:0!important}
-  .preview-inner{padding:0!important}
-}
-/* SCREENSHOT PROTECTION */
-#previewPanel{position:relative}
-#previewPanel::after{
-  content:'';
-  position:absolute;
-  inset:0;
-  background:transparent;
-  z-index:5;
-  pointer-events:none;
-}
-/* When screenshot is taken, show black via media query trick */
-@media print{
-  #previewPanel{display:none!important}
-  .no-print-msg{display:block!important}
-}
-.no-print-msg{display:none;text-align:center;padding:40px;font-family:Plus Jakarta Sans,sans-serif;font-size:1.2rem;color:#0f1729}
-/* Prevent text selection on preview */
-#previewDoc{
-  user-select:none;
-  -webkit-user-select:none;
-  pointer-events:none;
-}
-/* Force black on screenshot via CSS isolation */
-#previewDoc *{
-  -webkit-user-select:none;
-  user-select:none;
 }
 </style>
 </head>
 <body>
 
-<aside class="sidebar">
-  <div class="sb-logo">
-    <div class="sb-logo-icon"><svg fill="none" viewBox="0 0 120 120"><path d="M60 32 L26 88" stroke="white" stroke-opacity="0.5" stroke-width="18" stroke-linecap="round"/><path d="M60 32 L94 88" stroke="white" stroke-width="18" stroke-linecap="round"/></svg></div>
-    <div class="sb-logo-text">Invoicely</div>
+<div class="ld" id="ld">
+  <div style="text-align:center">
+    <div style="font-family:'Instrument Serif',serif;font-style:italic;font-size:1.6rem;color:var(--ink);margin-bottom:12px">Invoicely</div>
+    <div style="width:120px;height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin:0 auto"><div style="height:100%;background:var(--accent);animation:lb 1s ease-in-out infinite"></div></div>
   </div>
-  <nav class="sb-nav">
-    <div class="sb-lbl">Crear</div>
-    <button class="sb-item active" id="sb-invoice" onclick="setType('invoice')">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Factura
-    </button>
-    <button class="sb-item" id="sb-quote" onclick="setType('quote')">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Presupuesto
-    </button>
-    <button class="sb-item" id="sb-receipt" onclick="setType('receipt')">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>Recibo
-    </button>
-    <button class="sb-item" id="sb-proforma" onclick="setType('proforma')">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/></svg>Proforma
-    </button>
-  </nav>
-  <div class="sb-back">
-    <a href="dashboard.html">
-      <svg fill="none" viewBox="0 0 24 24" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-      Volver al inicio
-    </a>
+</div>
+<style>@keyframes lb{0%{width:0;margin-left:0}50%{width:60%}100%{width:0;margin-left:100%}}</style>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <a href="dashboard.html" class="tb-logo">
+    <div class="tb-icon"><svg fill="none" viewBox="0 0 120 120"><path d="M60 32L26 88" stroke="white" stroke-opacity=".5" stroke-width="18" stroke-linecap="round"/><path d="M60 32L94 88" stroke="white" stroke-width="18" stroke-linecap="round"/></svg></div>
+    <span class="tb-name">Invoicely</span>
+  </a>
+  <div class="tb-sep"></div>
+  <div class="type-sel">
+    <button class="type-btn on" onclick="setType('invoice',this)">Factura</button>
+    <button class="type-btn" onclick="setType('quote',this)">Presupuesto</button>
+    <button class="type-btn" onclick="setType('receipt',this)">Recibo</button>
+    <button class="type-btn" onclick="setType('proforma',this)">Proforma</button>
   </div>
-</aside>
-
-<main class="main">
-  <div class="topbar">
-    <div class="topbar-title" id="docTitleBar">Nueva Factura</div>
-    <button class="tb-btn secondary" onclick="window.print()">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-      Imprimir
-    </button>
-    <button class="tb-btn primary" onclick="handleDownload()">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-      Descargar PDF — €0,50
-    </button>
+  <div class="tb-actions">
+    <button class="tb-btn sec" onclick="saveDoc()"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Guardar</button>
+    <button class="tb-btn pri" onclick="downloadPDF()"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Descargar PDF</button>
   </div>
+</div>
 
-  <div class="type-bar">
-    <button class="type-btn active" id="tb-invoice" onclick="setType('invoice')">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Factura
-    </button>
-    <button class="type-btn" id="tb-quote" onclick="setType('quote')">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Presupuesto
-    </button>
-    <button class="type-btn" id="tb-receipt" onclick="setType('receipt')">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/></svg>Recibo
-    </button>
-    <button class="type-btn" id="tb-proforma" onclick="setType('proforma')">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Proforma
-    </button>
-  </div>
+<!-- LAYOUT -->
+<div class="layout">
 
-  <div class="builder-layout">
-    <div class="form-panel">
+  <!-- FORM -->
+  <div class="form-panel">
+    <div class="form-inner">
 
-      <!-- TU EMPRESA -->
-      <div class="form-section">
-        <div class="fs-head">
-          <div class="fs-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg></div>
-          <div class="fs-title">Tu empresa</div>
+      <!-- DOC INFO -->
+      <div class="section">
+        <div class="sec-title">Documento</div>
+        <div class="field-row">
+          <div class="field"><label>Número</label><input type="text" id="docNum" placeholder="FAC-0001" oninput="upd()"></div>
+          <div class="field"><label>Fecha</label><input type="date" id="docDate" oninput="upd()"></div>
         </div>
-        <div class="fg">
-          <label>Logo</label>
-          <div class="logo-area" id="logoArea">
-            <input type="file" id="logoInput" accept="image/*" onchange="handleLogo(this)">
-            <div class="logo-area-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
-            <div class="logo-area-text">Subir logo</div>
-            <div class="logo-area-sub">PNG, JPG · Máx 2MB</div>
-          </div>
-          <div class="logo-preview" id="logoPreview">
-            <img id="logoThumb" src="" alt="logo">
-            <div style="flex:1"><div style="font-size:0.78rem;font-weight:600;color:var(--ink)">Logo subido</div><div style="font-size:0.68rem;color:var(--ink-4)">Aparece en el documento</div></div>
-            <button onclick="removeLogo()">Eliminar</button>
-          </div>
-        </div>
-        <div style="display:none" id="logoPosSection">
-          <label style="display:block;font-size:0.68rem;font-weight:600;color:var(--ink-3);margin-bottom:4px">Posición del logo</label>
-          <div class="logo-pos">
-            <button class="lp-btn active" id="lp-left" onclick="setLogoPos('left')">◀ Izquierda</button>
-            <button class="lp-btn" id="lp-center" onclick="setLogoPos('center')">● Centro</button>
-            <button class="lp-btn" id="lp-right" onclick="setLogoPos('right')">Derecha ▶</button>
-          </div>
-        </div>
-        <div class="fg" style="margin-top:10px"><label>Nombre de empresa</label><input type="text" id="bizName" placeholder="Tu Empresa S.L." oninput="updatePreview()"></div>
-        <div class="form-row">
-          <div class="fg"><label>Email</label><input type="email" id="bizEmail" placeholder="hola@empresa.com" oninput="updatePreview()"></div>
-          <div class="fg"><label>Teléfono</label><input type="tel" id="bizPhone" placeholder="+34 600 000 000" oninput="updatePreview()"></div>
-        </div>
-        <div class="fg"><label>Dirección</label><textarea id="bizAddress" placeholder="Calle Mayor 1&#10;28001 Madrid, España" rows="2" oninput="updatePreview()"></textarea></div>
-        <div class="fg"><label>NIF / CIF</label><input type="text" id="bizNif" placeholder="B-12345678" oninput="updatePreview()"></div>
-      </div>
-
-      <!-- CLIENTE (hidden for receipt) -->
-      <div class="form-section" id="clientSection">
-        <div class="fs-head">
-          <div class="fs-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
-          <div class="fs-title" id="clientTitle">Datos del cliente</div>
-        </div>
-        <div class="form-row">
-          <div class="fg"><label>Nombre / Empresa</label><input type="text" id="clientName" placeholder="Acme S.L." oninput="updatePreview()"></div>
-          <div class="fg"><label>Email</label><input type="email" id="clientEmail" placeholder="cliente@empresa.com" oninput="updatePreview()"></div>
-        </div>
-        <div class="fg"><label>Dirección</label><textarea id="clientAddress" placeholder="Calle Empresa 10&#10;08001 Barcelona, España" rows="2" oninput="updatePreview()"></textarea></div>
-        <div class="fg"><label>NIF / CIF cliente</label><input type="text" id="clientNif" placeholder="A-87654321" oninput="updatePreview()"></div>
-      </div>
-
-      <!-- RECIBO INFO (solo para receipt) -->
-      <div class="form-section" id="receiptSection" style="display:none">
-        <div class="fs-head">
-          <div class="fs-icon" style="background:var(--green-bg)"><svg fill="none" stroke="#16a34a" viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg></div>
-          <div class="fs-title">Datos del pago</div>
-        </div>
-        <div class="fg"><label>Importe recibido</label><input type="text" id="recAmount" placeholder="1500.00" oninput="updatePreview()"></div>
-        <div class="fg"><label>Recibido de</label><input type="text" id="recFrom" placeholder="Juan García / Acme S.L." oninput="updatePreview()"></div>
-        <div class="fg"><label>Concepto</label><input type="text" id="recDesc" placeholder="Diseño web — Factura INV-0042" oninput="updatePreview()"></div>
-        <div class="form-row">
-          <div class="fg"><label>Método de pago</label>
-            <select id="recMethod" onchange="updatePreview()">
-              <option>Transferencia bancaria</option><option>Efectivo</option><option>Tarjeta</option><option>PayPal</option><option>Stripe</option><option>Bizum</option><option>Otro</option>
-            </select>
-          </div>
-          <div class="fg"><label>Moneda</label>
-            <select id="recCurrency" onchange="updatePreview()">
-              <option value="€">€ Euro</option><option value="$">$ Dólar</option><option value="£">£ Libra</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="fg"><label>Nº Recibo</label><input type="text" id="recNumber" placeholder="REC-0001" oninput="updatePreview()"></div>
-          <div class="fg"><label>Fecha</label><input type="date" id="recDate" oninput="updatePreview()"></div>
+        <div class="field-row" id="dueRow">
+          <div class="field"><label>Vencimiento</label><input type="date" id="dueDate" oninput="upd()"></div>
+          <div class="field"><label>Título <span style="color:var(--ink4);font-weight:400">(opcional)</span></label><input type="text" id="docTitle" placeholder="Proyecto web" oninput="upd()"></div>
         </div>
       </div>
 
-      <!-- DETALLES DEL DOCUMENTO -->
-      <div class="form-section" id="docDetailsSection">
-        <div class="fs-head">
-          <div class="fs-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-          <div class="fs-title" id="docDetailsTitle">Detalles de la factura</div>
+      <!-- FROM -->
+      <div class="section">
+        <div class="sec-title">De (tu empresa)</div>
+        <div class="field"><label>Nombre / Empresa</label><input type="text" id="fromName" placeholder="Studio Norte S.L." oninput="upd()"></div>
+        <div class="field-row">
+          <div class="field"><label>NIF / CIF</label><input type="text" id="fromNif" placeholder="B-12345678" oninput="upd()"></div>
+          <div class="field"><label>Email</label><input type="email" id="fromEmail" placeholder="hola@empresa.com" oninput="upd()"></div>
         </div>
-        <div class="form-row">
-          <div class="fg"><label id="docNumLabel">Nº Factura</label><input type="text" id="docNumber" oninput="updatePreview()"></div>
-          <div class="fg"><label>Fecha de emisión</label><input type="date" id="docDate" oninput="updatePreview()"></div>
-        </div>
-        <div class="form-row">
-          <div class="fg" id="dueDateGroup"><label>Fecha de vencimiento</label><input type="date" id="dueDate" oninput="updatePreview()"></div>
-          <div class="fg" id="validGroup" style="display:none"><label>Válido hasta</label><input type="date" id="validDate" oninput="updatePreview()"></div>
-        </div>
-        <div class="form-row">
-          <div class="fg"><label>Moneda</label>
-            <select id="currency" onchange="updatePreview()">
-              <option value="€">€ Euro</option><option value="$">$ Dólar</option><option value="£">£ Libra</option><option value="CHF">CHF Franco</option>
-            </select>
-          </div>
-          <div class="fg"><label>IVA (%)</label><input type="number" id="taxRate" placeholder="21" min="0" max="100" step="0.1" oninput="updatePreview()"></div>
-        </div>
-        <div class="fg" id="quoteIntroGroup" style="display:none">
-          <label>Mensaje de presentación</label>
-          <textarea id="quoteIntro" placeholder="Gracias por su interés. A continuación encontrará nuestra propuesta..." oninput="updatePreview()"></textarea>
-        </div>
+        <div class="field"><label>Dirección</label><input type="text" id="fromAddr" placeholder="Calle Gran Vía, 28, Madrid" oninput="upd()"></div>
       </div>
 
-      <!-- LÍNEAS (hidden for receipt) -->
-      <div class="form-section" id="lineSection">
-        <div class="fs-head">
-          <div class="fs-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
-          <div class="fs-title">Líneas</div>
+      <!-- TO -->
+      <div class="section">
+        <div class="sec-title">Para (cliente)</div>
+        <div class="client-sel">
+          <select id="clientPick" onchange="pickClient()">
+            <option value="">— Seleccionar cliente guardado —</option>
+          </select>
+          <button class="cs-btn" onclick="clearClient()">Limpiar</button>
         </div>
-        <div class="line-mode">
-          <button class="lm-btn active" id="modeSimple" onclick="setLineMode('simple')">Simple (precio)</button>
-          <button class="lm-btn" id="modeCalc" onclick="setLineMode('calc')">Calculado (cant × precio)</button>
+        <div class="field"><label>Nombre / Empresa</label><input type="text" id="toName" placeholder="Acme Corp S.L." oninput="upd()"></div>
+        <div class="field-row">
+          <div class="field"><label>NIF / CIF</label><input type="text" id="toNif" placeholder="A-87654321" oninput="upd()"></div>
+          <div class="field"><label>Email</label><input type="email" id="toEmail" placeholder="facturas@acme.com" oninput="upd()"></div>
         </div>
-        <div id="lineItems">
-          <div class="line-item">
-            <div class="li-top">
-              <input type="text" class="li-desc" placeholder="Ej. Diseño web — página principal" oninput="updatePreview()">
-              <button class="li-remove" onclick="removeLine(this)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-            </div>
-            <div class="li-nums simple">
-              <div><div class="num-lbl">Precio</div><input type="text" class="num-input price-in" placeholder="1200" oninput="updatePreview()"></div>
-            </div>
-          </div>
+        <div class="field"><label>Dirección</label><input type="text" id="toAddr" placeholder="Calle Provença, 123, Barcelona" oninput="upd()"></div>
+      </div>
+
+      <!-- LINES -->
+      <div class="section">
+        <div class="sec-title">Líneas</div>
+        <div class="lines-head"><span>Descripción</span><span>Cant.</span><span>Precio</span><span></span></div>
+        <div id="lines"></div>
+        <button class="add-line" onclick="addLine()">+ Añadir línea</button>
+      </div>
+
+      <!-- TAX -->
+      <div class="section">
+        <div class="sec-title">Impuestos</div>
+        <div class="field-row">
+          <div class="field"><label>IVA (%)</label><input type="number" id="taxRate" value="21" min="0" max="100" oninput="upd()"></div>
+          <div class="field" id="irpfField"><label>IRPF (%)</label><input type="number" id="irpfRate" value="0" min="0" max="100" oninput="upd()"></div>
         </div>
-        <button class="add-line" onclick="addLine()">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Añadir línea
-        </button>
+        <div class="totals-box">
+          <div class="tot-row"><span>Subtotal</span><span id="t-sub">€0,00</span></div>
+          <div class="tot-row"><span id="t-iva-lbl">IVA (21%)</span><span id="t-iva">€0,00</span></div>
+          <div class="tot-row" id="t-irpf-row" style="display:none"><span id="t-irpf-lbl">IRPF (0%)</span><span id="t-irpf">-€0,00</span></div>
+          <div class="tot-row main"><span>TOTAL</span><span id="t-total">€0,00</span></div>
+        </div>
       </div>
 
       <!-- EXTRAS -->
-      <div class="form-section" id="extrasSection">
-        <div class="fs-head">
-          <div class="fs-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
-          <div class="fs-title">Extras</div>
-        </div>
-        <div class="form-row">
-          <div class="fg"><label>Descuento (%)</label><input type="text" id="discPct" placeholder="10" oninput="updatePreview()"></div>
-          <div class="fg"><label>Descuento (fijo €)</label><input type="text" id="discFixed" placeholder="50" oninput="updatePreview()"></div>
-        </div>
-        <div class="fg"><label>Datos bancarios</label><textarea id="bankDetails" placeholder="IBAN: ES91 2100 0418 4502 0005 1332&#10;Banco: CaixaBank" oninput="updatePreview()" style="min-height:60px"></textarea></div>
-        <div class="fg"><label>Notas</label><textarea id="notes" placeholder="Pago en 14 días. Gracias por su confianza." oninput="updatePreview()"></textarea></div>
-        <div class="fg"><label>Pie de página</label><input type="text" id="footer" placeholder="¡Gracias por confiar en nosotros!" oninput="updatePreview()"></div>
+      <div class="section">
+        <div class="sec-title">Notas y banco</div>
+        <div class="field"><label>Notas <span style="color:var(--ink4);font-weight:400">(opcional)</span></label><textarea id="notes" placeholder="Pago en 14 días. Gracias por su confianza." oninput="upd()"></textarea></div>
+        <div class="field"><label>Datos bancarios <span style="color:var(--ink4);font-weight:400">(opcional)</span></label><textarea id="bank" placeholder="IBAN: ES91 2100..." oninput="upd()"></textarea></div>
+        <div class="field"><label>Pie de página <span style="color:var(--ink4);font-weight:400">(opcional)</span></label><input type="text" id="footer" placeholder="¡Gracias por su confianza!" oninput="upd()"></div>
       </div>
 
-      <!-- ESTILO -->
-      <div class="form-section" id="styleSection">
-        <div class="fs-head">
-          <div class="fs-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 011.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg></div>
-          <div class="fs-title">Estilo del documento</div>
-        </div>
-        <div class="fg">
-          <label>Color de fondo</label>
-          <div class="swatches">
-            <div class="sw active" data-bg="default" onclick="setBg('default')" style="background:#faf9f6;border:2px solid #ddd" title="Blanco cálido"></div>
-            <div class="sw" data-bg="white" onclick="setBg('white')" style="background:#ffffff;border:2px solid #ccc" title="Blanco puro"></div>
-            <div class="sw" data-bg="cream" onclick="setBg('cream')" style="background:#fffbf0" title="Crema"></div>
-            <div class="sw" data-bg="blue" onclick="setBg('blue')" style="background:#f0f4ff" title="Azul suave"></div>
-            <div class="sw" data-bg="green" onclick="setBg('green')" style="background:#f0faf4" title="Verde salvia"></div>
-            <div class="sw" data-bg="rose" onclick="setBg('rose')" style="background:#fff1f2" title="Rosa"></div>
-            <div class="sw" data-bg="dark" onclick="setBg('dark')" style="background:#0f172a" title="Oscuro"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- DESCARGAR -->
-      <div class="dl-section">
-        <button class="dl-btn" id="dlBtn" onclick="handleDownload()">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-          Descargar PDF — €0,50
-        </button>
-        <div class="dl-note">
-          <svg fill="none" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-          Pago seguro con Stripe · Apple Pay aceptado
-        </div>
-        <button class="print-btn" onclick="window.print()">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" width="13" height="13"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-          Imprimir
-        </button>
-      </div>
-
-    </div><!-- /form-panel -->
-
-    <div class="preview-panel" id="previewPanel" style="position:relative">
-      <!-- WATERMARK OVERLAY -->
-      <div id="watermark" style="position:absolute;inset:0;z-index:20;pointer-events:none;overflow:hidden;display:flex;align-items:center;justify-content:center">
-        <div style="transform:rotate(-35deg);display:flex;flex-direction:column;gap:48px;align-items:center;width:200%">
-          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:52px;font-weight:800;color:rgba(79,70,229,0.18);letter-spacing:0.05em;white-space:nowrap;text-transform:uppercase">VISTA PREVIA · NO VÁLIDA · VISTA PREVIA · NO VÁLIDA</div>
-          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:52px;font-weight:800;color:rgba(79,70,229,0.18);letter-spacing:0.05em;white-space:nowrap;text-transform:uppercase">INVOICELY.APP · PAGA PARA DESCARGAR · INVOICELY.APP</div>
-          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:52px;font-weight:800;color:rgba(79,70,229,0.18);letter-spacing:0.05em;white-space:nowrap;text-transform:uppercase">VISTA PREVIA · NO VÁLIDA · VISTA PREVIA · NO VÁLIDA</div>
-          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:52px;font-weight:800;color:rgba(79,70,229,0.18);letter-spacing:0.05em;white-space:nowrap;text-transform:uppercase">INVOICELY.APP · PAGA PARA DESCARGAR · INVOICELY.APP</div>
-          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:52px;font-weight:800;color:rgba(79,70,229,0.18);letter-spacing:0.05em;white-space:nowrap;text-transform:uppercase">VISTA PREVIA · NO VÁLIDA · VISTA PREVIA · NO VÁLIDA</div>
-        </div>
-      </div>
-      <div class="preview-inner">
-        <div class="preview-doc" id="previewDoc"></div>
-      </div>
     </div>
   </div>
-</main>
+
+  <!-- PREVIEW -->
+  <div class="preview-panel">
+    <div class="preview-page" id="preview">
+      <div class="pv-header">
+        <div class="pv-logo">
+          <div class="pv-logo-icon"><svg fill="none" viewBox="0 0 120 120"><path d="M60 32L26 88" stroke="white" stroke-opacity=".5" stroke-width="18" stroke-linecap="round"/><path d="M60 32L94 88" stroke="white" stroke-width="18" stroke-linecap="round"/></svg></div>
+          <span class="pv-brand" id="pv-brand">Invoicely</span>
+        </div>
+        <div class="pv-doctype">
+          <div class="pv-doctype-name" id="pv-type">FACTURA</div>
+          <div class="pv-doctype-num" id="pv-num">Nº —</div>
+          <div class="pv-doctype-date" id="pv-date">Fecha: —</div>
+          <div class="pv-doctype-date" id="pv-due">Vence: —</div>
+        </div>
+      </div>
+      <div class="pv-parties">
+        <div>
+          <div class="pv-party-lbl">De</div>
+          <div class="pv-party-name" id="pv-from-name">Tu empresa</div>
+          <div class="pv-party-detail" id="pv-from-detail">NIF · Email · Dirección</div>
+        </div>
+        <div>
+          <div class="pv-party-lbl">Para</div>
+          <div class="pv-party-name" id="pv-to-name">Cliente</div>
+          <div class="pv-party-detail" id="pv-to-detail">NIF · Email · Dirección</div>
+        </div>
+      </div>
+      <table class="pv-table">
+        <thead><tr><th>Descripción</th><th>Cantidad</th><th>Precio unit.</th><th>Importe</th></tr></thead>
+        <tbody id="pv-lines"></tbody>
+      </table>
+      <div class="pv-totals">
+        <div class="pv-tot-row"><span>Subtotal</span><span id="pv-sub">€0,00</span></div>
+        <div class="pv-tot-row"><span id="pv-iva-lbl">IVA (21%)</span><span id="pv-iva">€0,00</span></div>
+        <div class="pv-tot-row" id="pv-irpf-row" style="display:none"><span id="pv-irpf-lbl">IRPF</span><span id="pv-irpf">-€0,00</span></div>
+        <div class="pv-tot-row grand"><span>Total</span><span id="pv-total">€0,00</span></div>
+      </div>
+      <div class="pv-notes" id="pv-notes-box" style="display:none">
+        <div class="pv-notes-lbl">Notas</div>
+        <div class="pv-notes-text" id="pv-notes"></div>
+      </div>
+      <div class="pv-bank" id="pv-bank-box" style="display:none">
+        <div class="pv-bank-lbl">Método de pago</div>
+        <div class="pv-bank-text" id="pv-bank"></div>
+      </div>
+      <div class="pv-footer" id="pv-footer">Invoicely · invoicely0.netlify.app</div>
+    </div>
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ─── CONFIG ───
-var STRIPE_PK = 'pk_live_51TdnJEFB7wERNFpwMhdWeNLQxZpGIufy0lby2rVMNuCtcGeFAETwI12BpC0Df8Hrsz5fq18beYd9wggsTnnA6Eh200BfeAGDNJ';
-var PRICE_ID  = 'price_1TnNcZFB7wERNFpwxdGz7AoR';
+var SB=window.supabase.createClient(
+  'https://ihrloxoilbutrraddynw.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlocmxveG9pbGJ1dHJyYWRkeW53Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3NTA1MzIsImV4cCI6MjA5ODMyNjUzMn0.Br0ht6CwfJEwmakTc9_qL9B0uauBrBq5b9cLrLVx3js'
+);
+var user=null,profile=null,clients=[],docType='invoice',docId=null,lineCount=0;
+var TYPES={invoice:'FACTURA',quote:'PRESUPUESTO',receipt:'RECIBO',proforma:'PROFORMA'};
+var PREFIXES={invoice:'FAC-',quote:'PRE-',receipt:'REC-',proforma:'PRO-'};
 
-// ─── STATE ───
-var docType = 'invoice';
-var logoUrl = null;
-var logoPos = 'left';
-var lineMode = 'simple';
-var bgKey = 'default';
-var bgColors = {default:'#faf9f6',white:'#ffffff',cream:'#fffbf0',blue:'#f0f4ff',green:'#f0faf4',rose:'#fff1f2',dark:'#0f172a'};
+// AUTH
+SB.auth.getSession().then(function(r){
+  if(!r.data||!r.data.session){window.location.href='login.html';return;}
+  user=r.data.session.user;
+  loadProfile();
+});
 
-// ─── INIT ───
-(function(){
-  var p = new URLSearchParams(window.location.search);
-  var t = p.get('type') || 'invoice';
-  setType(t);
-  var today = new Date();
-  var due   = new Date(); due.setDate(due.getDate()+14);
-  var valid = new Date(); valid.setDate(valid.getDate()+30);
-  var fmt = function(d){ return d.toISOString().split('T')[0]; };
-  document.getElementById('docDate').value  = fmt(today);
-  document.getElementById('dueDate').value  = fmt(due);
-  document.getElementById('validDate').value = fmt(valid);
-  var pfx = {invoice:'FAC-',quote:'PRE-',receipt:'REC-',proforma:'PRO-'};
-  document.getElementById('docNumber').value = (pfx[t]||'FAC-') + (Math.floor(Math.random()*9000)+1000);
-
-  // Pre-fill with example data so visitors see a real invoice immediately
-  prefillExample(t);
-  updatePreview();
-
-  // Check if returning from Stripe success
-  if(p.get('paid') === 'true'){
-    showToast('¡Pago confirmado! Generando PDF...','success');
-    setTimeout(function(){ downloadPDF(); }, 1200);
-  }
-})();
-
-// ─── TYPE ───
-function setType(t){
-  docType = t;
-  ['invoice','quote','receipt','proforma'].forEach(function(x){
-    document.getElementById('sb-'+x).classList.toggle('active', x===t);
-    document.getElementById('tb-'+x).classList.toggle('active', x===t);
-  });
-  var isR = t==='receipt', isQ = t==='quote';
-  document.getElementById('clientSection').style.display     = isR ? 'none' : '';
-  document.getElementById('receiptSection').style.display    = isR ? '' : 'none';
-  document.getElementById('docDetailsSection').style.display = isR ? 'none' : '';
-  document.getElementById('lineSection').style.display       = isR ? 'none' : '';
-  document.getElementById('extrasSection').style.display     = isR ? 'none' : '';
-  document.getElementById('styleSection').style.display      = isR ? 'none' : '';
-  document.getElementById('quoteIntroGroup').style.display   = isQ ? '' : 'none';
-  document.getElementById('validGroup').style.display        = isQ ? '' : 'none';
-  document.getElementById('dueDateGroup').style.display      = isQ ? 'none' : '';
-  var titles = {invoice:'Detalles de la factura',quote:'Detalles del presupuesto',proforma:'Detalles de la proforma'};
-  var el = document.getElementById('docDetailsTitle');
-  if(el) el.textContent = titles[t] || '';
-  var numLbls = {invoice:'Nº Factura',quote:'Nº Presupuesto',proforma:'Nº Proforma'};
-  var nl = document.getElementById('docNumLabel');
-  if(nl) nl.textContent = numLbls[t] || 'Número';
-  var barTitles = {invoice:'Nueva Factura',quote:'Nuevo Presupuesto',receipt:'Nuevo Recibo',proforma:'Nueva Proforma'};
-  document.getElementById('docTitleBar').textContent = barTitles[t];
-  // Update doc number prefix
-  var pfx = {invoice:'FAC-',quote:'PRE-',receipt:'REC-',proforma:'PRO-'};
-  var cur = document.getElementById('docNumber').value;
-  var allPfx = ['FAC-','PRE-','REC-','PRO-'];
-  var hasPfx = allPfx.some(function(p){ return cur.startsWith(p); });
-  if(hasPfx) document.getElementById('docNumber').value = (pfx[t]||'FAC-') + cur.slice(4);
-  updatePreview();
-}
-
-// ─── LOGO ───
-function handleLogo(input){
-  var file = input.files[0]; if(!file) return;
-  var r = new FileReader();
-  r.onload = function(e){
-    logoUrl = e.target.result;
-    document.getElementById('logoThumb').src = logoUrl;
-    document.getElementById('logoPreview').style.display = 'flex';
-    document.getElementById('logoArea').style.display = 'none';
-    document.getElementById('logoPosSection').style.display = 'block';
-    updatePreview();
-  };
-  r.readAsDataURL(file);
-}
-function removeLogo(){
-  logoUrl = null;
-  document.getElementById('logoInput').value = '';
-  document.getElementById('logoPreview').style.display = 'none';
-  document.getElementById('logoArea').style.display = 'block';
-  document.getElementById('logoPosSection').style.display = 'none';
-  updatePreview();
-}
-function setLogoPos(p){
-  logoPos = p;
-  ['left','center','right'].forEach(function(x){ document.getElementById('lp-'+x).classList.toggle('active',x===p); });
-  updatePreview();
-}
-
-// ─── BG ───
-function setBg(key){
-  bgKey = key;
-  document.querySelectorAll('.sw').forEach(function(s){ s.classList.remove('active'); });
-  var sw = document.querySelector('[data-bg="'+key+'"]');
-  if(sw) sw.classList.add('active');
-  updatePreview();
-}
-function getBg(){ return bgColors[bgKey] || '#faf9f6'; }
-function isDark(bg){ var h=bg.replace('#',''),r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16); return(r*.299+g*.587+b*.114)<128; }
-
-// ─── LINE MODE ───
-function setLineMode(m){
-  lineMode = m;
-  document.getElementById('modeSimple').classList.toggle('active', m==='simple');
-  document.getElementById('modeCalc').classList.toggle('active', m==='calc');
-  document.querySelectorAll('.li-nums').forEach(function(el){ el.className='li-nums '+m; });
-  updatePreview();
-}
-function addLine(){
-  var c = document.getElementById('lineItems');
-  var d = document.createElement('div'); d.className='line-item';
-  d.innerHTML = '<div class="li-top"><input type="text" class="li-desc" placeholder="Ej. Diseño de logotipo" oninput="updatePreview()"><button class="li-remove" onclick="removeLine(this)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>'
-    +'<div class="li-nums '+lineMode+'">'
-    +(lineMode==='simple'
-      ? '<div><div class="num-lbl">Precio</div><input type="text" class="num-input price-in" placeholder="800" oninput="updatePreview()"></div>'
-      : '<div><div class="num-lbl">Cant.</div><input type="text" class="num-input qty-in" placeholder="2" oninput="calcLine(this)"></div><div><div class="num-lbl">Precio/u</div><input type="text" class="num-input rate-in" placeholder="400" oninput="calcLine(this)"></div><div><div class="num-lbl">Total</div><input type="text" class="num-input total-field" readonly placeholder="0.00"></div>')
-    +'</div>';
-  c.appendChild(d);
-}
-function calcLine(input){
-  var item = input.closest('.line-item');
-  var qty  = parseFloat(item.querySelector('.qty-in') ? item.querySelector('.qty-in').value : 0)||0;
-  var rate = parseFloat(item.querySelector('.rate-in') ? item.querySelector('.rate-in').value : 0)||0;
-  var t = item.querySelector('.total-field'); if(t) t.value=(qty*rate).toFixed(2);
-  updatePreview();
-}
-function removeLine(btn){ btn.closest('.line-item').remove(); updatePreview(); }
-
-// ─── COLLECT DATA ───
-function val(id){ var el=document.getElementById(id); return el?el.value:''; }
-function getCur(){ return val('currency')||'€'; }
-function fmt(n){ return getCur()+(parseFloat(n)||0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
-function fmtDate(d){ return d?new Date(d+'T12:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'}):'—'; }
-
-function collectData(){
-  var items=[],subtotal=0;
-  document.querySelectorAll('#lineItems .line-item').forEach(function(item){
-    var desc = item.querySelector('.li-desc') ? item.querySelector('.li-desc').value : '';
-    var price = 0;
-    if(lineMode==='simple'){
-      var pi = item.querySelector('.price-in'); price = parseFloat(pi?pi.value:0)||0;
-    } else {
-      var qi=item.querySelector('.qty-in'),ri=item.querySelector('.rate-in');
-      price = (parseFloat(qi?qi.value:0)||0)*(parseFloat(ri?ri.value:0)||0);
+function loadProfile(){
+  SB.from('profiles').select('*').eq('id',user.id).maybeSingle().then(function(r){
+    profile=r.data||{};
+    // Pre-fill from profile
+    if(profile.company_name) set('fromName',profile.company_name);
+    if(profile.nif) set('fromNif',profile.nif);
+    if(profile.email) set('fromEmail',profile.email);
+    if(profile.address) set('fromAddr',(profile.address||'')+(profile.city?', '+profile.city:''));
+    if(profile.data){
+      if(profile.data.tax) set('taxRate',profile.data.tax);
+      if(profile.data.irpf&&parseFloat(profile.data.irpf)>0) set('irpfRate',profile.data.irpf);
+      if(profile.data.notes) set('notes',profile.data.notes);
+      if(profile.data.bank) set('bank',profile.data.bank);
     }
-    if(desc||price){ items.push({desc:desc,amount:price}); subtotal+=price; }
-  });
-  var tax   = parseFloat(val('taxRate'))||0;
-  var dp    = parseFloat(val('discPct'))||0;
-  var df    = parseFloat(val('discFixed'))||0;
-  var disc  = subtotal*dp/100+df;
-  var after = subtotal-disc;
-  var taxAmt= after*tax/100;
-  return {
-    type:docType, bg:getBg(), dark:isDark(getBg()),
-    logo:logoUrl, logoPos:logoPos,
-    bizName:val('bizName')||'Tu Empresa',
-    bizEmail:val('bizEmail'), bizPhone:val('bizPhone'),
-    bizAddress:val('bizAddress'), bizNif:val('bizNif'),
-    clientName:val('clientName')||'Cliente',
-    clientEmail:val('clientEmail'), clientAddress:val('clientAddress'), clientNif:val('clientNif'),
-    docNum:val('docNumber'), docDate:fmtDate(val('docDate')),
-    dueDate:fmtDate(val('dueDate')), validDate:fmtDate(val('validDate')),
-    quoteIntro:val('quoteIntro'),
-    items:items, subtotal:subtotal, disc:disc, after:after, taxRate:tax, taxAmt:taxAmt, total:after+taxAmt,
-    notes:val('notes'), bankDetails:val('bankDetails'), footer:val('footer'),
-    recAmount:val('recAmount'), recFrom:val('recFrom'), recDesc:val('recDesc'),
-    recMethod:val('recMethod')||'Transferencia bancaria',
-    recNumber:val('recNumber'), recDate:val('recDate'),
-    recCurrency:val('recCurrency')||'€',
-    currency:getCur(), discPct:dp, discFixed:df
-  };
-}
-
-// ─── LOGO HTML ───
-function logoHtml(d){
-  if(!d.logo) return '';
-  var align = d.logoPos==='center'?'margin:0 auto 12px':d.logoPos==='right'?'margin-left:auto;margin-bottom:12px':'margin-bottom:12px';
-  return '<img src="'+d.logo+'" style="max-height:60px;max-width:160px;object-fit:contain;display:block;'+align+'">';
-}
-
-// ─── RENDER INVOICE ───
-function renderInvoice(d){
-  var bg=d.bg,tc=d.dark?'#e8e0d0':'#1a1a1a',mc=d.dark?'#9a9080':'#777',bc=d.dark?'rgba(255,255,255,0.2)':'#1a1a1a',rb=d.dark?'rgba(255,255,255,0.08)':'#f0ece4';
-  var F="font-family:'Plus Jakarta Sans',Arial,sans-serif";
-  var FI="font-family:'Instrument Serif',Georgia,serif";
-  var FM="font-family:'DM Mono',Courier,monospace";
-  var statusColor = 'background:#fff3cd;color:#856404';
-  var statusText = 'Pendiente';
-  var rows = d.items.length ? d.items.map(function(i){
-    return '<tr><td style="'+F+';padding:9px 0;font-size:0.84rem;color:'+tc+';border-bottom:1px solid '+rb+'">'+i.desc+'</td><td style="'+F+';padding:9px 0;font-size:0.84rem;color:'+tc+';border-bottom:1px solid '+rb+';text-align:right">'+fmt(i.amount)+'</td></tr>';
-  }).join('') : '<tr><td colspan="2" style="padding:12px 0;color:#bbb;font-style:italic;font-size:0.8rem">Añade líneas en el formulario...</td></tr>';
-  var disc = d.disc>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.8rem;color:'+mc+';'+F+'"><span>Descuento</span><span>-'+fmt(d.disc)+'</span></div>':'';
-  var tax  = d.taxRate>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.8rem;color:'+mc+';'+F+'"><span>IVA ('+d.taxRate+'%)</span><span>'+fmt(d.taxAmt)+'</span></div>':'';
-  var notes = d.notes?'<div style="margin-top:16px;padding:12px 16px;background:'+rb+';'+F+';font-size:0.76rem;color:'+mc+';line-height:1.6"><strong style="display:block;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:'+tc+';margin-bottom:3px;'+FM+'">Notas</strong>'+d.notes+'</div>':'';
-  var bank = d.bankDetails?'<div style="margin-top:12px;padding:12px 16px;background:'+rb+';'+F+';font-size:0.76rem;color:'+mc+';line-height:1.6"><strong style="display:block;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:'+tc+';margin-bottom:3px;'+FM+'">Datos bancarios</strong>'+d.bankDetails.replace(/\n/g,'<br>')+'</div>':'';
-  var footer = d.footer||'Generado con Invoicely';
-  return '<div style="background:'+bg+';padding:48px;font-size:14px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
-    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;padding-bottom:20px;border-bottom:2px solid '+bc+'">'
-    +'<div>'+logoHtml(d)+'<div style="'+FI+';font-size:2rem;color:'+tc+';line-height:1">'+d.bizName+'</div>'
-    +(d.bizEmail||d.bizPhone?'<div style="'+F+';font-size:0.76rem;color:'+mc+';margin-top:4px">'+[d.bizEmail,d.bizPhone].filter(Boolean).join(' · ')+'</div>':'')
-    +(d.bizNif?'<div style="'+F+';font-size:0.76rem;color:'+mc+'">NIF: '+d.bizNif+'</div>':'')+'</div>'
-    +'<div style="text-align:right"><span style="'+FM+';font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#c9a84c;display:block;margin-bottom:3px">Factura</span>'
-    +'<div style="'+FI+';font-size:1.4rem;color:'+tc+'">'+d.docNum+'</div>'
-    +'<div style="margin-top:6px"><span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:0.6rem;'+FM+';letter-spacing:0.1em;text-transform:uppercase;'+statusColor+'">'+statusText+'</span></div></div></div>'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-bottom:28px">'
-    +'<div><div style="'+FM+';font-size:0.6rem;letter-spacing:0.16em;text-transform:uppercase;color:#bbb;margin-bottom:5px">Facturar a</div>'
-    +'<div style="'+F+';font-size:0.9rem;font-weight:700;color:'+tc+';margin-bottom:2px">'+d.clientName+'</div>'
-    +(d.clientEmail?'<div style="'+F+';font-size:0.78rem;color:'+mc+'">'+d.clientEmail+'</div>':'')
-    +(d.clientNif?'<div style="'+F+';font-size:0.78rem;color:'+mc+'">NIF: '+d.clientNif+'</div>':'')
-    +(d.clientAddress?'<div style="'+F+';font-size:0.78rem;color:'+mc+';line-height:1.5">'+d.clientAddress.replace(/\n/g,'<br>')+'</div>':'')+'</div>'
-    +'<div style="text-align:right"><div style="'+FM+';font-size:0.6rem;letter-spacing:0.16em;text-transform:uppercase;color:#bbb;margin-bottom:5px">Fechas</div>'
-    +'<div style="'+F+';font-size:0.78rem;color:'+mc+'">Emisión: '+d.docDate+'<br>Vencimiento: '+d.dueDate+'</div></div></div>'
-    +'<table style="width:100%;border-collapse:collapse;margin-bottom:14px">'
-    +'<thead><tr><th style="'+FM+';font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:'+mc+';padding:0 0 8px;border-bottom:1.5px solid '+bc+';font-weight:400;text-align:left">Descripción</th>'
-    +'<th style="'+FM+';font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:'+mc+';padding:0 0 8px;border-bottom:1.5px solid '+bc+';font-weight:400;text-align:right">Importe</th></tr></thead>'
-    +'<tbody>'+rows+'</tbody></table>'
-    +'<div style="margin-left:auto;width:220px">'+disc
-    +'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.8rem;color:'+mc+';'+F+'"><span>Base imponible</span><span>'+fmt(d.subtotal)+'</span></div>'+tax
-    +'<div style="display:flex;justify-content:space-between;padding:10px 0 4px;font-size:1rem;font-weight:700;color:'+tc+';'+F+';border-top:2px solid '+bc+';margin-top:4px"><span>Total</span><span>'+fmt(d.total)+'</span></div></div>'
-    +notes+bank
-    +'<div style="margin-top:24px;padding-top:12px;border-top:1px solid '+rb+';'+FM+';font-size:0.58rem;color:'+mc+';text-align:center;letter-spacing:0.1em;text-transform:uppercase">'+footer+'</div>'
-    +'</div>';
-}
-
-// ─── RENDER QUOTE ───
-function renderQuote(d){
-  var F="font-family:'Plus Jakarta Sans',Arial,sans-serif";
-  var FI="font-family:'Instrument Serif',Georgia,serif";
-  var FM="font-family:'DM Mono',Courier,monospace";
-  var rows = d.items.length ? d.items.map(function(i){
-    return '<tr><td style="'+F+';padding:10px 12px;font-size:0.83rem;color:#374151;border-bottom:1px solid #e5e7eb">'+i.desc+'</td><td style="'+F+';padding:10px 12px;font-size:0.83rem;color:#374151;border-bottom:1px solid #e5e7eb;text-align:right">'+fmt(i.amount)+'</td></tr>';
-  }).join('') : '<tr><td colspan="2" style="padding:12px;color:#bbb;font-style:italic;font-size:0.8rem">Añade líneas...</td></tr>';
-  var disc = d.disc>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.8rem;color:#6b7280;'+F+'"><span>Descuento</span><span>-'+fmt(d.disc)+'</span></div>':'';
-  var tax  = d.taxRate>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.8rem;color:#6b7280;'+F+'"><span>IVA ('+d.taxRate+'%)</span><span>'+fmt(d.taxAmt)+'</span></div>':'';
-  var footer = d.footer||'Generado con Invoicely';
-  return '<div style="font-size:14px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
-    +'<div style="background:linear-gradient(135deg,#4f46e5,#6366f1);padding:36px 48px;color:white">'
-    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px">'
-    +'<div>'+logoHtml(d)+'<div style="'+FI+';font-size:1.8rem;color:white;line-height:1">'+d.bizName+'</div>'
-    +(d.bizEmail?'<div style="'+F+';font-size:0.76rem;color:rgba(255,255,255,0.7);margin-top:3px">'+d.bizEmail+'</div>':'')+'</div>'
-    +'<div style="text-align:right"><span style="'+FM+';font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.6);display:block;margin-bottom:3px">Presupuesto</span>'
-    +'<div style="'+F+';font-size:1.3rem;font-weight:700;color:white">'+d.docNum+'</div></div></div>'
-    +(d.quoteIntro?'<div style="'+F+';font-size:0.86rem;color:rgba(255,255,255,0.85);line-height:1.7;padding-top:14px;border-top:1px solid rgba(255,255,255,0.2)">'+d.quoteIntro+'</div>':'')+'</div>'
-    +'<div style="padding:36px 48px;background:#fff">'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-bottom:28px">'
-    +'<div><div style="'+FM+';font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:#9ca3af;margin-bottom:5px">Preparado para</div>'
-    +'<div style="'+F+';font-size:0.9rem;font-weight:700;color:#0f1729;margin-bottom:2px">'+d.clientName+'</div>'
-    +(d.clientEmail?'<div style="'+F+';font-size:0.78rem;color:#6b7280">'+d.clientEmail+'</div>':'')+'</div>'
-    +'<div style="text-align:right"><div style="'+FM+';font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:#9ca3af;margin-bottom:5px">Fechas</div>'
-    +'<div style="'+F+';font-size:0.78rem;color:#6b7280">Emisión: '+d.docDate+'<br>Válido hasta: '+d.validDate+'</div></div></div>'
-    +'<table style="width:100%;border-collapse:collapse;margin-bottom:14px">'
-    +'<thead><tr style="background:#eef2ff"><th style="'+FM+';font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:#4f46e5;padding:9px 12px;font-weight:600;text-align:left">Descripción</th>'
-    +'<th style="'+FM+';font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:#4f46e5;padding:9px 12px;font-weight:600;text-align:right">Importe</th></tr></thead>'
-    +'<tbody>'+rows+'</tbody></table>'
-    +'<div style="margin-left:auto;width:220px">'+disc
-    +'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.8rem;color:#6b7280;'+F+'"><span>Base imponible</span><span>'+fmt(d.subtotal)+'</span></div>'+tax
-    +'<div style="display:flex;justify-content:space-between;padding:10px 0 4px;font-size:1rem;font-weight:700;color:#4f46e5;'+F+';border-top:2px solid #4f46e5;margin-top:4px"><span>Total estimado</span><span>'+fmt(d.total)+'</span></div></div>'
-    +(d.notes?'<div style="margin-top:16px;padding:12px 16px;background:#eef2ff;border-left:3px solid #4f46e5;'+F+';font-size:0.76rem;color:#374151;line-height:1.6"><strong style="display:block;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:#4f46e5;margin-bottom:3px;'+FM+'">Condiciones</strong>'+d.notes+'</div>':'')
-    +'<div style="margin-top:14px;text-align:center;'+FM+';font-size:0.68rem;color:#9ca3af;letter-spacing:0.08em;text-transform:uppercase">Este presupuesto es válido hasta el '+d.validDate+'</div>'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:36px;margin-top:24px;padding-top:18px;border-top:1px solid #e5e7eb">'
-    +'<div><div style="height:36px;border-bottom:1.5px solid #e5e7eb;margin-bottom:5px"></div><div style="'+FM+';font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af">Firma del cliente</div></div>'
-    +'<div><div style="height:36px;border-bottom:1.5px solid #e5e7eb;margin-bottom:5px"></div><div style="'+FM+';font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;color:#9ca3af">Fecha de aceptación</div></div></div>'
-    +'<div style="margin-top:18px;padding-top:12px;border-top:1px solid #e5e7eb;'+FM+';font-size:0.58rem;color:#9ca3af;text-align:center;letter-spacing:0.1em;text-transform:uppercase">'+footer+'</div>'
-    +'</div></div>';
-}
-
-// ─── RENDER RECEIPT ───
-function renderReceipt(d){
-  var F="font-family:'Plus Jakarta Sans',Arial,sans-serif";
-  var FI="font-family:'Instrument Serif',Georgia,serif";
-  var FM="font-family:'DM Mono',Courier,monospace";
-  var cur = d.recCurrency||'€';
-  var amount = parseFloat(d.recAmount)||0;
-  var footer = d.footer||'Generado con Invoicely';
-  var date = d.recDate ? new Date(d.recDate+'T12:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'}) : d.docDate||'—';
-  return '<div style="font-size:14px;max-width:500px;margin:0 auto;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
-    +'<div style="background:#16a34a;padding:28px 36px;color:white;text-align:center">'
-    +'<div style="width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1.3rem;line-height:52px">✓</div>'
-    +'<div style="'+FI+';font-size:1.5rem;color:white;margin-bottom:3px">Recibo de pago</div>'
-    +'<div style="'+F+';font-size:0.82rem;color:rgba(255,255,255,0.8)">'+d.bizName+'</div>'
-    +'</div>'
-    +'<div style="padding:28px 36px;background:#fff">'
-    +'<div style="background:#f0faf4;border:2px solid #bbf7d0;border-radius:10px;padding:18px;text-align:center;margin-bottom:20px">'
-    +'<div style="'+FM+';font-size:0.68rem;color:#15803d;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:5px">Importe recibido</div>'
-    +'<div style="'+F+';font-size:2.4rem;font-weight:800;color:#15803d;line-height:1">'+cur+amount.toFixed(2)+'</div>'
-    +'</div>'
-    +'<div style="border-top:1px solid #f0f0f0">'
-    +'<div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #f0f0f0"><span style="'+F+';font-size:0.78rem;color:#666">Nº Recibo</span><span style="'+F+';font-size:0.82rem;font-weight:600;color:#1a1a1a">'+(d.recNumber||d.docNum||'—')+'</span></div>'
-    +'<div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #f0f0f0"><span style="'+F+';font-size:0.78rem;color:#666">Fecha</span><span style="'+F+';font-size:0.82rem;font-weight:600;color:#1a1a1a">'+date+'</span></div>'
-    +'<div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #f0f0f0"><span style="'+F+';font-size:0.78rem;color:#666">Recibido de</span><span style="'+F+';font-size:0.82rem;font-weight:600;color:#1a1a1a">'+(d.recFrom||'—')+'</span></div>'
-    +(d.recDesc?'<div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #f0f0f0"><span style="'+F+';font-size:0.78rem;color:#666">Concepto</span><span style="'+F+';font-size:0.82rem;font-weight:600;color:#1a1a1a;text-align:right;max-width:55%">'+d.recDesc+'</span></div>':'')
-    +'<div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #f0f0f0"><span style="'+F+';font-size:0.78rem;color:#666">Método</span><span style="'+F+';font-size:0.82rem;font-weight:600;color:#1a1a1a">'+d.recMethod+'</span></div>'
-    +'<div style="display:flex;justify-content:space-between;padding:11px 0"><span style="'+F+';font-size:0.78rem;color:#666">Recibido por</span><span style="'+F+';font-size:0.82rem;font-weight:600;color:#1a1a1a">'+d.bizName+'</span></div>'
-    +'</div>'
-    +'<div style="text-align:center;margin-top:20px;padding-top:18px;border-top:2px dashed #bbf7d0">'
-    +'<div style="display:inline-flex;align-items:center;gap:7px;background:#16a34a;color:white;padding:9px 22px;border-radius:50px;'+F+';font-size:0.88rem;font-weight:700">✓ Pago confirmado</div>'
-    +'</div>'
-    +'<div style="margin-top:18px;'+FM+';font-size:0.64rem;color:#bbb;text-align:center;letter-spacing:0.08em;text-transform:uppercase">'+footer+'</div>'
-    +'</div></div>';
-}
-
-// ─── RENDER PROFORMA ───
-function renderProforma(d){
-  var bg=d.bg||'#fffbf0';
-  var F="font-family:'Plus Jakarta Sans',Arial,sans-serif";
-  var FI="font-family:'Instrument Serif',Georgia,serif";
-  var FM="font-family:'DM Mono',Courier,monospace";
-  var rows = d.items.length ? d.items.map(function(i){
-    return '<tr><td style="'+F+';padding:9px 0;font-size:0.82rem;color:#333;border-bottom:1px solid #f5e8c8">'+i.desc+'</td><td style="'+F+';padding:9px 0;font-size:0.82rem;color:#333;border-bottom:1px solid #f5e8c8;text-align:right">'+fmt(i.amount)+'</td></tr>';
-  }).join('') : '<tr><td colspan="2" style="padding:9px 0;color:#bbb;font-style:italic;font-size:0.8rem">Añade líneas...</td></tr>';
-  var disc = d.disc>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.8rem;color:#888;'+F+'"><span>Descuento</span><span>-'+fmt(d.disc)+'</span></div>':'';
-  var tax  = d.taxRate>0?'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.8rem;color:#888;'+F+'"><span>IVA ('+d.taxRate+'%)</span><span>'+fmt(d.taxAmt)+'</span></div>':'';
-  var footer = d.footer||'Generado con Invoicely';
-  return '<div style="background:'+bg+';padding:48px;font-size:14px;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
-    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;padding-bottom:16px;border-bottom:3px solid #d97706">'
-    +'<div>'+logoHtml(d)+'<div style="'+FI+';font-size:1.8rem;color:#1a1a1a">'+d.bizName+'</div>'
-    +(d.bizEmail?'<div style="'+F+';font-size:0.76rem;color:#888;margin-top:3px">'+d.bizEmail+'</div>':'')+'</div>'
-    +'<div style="text-align:right"><span style="'+FM+';font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;color:#d97706;display:block;margin-bottom:3px">Factura Proforma</span>'
-    +'<div style="'+F+';font-size:1.2rem;font-weight:700;color:#1a1a1a">'+d.docNum+'</div></div></div>'
-    +'<div style="background:#fef3c7;border:1px solid #fbbf24;border-radius:7px;padding:9px 14px;'+F+';font-size:0.76rem;color:#92400e;margin-bottom:20px">⚠️ Este documento es una proforma — no tiene validez fiscal. Se emitirá la factura definitiva tras la confirmación.</div>'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px">'
-    +'<div><div style="'+FM+';font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:#bbb;margin-bottom:4px">Para</div>'
-    +'<div style="'+F+';font-size:0.88rem;font-weight:700;color:#1a1a1a;margin-bottom:2px">'+d.clientName+'</div>'
-    +(d.clientEmail?'<div style="'+F+';font-size:0.76rem;color:#666">'+d.clientEmail+'</div>':'')+'</div>'
-    +'<div style="text-align:right"><div style="'+FM+';font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:#bbb;margin-bottom:4px">Fechas</div>'
-    +'<div style="'+F+';font-size:0.76rem;color:#666">Emisión: '+d.docDate+'<br>Vencimiento: '+d.dueDate+'</div></div></div>'
-    +'<table style="width:100%;border-collapse:collapse;margin-bottom:14px">'
-    +'<thead><tr><th style="'+FM+';font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:#d97706;padding:0 0 7px;border-bottom:2px solid #d97706;font-weight:600;text-align:left">Descripción</th>'
-    +'<th style="'+FM+';font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:#d97706;padding:0 0 7px;border-bottom:2px solid #d97706;font-weight:600;text-align:right">Importe</th></tr></thead>'
-    +'<tbody>'+rows+'</tbody></table>'
-    +'<div style="margin-left:auto;width:220px">'+disc
-    +'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.8rem;color:#888;'+F+'"><span>Base imponible</span><span>'+fmt(d.subtotal)+'</span></div>'+tax
-    +'<div style="display:flex;justify-content:space-between;padding:9px 0 4px;font-size:1rem;font-weight:700;color:#d97706;'+F+';border-top:2px solid #d97706;margin-top:4px"><span>Total estimado</span><span>'+fmt(d.total)+'</span></div></div>'
-    +(d.notes?'<div style="margin-top:14px;padding:11px 14px;background:#fef3c7;'+F+';font-size:0.76rem;color:#92400e;line-height:1.6"><strong style="display:block;font-size:0.56rem;letter-spacing:0.12em;text-transform:uppercase;color:#d97706;margin-bottom:3px;'+FM+'">Notas</strong>'+d.notes+'</div>':'')
-    +'<div style="margin-top:18px;padding-top:12px;border-top:1px solid #f5e8c8;'+FM+';font-size:0.56rem;color:#ccc;text-align:center;letter-spacing:0.1em;text-transform:uppercase">'+footer+'</div>'
-    +'</div>';
-}
-
-// ─── UPDATE PREVIEW ───
-function updatePreview(){
-  var d = collectData();
-  var el = document.getElementById('previewDoc');
-  var panel = document.querySelector('.preview-panel');
-  panel.style.background = (d.type==='quote') ? '#e0e0e0' : '#e8e8e8';
-  if(d.type==='quote')       el.innerHTML = renderQuote(d);
-  else if(d.type==='receipt') el.innerHTML = renderReceipt(d);
-  else if(d.type==='proforma') el.innerHTML = renderProforma(d);
-  else                         el.innerHTML = renderInvoice(d);
-}
-
-// ─── STRIPE PAYMENT ───
-function handleDownload(){
-  var btn = document.getElementById('dlBtn');
-  btn.disabled = true;
-  btn.textContent = 'Generando PDF...';
-
-  // 1. Render the preview doc into a visible clone for html2pdf
-  var d = collectData();
-  var bg = (d.type==='receipt') ? '#ffffff' : (d.bg||'#faf9f6');
-  var fname = (d.bizName||'Documento').replace(/[^a-zA-Z0-9]/g,'-')+'-'+(d.docNum||'doc')+'.pdf';
-
-  // Use the live visible preview — it's already rendered correctly
-  var src = document.getElementById('previewDoc');
-
-  html2pdf().set({
-    margin: 0,
-    filename: fname,
-    image: {type:'jpeg', quality:0.98},
-    html2canvas: {scale:2, useCORS:true, allowTaint:true, backgroundColor:bg, logging:false},
-    jsPDF: {unit:'mm', format:'a4', orientation:'portrait'}
-  }).from(src).outputPdf('datauristring').then(function(pdfData){
-    // Save PDF as base64 in localStorage
-    try {
-      localStorage.setItem('inv_pdf', pdfData);
-      localStorage.setItem('inv_fname', fname);
-      localStorage.setItem('inv_pending', 'true');
-    } catch(e) {
-      // PDF too large for localStorage — store just the data
-      localStorage.setItem('inv_pdf', '');
-    }
-
-    btn.textContent = 'Redirigiendo a Stripe...';
-
-    // 2. Go to Stripe
-    setTimeout(function(){
-      window.location.href = 'https://buy.stripe.com/bJefZhgtw88cguC1vX1Jm02';
-    }, 300);
-
-  }).catch(function(e){
-    btn.disabled = false;
-    btn.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Descargar PDF — €0,50';
-    showToast('Error generando PDF. Inténtalo de nuevo.','error');
-  });
-}
-
-// ─── DOWNLOAD PDF ───
-function downloadPDF(){
-  var btn = document.getElementById('dlBtn');
-  btn.disabled = true;
-  btn.textContent = 'Generando PDF...';
-  var d = collectData();
-  var bg = d.type==='receipt' ? '#ffffff' : d.bg||'#faf9f6';
-  var fname = (d.bizName||'Documento').replace(/[^a-zA-Z0-9]/g,'-')+'-'+d.docNum+'.pdf';
-  var src = document.getElementById('previewDoc');
-  html2pdf().set({
-    margin:0,
-    filename:fname,
-    image:{type:'jpeg',quality:0.98},
-    html2canvas:{scale:2,useCORS:true,allowTaint:true,backgroundColor:bg,logging:false},
-    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
-  }).from(src).save().then(function(){
-    btn.disabled = false;
-    btn.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Descargar PDF — €0,50';
-    showToast('¡PDF descargado!','success');
+    loadClients();
+    initDoc();
+    setTimeout(function(){document.getElementById('ld').classList.add('gone');},400);
   }).catch(function(){
-    btn.disabled = false;
-    btn.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Descargar PDF — €0,50';
-    showToast('Error generando PDF. Prueba a imprimir.','error');
+    initDoc();
+    setTimeout(function(){document.getElementById('ld').classList.add('gone');},400);
   });
 }
 
-// ─── TOAST ───
-function showToast(msg,type){
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast '+(type||'info');
-  t.classList.add('show');
-  setTimeout(function(){ t.classList.remove('show'); }, 3500);
+function loadClients(){
+  SB.from('clients').select('*').eq('user_id',user.id).order('name').then(function(r){
+    clients=r.data||[];
+    var sel=document.getElementById('clientPick');
+    clients.forEach(function(c){
+      var o=document.createElement('option');
+      o.value=c.id;o.textContent=c.name;sel.appendChild(o);
+    });
+  });
 }
 
-window.addEventListener('load', updatePreview);
+function initDoc(){
+  var today=new Date();
+  var due=new Date();due.setDate(due.getDate()+14);
+  var fmt=function(d){return d.toISOString().split('T')[0];};
+  set('docDate',fmt(today));
+  set('dueDate',fmt(due));
+  set('docNum',PREFIXES[docType]+(Math.floor(Math.random()*9000)+1000));
+  // Check URL params
+  var p=new URLSearchParams(window.location.search);
+  if(p.get('type')) setType(p.get('type'),null);
+  addLine();
+  upd();
+}
 
-function prefillExample(type){
-  // Business info
-  var biz = document.getElementById('bizName');
-  if(biz && !biz.value) biz.value = 'Studio Norte S.L.';
-  var bizEmail = document.getElementById('bizEmail');
-  if(bizEmail && !bizEmail.value) bizEmail.value = 'hola@studionorte.com';
-  var bizPhone = document.getElementById('bizPhone');
-  if(bizPhone && !bizPhone.value) bizPhone.value = '+34 600 123 456';
-  var bizNif = document.getElementById('bizNif');
-  if(bizNif && !bizNif.value) bizNif.value = 'B-12345678';
-  var bizAddr = document.getElementById('bizAddress');
-  if(bizAddr && !bizAddr.value) bizAddr.value = 'Calle Gran Vía, 28\n28013 Madrid, España';
+function set(id,val){var e=document.getElementById(id);if(e)e.value=val;}
+function get(id){var e=document.getElementById(id);return e?e.value.trim():'';}
 
-  if(type === 'receipt'){
-    var recFrom = document.getElementById('recFrom');
-    if(recFrom && !recFrom.value) recFrom.value = 'Acme Corp S.L.';
-    var recAmount = document.getElementById('recAmount');
-    if(recAmount && !recAmount.value) recAmount.value = '1500.00';
-    var recDesc = document.getElementById('recDesc');
-    if(recDesc && !recDesc.value) recDesc.value = 'Diseño web — Factura FAC-0042';
-    return;
-  }
+function setType(type,btn){
+  docType=type;
+  document.querySelectorAll('.type-btn').forEach(function(b){b.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+  else{var btns=document.querySelectorAll('.type-btn');var i=['invoice','quote','receipt','proforma'].indexOf(type);if(btns[i])btns[i].classList.add('on');}
+  // Update doc number prefix
+  var num=get('docNum');
+  if(num&&num.length>4) set('docNum',PREFIXES[type]+num.split('-')[1]);
+  else set('docNum',PREFIXES[type]+(Math.floor(Math.random()*9000)+1000));
+  // Show/hide due date for receipt
+  document.getElementById('dueRow').style.display=type==='receipt'?'none':'';
+  upd();
+}
 
-  // Client info
-  var client = document.getElementById('clientName');
-  if(client && !client.value) client.value = 'Acme Corporation S.L.';
-  var clientEmail = document.getElementById('clientEmail');
-  if(clientEmail && !clientEmail.value) clientEmail.value = 'facturacion@acme.es';
-  var clientNif = document.getElementById('clientNif');
-  if(clientNif && !clientNif.value) clientNif.value = 'A-87654321';
-  var clientAddr = document.getElementById('clientAddress');
-  if(clientAddr && !clientAddr.value) clientAddr.value = 'Calle Provença, 123\n08008 Barcelona, España';
+function pickClient(){
+  var id=document.getElementById('clientPick').value;
+  if(!id){return;}
+  var c=clients.find(function(x){return x.id===id;});
+  if(!c)return;
+  set('toName',c.name||'');
+  set('toNif',c.nif||'');
+  set('toEmail',c.email||'');
+  var addr=(c.address||'')+(c.city?', '+c.city:'');
+  set('toAddr',addr);
+  upd();
+}
+function clearClient(){
+  document.getElementById('clientPick').value='';
+  ['toName','toNif','toEmail','toAddr'].forEach(function(id){set(id,'');});
+  upd();
+}
 
-  // Tax
-  var tax = document.getElementById('taxRate');
-  if(tax && !tax.value) tax.value = '21';
+function addLine(){
+  lineCount++;
+  var id='l'+lineCount;
+  var div=document.createElement('div');
+  div.className='line-item';
+  div.id=id;
+  div.innerHTML='<input type="text" placeholder="Descripción del servicio" oninput="upd()">'
+    +'<input type="number" placeholder="1" value="1" min="0" oninput="upd()">'
+    +'<input type="number" placeholder="0,00" value="" min="0" step="0.01" oninput="upd()">'
+    +'<button class="del-line" onclick="delLine(\''+id+'\')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M9 6V4h6v2"/></svg></button>';
+  document.getElementById('lines').appendChild(div);
+  upd();
+}
+function delLine(id){
+  var el=document.getElementById(id);
+  if(el&&document.getElementById('lines').children.length>1){el.remove();upd();}
+}
 
-  // Notes
-  var notes = document.getElementById('notes');
-  if(notes && !notes.value) notes.value = 'Pago en 14 días naturales. Gracias por su confianza.';
+function getLines(){
+  var rows=[];
+  document.querySelectorAll('#lines .line-item').forEach(function(div){
+    var ins=div.querySelectorAll('input');
+    var desc=ins[0].value.trim();
+    var qty=parseFloat(ins[1].value)||1;
+    var price=parseFloat(ins[2].value)||0;
+    rows.push({desc:desc,qty:qty,price:price,total:qty*price});
+  });
+  return rows;
+}
 
-  // Footer
-  var footer = document.getElementById('footer');
-  if(footer && !footer.value) footer.value = '¡Gracias por confiar en nosotros!';
+function fmt(n){return n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2});}
 
-  // Bank details
-  var bank = document.getElementById('bankDetails');
-  if(bank && !bank.value) bank.value = 'IBAN: ES91 2100 0418 4502 0005 1332\nBanco: CaixaBank · SWIFT: CAIXESBBXXX';
+function upd(){
+  var lines=getLines();
+  var sub=lines.reduce(function(s,l){return s+l.total;},0);
+  var tax=parseFloat(get('taxRate'))||0;
+  var irpf=parseFloat(get('irpfRate'))||0;
+  var iva=sub*tax/100;
+  var irpfAmt=sub*irpf/100;
+  var total=sub+iva-irpfAmt;
 
-  // Quote intro
-  if(type === 'quote'){
-    var qi = document.getElementById('quoteIntro');
-    if(qi && !qi.value) qi.value = 'Gracias por su interés. A continuación encontrará nuestra propuesta detallada para el proyecto solicitado.';
-  }
+  // Form totals
+  document.getElementById('t-sub').textContent='€'+fmt(sub);
+  document.getElementById('t-iva-lbl').textContent='IVA ('+tax+'%)';
+  document.getElementById('t-iva').textContent='€'+fmt(iva);
+  document.getElementById('t-irpf-row').style.display=irpf>0?'':'none';
+  document.getElementById('t-irpf-lbl').textContent='IRPF ('+irpf+'%)';
+  document.getElementById('t-irpf').textContent='-€'+fmt(irpfAmt);
+  document.getElementById('t-total').textContent='€'+fmt(total);
 
-  // Line items — fill first item, add second
-  var firstDesc = document.querySelector('#lineItems .li-desc');
-  var firstPrice = document.querySelector('#lineItems .price-in');
-  if(firstDesc && !firstDesc.value){
-    if(type === 'proforma'){
-      firstDesc.value = 'Diseño de identidad visual';
-      if(firstPrice) firstPrice.value = '800';
-    } else if(type === 'quote'){
-      firstDesc.value = 'Diseño web — página principal';
-      if(firstPrice) firstPrice.value = '1200';
-    } else {
-      firstDesc.value = 'Diseño web — Homepage';
-      if(firstPrice) firstPrice.value = '1200';
+  // Preview
+  var fromName=get('fromName')||'Tu empresa';
+  document.getElementById('pv-brand').textContent=fromName;
+  document.getElementById('pv-type').textContent=TYPES[docType]||'FACTURA';
+  document.getElementById('pv-num').textContent='Nº '+(get('docNum')||'—');
+  document.getElementById('pv-date').textContent='Fecha: '+(get('docDate')||'—');
+  var due=document.getElementById('dueDate');
+  document.getElementById('pv-due').textContent=due&&due.value?'Vence: '+due.value:'';
+  document.getElementById('pv-from-name').textContent=fromName;
+  var fromDetail=[get('fromNif'),get('fromEmail'),get('fromAddr')].filter(Boolean).join(' · ');
+  document.getElementById('pv-from-detail').textContent=fromDetail||'NIF · Email · Dirección';
+  document.getElementById('pv-to-name').textContent=get('toName')||'Cliente';
+  var toDetail=[get('toNif'),get('toEmail'),get('toAddr')].filter(Boolean).join(' · ');
+  document.getElementById('pv-to-detail').textContent=toDetail||'NIF · Email · Dirección';
+
+  // Lines
+  var tbody=document.getElementById('pv-lines');
+  tbody.innerHTML=lines.map(function(l){
+    return '<tr><td>'+(l.desc||'—')+'</td><td>'+l.qty+'</td><td>€'+fmt(l.price)+'</td><td>€'+fmt(l.total)+'</td></tr>';
+  }).join('');
+
+  // Totals
+  document.getElementById('pv-sub').textContent='€'+fmt(sub);
+  document.getElementById('pv-iva-lbl').textContent='IVA ('+tax+'%)';
+  document.getElementById('pv-iva').textContent='€'+fmt(iva);
+  document.getElementById('pv-irpf-row').style.display=irpf>0?'':'none';
+  document.getElementById('pv-irpf-lbl').textContent='IRPF ('+irpf+'%)';
+  document.getElementById('pv-irpf').textContent='-€'+fmt(irpfAmt);
+  document.getElementById('pv-total').textContent='€'+fmt(total);
+
+  // Notes, bank, footer
+  var notes=get('notes');
+  document.getElementById('pv-notes-box').style.display=notes?'':'none';
+  document.getElementById('pv-notes').textContent=notes;
+  var bank=get('bank');
+  document.getElementById('pv-bank-box').style.display=bank?'':'none';
+  document.getElementById('pv-bank').textContent=bank;
+  var footer=get('footer');
+  document.getElementById('pv-footer').textContent=footer||'Invoicely · invoicely0.netlify.app';
+}
+
+function getDocData(){
+  var lines=getLines();
+  var sub=lines.reduce(function(s,l){return s+l.total;},0);
+  var tax=parseFloat(get('taxRate'))||0;
+  var irpf=parseFloat(get('irpfRate'))||0;
+  var iva=sub*tax/100;
+  var irpfAmt=sub*irpf/100;
+  var total=sub+iva-irpfAmt;
+  return {
+    user_id:user.id,
+    type:docType,
+    doc_number:get('docNum'),
+    title:get('docTitle')||get('toName'),
+    client_name:get('toName'),
+    total:total,
+    status:'draft',
+    data:{
+      from:{name:get('fromName'),nif:get('fromNif'),email:get('fromEmail'),address:get('fromAddr')},
+      to:{name:get('toName'),nif:get('toNif'),email:get('toEmail'),address:get('toAddr')},
+      lines:lines,
+      tax:tax,irpf:irpf,sub:sub,iva:iva,irpfAmt:irpfAmt,total:total,
+      date:get('docDate'),due:get('dueDate'),
+      notes:get('notes'),bank:get('bank'),footer:get('footer')
     }
-  }
-
-  // Add a second line item
-  addLine();
-  var items = document.querySelectorAll('#lineItems .line-item');
-  if(items.length >= 2){
-    var d2 = items[1].querySelector('.li-desc');
-    var p2 = items[1].querySelector('.price-in');
-    if(d2) d2.value = type === 'quote' ? 'Identidad visual y branding' : 'Mantenimiento mensual';
-    if(p2) p2.value = type === 'quote' ? '800' : '150';
-  }
-
-  // Add a third line item
-  addLine();
-  var items2 = document.querySelectorAll('#lineItems .line-item');
-  if(items2.length >= 3){
-    var d3 = items2[2].querySelector('.li-desc');
-    var p3 = items2[2].querySelector('.price-in');
-    if(d3) d3.value = 'Optimización SEO';
-    if(p3) p3.value = '300';
-  }
+  };
 }
 
-// Block right-click on preview
-document.getElementById('previewPanel').addEventListener('contextmenu', function(e){ e.preventDefault(); });
-
-// On PrintScreen key — replace preview with black for ~1 second
-document.addEventListener('keyup', function(e){
-  if(e.key === 'PrintScreen'){
-    blackout();
-  }
-});
-document.addEventListener('keydown', function(e){
-  if(e.key === 'PrintScreen'){
-    blackout();
-    e.preventDefault();
-  }
-  // Block Ctrl+P (print)
-  if(e.ctrlKey && e.key === 'p'){
-    e.preventDefault();
-  }
-  // Block Ctrl+Shift+S
-  if(e.ctrlKey && e.shiftKey && e.key === 's'){
-    e.preventDefault();
-  }
-});
-
-// Blackout: makes preview black for 800ms — screenshot captures black
-function blackout(){
-  var panel = document.getElementById('previewDoc');
-  var prev = panel.innerHTML;
-  panel.innerHTML = '<div style="background:#000;width:100%;height:800px"></div>';
-  panel.style.background = '#000';
-  setTimeout(function(){
-    panel.innerHTML = prev;
-    panel.style.background = '';
-  }, 800);
+function saveDoc(){
+  if(!user){toast('No has iniciado sesión.','err');return;}
+  var data=getDocData();
+  var promise=docId
+    ? SB.from('documents').update(data).eq('id',docId).eq('user_id',user.id)
+    : SB.from('documents').insert(data).select().single();
+  promise.then(function(r){
+    if(r.error){toast('Error al guardar: '+r.error.message,'err');return;}
+    if(!docId&&r.data&&r.data.id) docId=r.data.id;
+    toast('Documento guardado.','ok');
+  }).catch(function(e){toast('Error: '+e.message,'err');});
 }
 
-// Detect visibility change (Tab key, alt+tab) — used by some screenshot tools
-document.addEventListener('visibilitychange', function(){
-  if(document.hidden){
-    var panel = document.getElementById('previewDoc');
-    panel._savedContent = panel.innerHTML;
-    panel.innerHTML = '<div style="background:#000;width:100%;height:800px"></div>';
-  } else {
-    var panel = document.getElementById('previewDoc');
-    if(panel._savedContent) panel.innerHTML = panel._savedContent;
-  }
-});
+function downloadPDF(){
+  saveDoc();
+  var el=document.getElementById('preview');
+  // Use jsPDF with html
+  var opt={
+    margin:[10,10,10,10],
+    filename:(get('docNum')||'factura')+'.pdf',
+    image:{type:'jpeg',quality:0.98},
+    html2canvas:{scale:2,useCORS:true},
+    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
+  };
+  // Simple print approach for reliability
+  var win=window.open('','_blank');
+  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>');
+  win.document.write('*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;padding:20px;color:#0f1729}');
+  win.document.write('.h{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid #4f46e5}');
+  win.document.write('.brand{font-size:1.3rem;font-weight:800;color:#4f46e5}.doctype{text-align:right}.doctype-name{font-size:1.6rem;font-weight:800;color:#0f1729}');
+  win.document.write('.doctype-sub{font-size:0.78rem;color:#6b7280;margin-top:3px}');
+  win.document.write('.parties{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}');
+  win.document.write('.lbl{font-size:0.6rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}');
+  win.document.write('.name{font-size:0.88rem;font-weight:700;margin-bottom:2px}.detail{font-size:0.74rem;color:#6b7280;line-height:1.5}');
+  win.document.write('table{width:100%;border-collapse:collapse;margin-bottom:16px}');
+  win.document.write('th{font-size:0.62rem;font-weight:700;color:#9ca3af;text-align:left;padding:6px 4px;border-bottom:1.5px solid #e5e7eb;text-transform:uppercase}');
+  win.document.write('th:not(:first-child){text-align:right}td{padding:8px 4px;border-bottom:1px solid #f8f9fc;font-size:0.8rem;color:#374151}td:not(:first-child){text-align:right}');
+  win.document.write('.tots{margin-left:auto;width:200px;margin-bottom:20px}.tr{display:flex;justify-content:space-between;padding:4px 0;font-size:0.78rem;color:#6b7280}');
+  win.document.write('.tr.grand{border-top:2px solid #4f46e5;padding-top:7px;margin-top:3px;font-weight:800;font-size:0.9rem;color:#0f1729}');
+  win.document.write('.notes{background:#f8f9fc;border-radius:6px;padding:12px;margin-bottom:14px}.notes-lbl{font-size:0.6rem;font-weight:700;color:#9ca3af;text-transform:uppercase;margin-bottom:4px}.notes-txt{font-size:0.76rem;color:#6b7280;line-height:1.5}');
+  win.document.write('.footer{margin-top:30px;border-top:1px solid #e5e7eb;padding-top:8px;font-size:0.68rem;color:#9ca3af;text-align:center}');
+  win.document.write('@media print{body{padding:0}}');
+  win.document.write('</style></head><body>');
+
+  var lines=getLines();
+  var sub=lines.reduce(function(s,l){return s+l.total;},0);
+  var tax=parseFloat(get('taxRate'))||0;
+  var irpf=parseFloat(get('irpfRate'))||0;
+  var iva=sub*tax/100;
+  var irpfAmt=sub*irpf/100;
+  var total=sub+iva-irpfAmt;
+
+  var fromDetail=[get('fromNif'),get('fromEmail'),get('fromAddr')].filter(Boolean).join('<br>');
+  var toDetail=[get('toNif'),get('toEmail'),get('toAddr')].filter(Boolean).join('<br>');
+
+  win.document.write('<div class="h">');
+  win.document.write('<div class="brand">'+(get('fromName')||'Invoicely')+'</div>');
+  win.document.write('<div class="doctype"><div class="doctype-name">'+(TYPES[docType]||'FACTURA')+'</div>');
+  win.document.write('<div class="doctype-sub">Nº '+(get('docNum')||'—')+'</div>');
+  win.document.write('<div class="doctype-sub">Fecha: '+(get('docDate')||'—')+'</div>');
+  if(get('dueDate')) win.document.write('<div class="doctype-sub">Vence: '+get('dueDate')+'</div>');
+  win.document.write('</div></div>');
+
+  win.document.write('<div class="parties">');
+  win.document.write('<div><div class="lbl">De</div><div class="name">'+(get('fromName')||'—')+'</div><div class="detail">'+(fromDetail||'—')+'</div></div>');
+  win.document.write('<div><div class="lbl">Para</div><div class="name">'+(get('toName')||'—')+'</div><div class="detail">'+(toDetail||'—')+'</div></div>');
+  win.document.write('</div>');
+
+  win.document.write('<table><thead><tr><th>Descripción</th><th>Cant.</th><th>Precio</th><th>Importe</th></tr></thead><tbody>');
+  lines.forEach(function(l){
+    win.document.write('<tr><td>'+(l.desc||'—')+'</td><td>'+l.qty+'</td><td>€'+fmt(l.price)+'</td><td>€'+fmt(l.total)+'</td></tr>');
+  });
+  win.document.write('</tbody></table>');
+
+  win.document.write('<div class="tots">');
+  win.document.write('<div class="tr"><span>Subtotal</span><span>€'+fmt(sub)+'</span></div>');
+  win.document.write('<div class="tr"><span>IVA ('+tax+'%)</span><span>€'+fmt(iva)+'</span></div>');
+  if(irpf>0) win.document.write('<div class="tr"><span>IRPF ('+irpf+'%)</span><span>-€'+fmt(irpfAmt)+'</span></div>');
+  win.document.write('<div class="tr grand"><span>Total</span><span>€'+fmt(total)+'</span></div>');
+  win.document.write('</div>');
+
+  if(get('notes')) win.document.write('<div class="notes"><div class="notes-lbl">Notas</div><div class="notes-txt">'+get('notes')+'</div></div>');
+  if(get('bank')) win.document.write('<div class="notes"><div class="notes-lbl">Método de pago</div><div class="notes-txt">'+get('bank')+'</div></div>');
+
+  win.document.write('<div class="footer">'+(get('footer')||'Invoicely · invoicely0.netlify.app')+'</div>');
+  win.document.write('</body></html>');
+  win.document.close();
+  setTimeout(function(){ win.print(); }, 600);
+  toast('PDF generado.','ok');
+}
+
+function toast(msg,type){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast '+(type||'inf');t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},2800);
+}
 </script>
 </body>
 </html>
