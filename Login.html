@@ -130,7 +130,10 @@ function doLogin(){
   btn.disabled=true;btn.textContent='Entrando...';
   sb.auth.signInWithPassword({email:email,password:pass}).then(function(r){
     btn.disabled=false;btn.textContent='Entrar';
-    if(r.error){showMsg(r.error.message,'error');return;}
+    if(r.error){
+      var msg=typeof r.error==='string'?r.error:(r.error.message||r.error.msg||'Email o contraseña incorrectos.');
+      showMsg(msg,'error');return;
+    }
     checkOnboarding(r.data.user);
   });
 }
@@ -145,9 +148,25 @@ function doRegister(){
   btn.disabled=true;btn.textContent='Creando cuenta...';
   sb.auth.signUp({email:email,password:pass,options:{data:{full_name:name}}}).then(function(r){
     btn.disabled=false;btn.textContent='Crear cuenta gratis';
-    if(r.error){showMsg(r.error.message,'error');return;}
-    if(r.data&&r.data.session) window.location.href='onboarding.html';
-    else showMsg('Revisa tu email para confirmar tu cuenta y luego entra.','success');
+    if(r.error){
+      var msg=typeof r.error==='string'?r.error:(r.error.message||r.error.msg||JSON.stringify(r.error));
+      showMsg(msg,'error');return;
+    }
+    if(r.data&&r.data.session){
+      window.location.href='onboarding.html';
+    } else if(r.data&&r.data.user&&r.data.user.id){
+      // No session but user created — email confirmation probably still on
+      // Try to sign in directly
+      sb.auth.signInWithPassword({email:email,password:pass}).then(function(r2){
+        if(r2.data&&r2.data.session){window.location.href='onboarding.html';}
+        else{showMsg('Cuenta creada. Revisa tu email para confirmarla.','success');}
+      });
+    } else {
+      showMsg('Algo salió mal. Inténtalo de nuevo.','error');
+    }
+  }).catch(function(e){
+    btn.disabled=false;btn.textContent='Crear cuenta gratis';
+    showMsg(e.message||'Error al crear la cuenta.','error');
   });
 }
 function doForgot(){
