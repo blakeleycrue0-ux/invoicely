@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoicely — Recibo</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#f8f9fc;color:#0f1729;height:100vh;overflow:hidden;display:flex;flex-direction:column}
+.topbar{height:52px;background:#fff;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0}
+.tb-back{display:flex;align-items:center;gap:5px;color:#6b7280;text-decoration:none;font-size:0.78rem;font-weight:600;padding:6px 10px;border-radius:6px;border:1px solid #e5e7eb;transition:all .15s}
+.tb-back:hover{color:#0f1729;border-color:#4f46e5}
+.tb-back svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
+.tb-title{font-family:'Instrument Serif',serif;font-style:italic;font-size:1.1rem;color:#0f1729;flex:1;text-align:center}
+.tb-actions{display:flex;gap:6px}
+.btn{display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn.s{background:#fff;color:#374151;border:1px solid #e5e7eb}.btn.s:hover{border-color:#4f46e5;color:#4f46e5}
+.btn.p{background:#16a34a;color:#fff}.btn.p:hover{background:#15803d}
+.btn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+.layout{display:flex;flex:1;overflow:hidden}
+.fp{width:380px;flex-shrink:0;background:#fff;border-right:1px solid #e5e7eb;overflow-y:auto}
+.fi{padding:14px}
+.sec{margin-bottom:18px}
+.sec-t{font-size:0.62rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid #f0f0f0}
+.f{margin-bottom:8px}
+.f label{display:block;font-size:0.65rem;font-weight:700;color:#374151;margin-bottom:3px}
+.f input,.f select,.f textarea{width:100%;padding:8px 10px;border:1.5px solid #e5e7eb;border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;color:#0f1729;outline:none;transition:border-color .15s;background:#fff}
+.f input:focus,.f textarea:focus{border-color:#16a34a}
+.f textarea{resize:vertical;min-height:52px;line-height:1.4}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.amt-big{font-size:2rem;font-weight:800;color:#16a34a;text-align:center;padding:16px;background:#f0fdf4;border-radius:10px;border:2px solid #bbf7d0;margin-top:4px}
+.color-sec{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.color-pick{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:0.6rem;color:#6b7280}
+.color-pick input[type=color]{width:32px;height:32px;border:none;border-radius:6px;cursor:pointer;padding:0}
+.pp{flex:1;overflow:auto;background:#d1d5db;display:flex;align-items:flex-start;justify-content:center;padding:20px}
+.page{width:680px;min-height:480px;background:#fff;box-shadow:0 4px 24px rgba(0,0,0,.15);padding:40px 48px;font-family:'Plus Jakarta Sans',sans-serif}
+.rh{text-align:center;margin-bottom:28px;padding-bottom:20px;border-bottom:3px solid #16a34a}
+.rh-title{font-size:2rem;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
+.rh-num{font-size:0.82rem;color:#6b7280}
+.rh-date{font-size:0.82rem;color:#6b7280}
+.r-body{margin-bottom:24px}
+.r-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #f0f0f0}
+.r-row:last-child{border-bottom:none}
+.r-lbl{font-size:0.72rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.08em}
+.r-val{font-size:0.92rem;font-weight:600;color:#0f1729;text-align:right;max-width:60%}
+.r-total-box{background:#f0fdf4;border-radius:10px;padding:20px;text-align:center;border:2px solid #bbf7d0;margin-bottom:20px}
+.r-total-lbl{font-size:0.7rem;font-weight:700;color:#16a34a;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.r-total-amt{font-size:2.4rem;font-weight:800;color:#16a34a;line-height:1}
+.r-sig{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px;padding-top:16px;border-top:1px solid #e5e7eb}
+.r-sig-box{text-align:center}
+.r-sig-line{height:1px;background:#e5e7eb;margin-bottom:6px}
+.r-sig-lbl{font-size:0.65rem;color:#9ca3af}
+.r-footer{text-align:center;font-size:0.68rem;color:#9ca3af;margin-top:16px}
+.toast{position:fixed;bottom:16px;right:16px;padding:8px 15px;border-radius:7px;font-size:0.78rem;font-weight:600;z-index:9999;transform:translateY(60px);transition:transform .3s}
+.toast.show{transform:translateY(0)}.toast.ok{background:#16a34a;color:#fff}.toast.err{background:#dc2626;color:#fff}.toast.inf{background:#0f1729;color:#fff}
+@media(max-width:900px){.fp{width:100%;max-height:55vh;border-right:none;border-bottom:1px solid #e5e7eb}.layout{flex-direction:column}.pp{display:none}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="builder.html" class="tb-back"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Tipos</a>
+  <div class="tb-title">Recibo</div>
+  <div class="tb-actions">
+    <button class="btn s" onclick="saveDoc()"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>Guardar</button>
+    <button class="btn p" onclick="printDoc()"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Descargar PDF</button>
+  </div>
+</div>
+<div class="layout">
+<div class="fp"><div class="fi">
+  <div class="sec">
+    <div class="sec-t">Colores</div>
+    <div class="color-sec">
+      <div class="color-pick"><input type="color" id="c-accent" value="#16a34a" oninput="applyColors()"><span>Acento</span></div>
+      <div class="color-pick"><input type="color" id="c-bg" value="#ffffff" oninput="applyColors()"><span>Fondo</span></div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-t">Documento</div>
+    <div class="fr">
+      <div class="f"><label>Número de recibo</label><input id="docNum" placeholder="REC-0001" oninput="upd()"></div>
+      <div class="f"><label>Fecha</label><input type="date" id="docDate" oninput="upd()"></div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-t">Recibido por</div>
+    <div class="f"><label>Tu nombre / Empresa</label><input id="fromName" placeholder="Studio Norte S.L." oninput="upd()"></div>
+    <div class="f"><label>NIF / CIF</label><input id="fromNif" placeholder="B-12345678" oninput="upd()"></div>
+  </div>
+  <div class="sec">
+    <div class="sec-t">Recibido de</div>
+    <div class="f"><label>Nombre / Empresa</label><input id="fromClient" placeholder="Acme Corp S.L." oninput="upd()"></div>
+    <div class="f"><label>NIF del pagador</label><input id="clientNif" placeholder="A-87654321" oninput="upd()"></div>
+  </div>
+  <div class="sec">
+    <div class="sec-t">Pago</div>
+    <div class="f"><label>Concepto</label><input id="concept" placeholder="Diseño web — Proyecto Norte" oninput="upd()"></div>
+    <div class="f"><label>Importe recibido (€)</label><input type="number" id="amount" placeholder="0,00" step="0.01" min="0" oninput="upd()"></div>
+    <div id="amt-display" class="amt-big">€0,00</div>
+    <div class="f" style="margin-top:8px"><label>Forma de pago</label>
+      <select id="payMethod" onchange="upd()">
+        <option>Transferencia bancaria</option>
+        <option>Efectivo</option>
+        <option>Tarjeta de crédito</option>
+        <option>Bizum</option>
+        <option>PayPal</option>
+        <option>Otro</option>
+      </select>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-t">Notas (opcional)</div>
+    <div class="f"><textarea id="notes" placeholder="Comentarios adicionales..." oninput="upd()"></textarea></div>
+  </div>
+</div></div>
+<div class="pp">
+<div class="page" id="preview">
+  <div class="rh" id="rh-el">
+    <div class="rh-title" id="pv-type">RECIBO</div>
+    <div class="rh-num" id="pv-num">Nº —</div>
+    <div class="rh-date" id="pv-date">Fecha: —</div>
+  </div>
+  <div class="r-body">
+    <div class="r-row"><span class="r-lbl">Recibido por</span><span class="r-val" id="pv-from">—</span></div>
+    <div class="r-row"><span class="r-lbl">Recibido de</span><span class="r-val" id="pv-client">—</span></div>
+    <div class="r-row"><span class="r-lbl">Concepto</span><span class="r-val" id="pv-concept">—</span></div>
+    <div class="r-row"><span class="r-lbl">Forma de pago</span><span class="r-val" id="pv-method">—</span></div>
+  </div>
+  <div class="r-total-box" id="pv-total-box">
+    <div class="r-total-lbl">Importe recibido</div>
+    <div class="r-total-amt" id="pv-amount">€0,00</div>
+  </div>
+  <div id="pv-notes-box" style="display:none;background:#f8f9fc;border-radius:7px;padding:10px;margin-bottom:14px"><div style="font-size:0.6rem;font-weight:700;color:#9ca3af;text-transform:uppercase;margin-bottom:3px">Notas</div><div style="font-size:0.76rem;color:#6b7280" id="pv-notes"></div></div>
+  <div class="r-sig">
+    <div class="r-sig-box"><div class="r-sig-line"></div><div class="r-sig-lbl">Firma del pagador</div></div>
+    <div class="r-sig-box"><div class="r-sig-line"></div><div class="r-sig-lbl">Firma del receptor</div></div>
+  </div>
+  <div class="r-footer">Invoicely · invoicely0.netlify.app</div>
+</div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+var SB=window.supabase.createClient('https://ihrloxoilbutrraddynw.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlocmxveG9pbGJ1dHJyYWRkeW53Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3NTA1MzIsImV4cCI6MjA5ODMyNjUzMn0.Br0ht6CwfJEwmakTc9_qL9B0uauBrBq5b9cLrLVx3js');
+var user=null,docId=null;
+
+SB.auth.getSession().then(function(r){
+  if(!r.data||!r.data.session){location.href='login.html';return;}
+  user=r.data.session.user;
+  SB.from('profiles').select('*').eq('id',user.id).maybeSingle().then(function(r){
+    var p=r.data||{};
+    if(p.company_name)set('fromName',p.company_name);
+    if(p.nif)set('fromNif',p.nif);
+    var today=new Date();set('docDate',today.toISOString().split('T')[0]);
+    set('docNum','REC-'+(Math.floor(Math.random()*9000)+1000));
+    upd();
+  });
+});
+
+function set(id,v){var e=document.getElementById(id);if(e)e.value=v;}
+function get(id){var e=document.getElementById(id);return e?e.value.trim():'';}
+function fmt(n){return n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2});}
+
+function applyColors(){
+  var ac=document.getElementById('c-accent').value;
+  var bg=document.getElementById('c-bg').value;
+  document.getElementById('preview').style.background=bg;
+  document.getElementById('rh-el').style.borderBottomColor=ac;
+  document.getElementById('pv-total-box').style.borderColor=ac;
+  document.getElementById('pv-total-box').style.background=ac+'18';
+  document.getElementById('pv-amount').style.color=ac;
+  document.getElementById('pv-total-box').querySelector('.r-total-lbl').style.color=ac;
+  document.getElementById('amt-display').style.color=ac;
+  document.getElementById('amt-display').style.borderColor=ac;
+  document.getElementById('amt-display').style.background=ac+'12';
+}
+
+function upd(){
+  var amt=parseFloat(get('amount'))||0;
+  document.getElementById('amt-display').textContent='€'+fmt(amt);
+  document.getElementById('pv-num').textContent='Nº '+(get('docNum')||'—');
+  document.getElementById('pv-date').textContent='Fecha: '+(get('docDate')||'—');
+  var from=[get('fromName'),get('fromNif')].filter(Boolean).join(' · ');
+  document.getElementById('pv-from').textContent=from||'—';
+  var cl=[get('fromClient'),get('clientNif')].filter(Boolean).join(' · ');
+  document.getElementById('pv-client').textContent=cl||'—';
+  document.getElementById('pv-concept').textContent=get('concept')||'—';
+  document.getElementById('pv-method').textContent=get('payMethod')||'—';
+  document.getElementById('pv-amount').textContent='€'+fmt(amt);
+  var notes=get('notes');
+  document.getElementById('pv-notes-box').style.display=notes?'':'none';
+  document.getElementById('pv-notes').textContent=notes;
+}
+
+function saveDoc(){
+  if(!user)return;
+  var amt=parseFloat(get('amount'))||0;
+  var data={user_id:user.id,type:'receipt',doc_number:get('docNum'),title:get('concept'),client_name:get('fromClient'),total:amt,status:'paid',
+    data:{from:{name:get('fromName'),nif:get('fromNif')},to:{name:get('fromClient'),nif:get('clientNif')},concept:get('concept'),amount:amt,method:get('payMethod'),date:get('docDate'),notes:get('notes')}};
+  var p=docId?SB.from('documents').update(data).eq('id',docId).eq('user_id',user.id):SB.from('documents').insert(data).select().single();
+  p.then(function(r){if(r.error){toast('Error: '+r.error.message,'err');return;}if(!docId&&r.data)docId=r.data.id;toast('Guardado.','ok');});
+}
+
+function printDoc(){
+  saveDoc();
+  var amt=parseFloat(get('amount'))||0;
+  var ac=document.getElementById('c-accent').value;
+  var win=window.open('','_blank');
+  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;padding:28px;color:#0f1729;max-width:600px;margin:0 auto}.rh{text-align:center;margin-bottom:24px;padding-bottom:16px;border-bottom:3px solid '+ac+'}.rh-t{font-size:1.8rem;font-weight:800;margin-bottom:3px}.rh-s{font-size:11px;color:#6b7280}.r-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0}.r-lbl{font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase}.r-val{font-size:13px;font-weight:600;text-align:right}.total-box{background:'+ac+'12;border:2px solid '+ac+';border-radius:8px;padding:16px;text-align:center;margin:16px 0}.total-lbl{font-size:10px;font-weight:700;color:'+ac+';text-transform:uppercase;margin-bottom:4px}.total-amt{font-size:2rem;font-weight:800;color:'+ac+'}.sigs{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;padding-top:14px;border-top:1px solid #e5e7eb}.sig-box{text-align:center}.sig-line{height:1px;background:#e5e7eb;margin-bottom:5px}.sig-lbl{font-size:10px;color:#9ca3af}.ft{text-align:center;font-size:10px;color:#9ca3af;margin-top:16px}@media print{body{padding:0}}</style></head><body>');
+  win.document.write('<div class="rh"><div class="rh-t">RECIBO</div><div class="rh-s">Nº '+(get('docNum')||'—')+' · Fecha: '+(get('docDate')||'—')+'</div></div>');
+  win.document.write('<div class="r-row"><span class="r-lbl">Recibido por</span><span class="r-val">'+([get('fromName'),get('fromNif')].filter(Boolean).join(' · ')||'—')+'</span></div>');
+  win.document.write('<div class="r-row"><span class="r-lbl">Recibido de</span><span class="r-val">'+([get('fromClient'),get('clientNif')].filter(Boolean).join(' · ')||'—')+'</span></div>');
+  win.document.write('<div class="r-row"><span class="r-lbl">Concepto</span><span class="r-val">'+(get('concept')||'—')+'</span></div>');
+  win.document.write('<div class="r-row"><span class="r-lbl">Forma de pago</span><span class="r-val">'+(get('payMethod')||'—')+'</span></div>');
+  win.document.write('<div class="total-box"><div class="total-lbl">Importe recibido</div><div class="total-amt">€'+fmt(amt)+'</div></div>');
+  if(get('notes'))win.document.write('<div style="background:#f8f9fc;border-radius:6px;padding:10px;margin-bottom:12px"><div style="font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;margin-bottom:3px">Notas</div><div style="font-size:11px;color:#6b7280">'+get('notes')+'</div></div>');
+  win.document.write('<div class="sigs"><div class="sig-box"><div class="sig-line"></div><div class="sig-lbl">Firma del pagador</div></div><div class="sig-box"><div class="sig-line"></div><div class="sig-lbl">Firma del receptor</div></div></div>');
+  win.document.write('<div class="ft">Invoicely · invoicely0.netlify.app</div></body></html>');
+  win.document.close();setTimeout(function(){win.print();},500);
+  toast('PDF generado.','ok');
+}
+
+function toast(m,t){var e=document.getElementById('toast');e.textContent=m;e.className='toast '+(t||'inf');e.classList.add('show');setTimeout(function(){e.classList.remove('show');},2600);}
+</script>
+</body>
+</html>

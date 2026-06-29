@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoicely — Presupuesto</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#f8f9fc;color:#0f1729;height:100vh;overflow:hidden;display:flex;flex-direction:column}
+.topbar{height:52px;background:#fff;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0}
+.tb-back{display:flex;align-items:center;gap:5px;color:#6b7280;text-decoration:none;font-size:0.78rem;font-weight:600;padding:6px 10px;border-radius:6px;transition:all .15s;border:1px solid #e5e7eb}
+.tb-back:hover{color:#0f1729;border-color:#4f46e5}
+.tb-back svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
+.tb-title{font-family:'Instrument Serif',serif;font-style:italic;font-size:1.1rem;color:#0f1729;flex:1;text-align:center}
+.tb-actions{display:flex;gap:6px}
+.btn{display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn.s{background:#fff;color:#374151;border:1px solid #e5e7eb}
+.btn.s:hover{border-color:#4f46e5;color:#4f46e5}
+.btn.p{background:#4f46e5;color:#fff}
+.btn.p:hover{background:#6366f1}
+.btn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+.layout{display:flex;flex:1;overflow:hidden}
+.fp{width:380px;flex-shrink:0;background:#fff;border-right:1px solid #e5e7eb;overflow-y:auto}
+.fi{padding:14px}
+.sec{margin-bottom:18px}
+.sec-t{font-size:0.62rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid #f0f0f0}
+.f{margin-bottom:8px}
+.f label{display:block;font-size:0.65rem;font-weight:700;color:#374151;margin-bottom:3px}
+.f input,.f select,.f textarea{width:100%;padding:8px 10px;border:1.5px solid #e5e7eb;border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;color:#0f1729;outline:none;transition:border-color .15s;background:#fff}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:#4f46e5}
+.f textarea{resize:vertical;min-height:52px;line-height:1.4}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cs{display:flex;gap:5px;margin-bottom:7px}
+.cs select{flex:1;padding:7px 9px;border:1.5px solid #e5e7eb;border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.8rem;outline:none}
+.cs select:focus{border-color:#4f46e5}
+.cs-b{padding:7px 9px;border-radius:7px;border:1.5px solid #e5e7eb;background:#fff;color:#6b7280;font-size:0.73rem;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif}
+.cs-b:hover{border-color:#4f46e5;color:#4f46e5}
+.lh{display:grid;grid-template-columns:1fr 55px 75px 22px;gap:5px;padding-bottom:4px;margin-bottom:4px;border-bottom:1px solid #f0f0f0}
+.lh span{font-size:0.58rem;font-weight:700;color:#9ca3af;text-transform:uppercase}
+.li{display:grid;grid-template-columns:1fr 55px 75px 22px;gap:5px;margin-bottom:5px;align-items:center}
+.li input{padding:7px 8px;border:1.5px solid #e5e7eb;border-radius:6px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;color:#0f1729;outline:none;width:100%}
+.li input:focus{border-color:#4f46e5}
+.dl{background:none;border:none;cursor:pointer;color:#9ca3af;padding:3px;border-radius:4px;line-height:0}
+.dl:hover{color:#dc2626}
+.dl svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+.al{width:100%;padding:6px;border-radius:6px;border:1.5px dashed #e5e7eb;background:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.76rem;font-weight:600;color:#9ca3af;cursor:pointer;margin-top:3px}
+.al:hover{border-color:#4f46e5;color:#4f46e5}
+.tbox{background:#f8f9fc;border-radius:7px;padding:9px 11px;margin-top:5px}
+.tr{display:flex;justify-content:space-between;font-size:0.75rem;padding:3px 0;color:#6b7280}
+.tr.tot{font-weight:800;font-size:0.88rem;color:#4f46e5;border-top:1px solid #e5e7eb;padding-top:5px;margin-top:3px}
+/* COLOR PANEL */
+.color-sec{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.color-pick{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:0.6rem;color:#6b7280}
+.color-pick input[type=color]{width:32px;height:32px;border:none;border-radius:6px;cursor:pointer;padding:0;background:none}
+/* PREVIEW */
+.pp{flex:1;overflow:auto;background:#d1d5db;display:flex;align-items:flex-start;justify-content:center;padding:20px}
+.page{width:794px;min-height:1123px;background:#fff;box-shadow:0 4px 24px rgba(0,0,0,.15);padding:48px 52px;position:relative;font-family:'Plus Jakarta Sans',sans-serif}
+.ph{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;padding-bottom:20px}
+.ph-border{border-bottom:2px solid var(--ac,#4f46e5)}
+.pb{font-size:1.3rem;font-weight:800}
+.pdt-name{font-size:1.7rem;font-weight:800;text-align:right;line-height:1}
+.pdt-sub{font-size:0.78rem;color:#6b7280;text-align:right;margin-top:3px}
+.parties{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
+.pl{font-size:0.58rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.pn{font-size:0.88rem;font-weight:700;margin-bottom:2px}
+.pd{font-size:0.75rem;color:#6b7280;line-height:1.5}
+.ptable{width:100%;border-collapse:collapse;margin-bottom:16px}
+.ptable th{font-size:0.6rem;font-weight:700;color:#9ca3af;text-align:left;padding:7px 5px;border-bottom:1.5px solid #e5e7eb;text-transform:uppercase}
+.ptable th:not(:first-child){text-align:right}
+.ptable td{padding:9px 5px;border-bottom:1px solid #f8f9fc;font-size:0.8rem;color:#374151}
+.ptable td:not(:first-child){text-align:right}
+.ptots{margin-left:auto;width:200px;margin-bottom:20px}
+.ptr{display:flex;justify-content:space-between;padding:4px 0;font-size:0.78rem;color:#6b7280}
+.ptr.g{border-top:2px solid;padding-top:7px;margin-top:3px;font-weight:800;font-size:0.92rem;color:#0f1729}
+.pnotes{border-radius:7px;padding:12px 14px;margin-bottom:16px}
+.pnl{font-size:0.58rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.pnt{font-size:0.75rem;color:#6b7280;line-height:1.55}
+.pfooter{position:absolute;bottom:28px;left:52px;right:52px;border-top:1px solid #e5e7eb;padding-top:8px;font-size:0.68rem;color:#9ca3af;text-align:center}
+/* TOAST */
+.toast{position:fixed;bottom:16px;right:16px;padding:8px 15px;border-radius:7px;font-size:0.78rem;font-weight:600;z-index:9999;transform:translateY(60px);transition:transform .3s}
+.toast.show{transform:translateY(0)}
+.toast.ok{background:#16a34a;color:#fff}
+.toast.err{background:#dc2626;color:#fff}
+.toast.inf{background:#0f1729;color:#fff}
+@media(max-width:900px){.fp{width:100%;max-height:55vh;border-right:none;border-bottom:1px solid #e5e7eb}.layout{flex-direction:column}.pp{display:none}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="builder.html" class="tb-back"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Tipos</a>
+  <div class="tb-title">Presupuesto</div>
+  <div class="tb-actions">
+    <button class="btn s" onclick="saveDoc()"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>Guardar</button>
+    <button class="btn p" onclick="printDoc()"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Descargar PDF</button>
+  </div>
+</div>
+<div class="layout">
+<div class="fp"><div class="fi">
+
+  <div class="sec">
+    <div class="sec-t">Colores</div>
+    <div class="color-sec">
+      <div class="color-pick"><input type="color" id="c-accent" value="#7c3aed" oninput="applyColors()"><span>Acento</span></div>
+      <div class="color-pick"><input type="color" id="c-bg" value="#ffffff" oninput="applyColors()"><span>Fondo</span></div>
+      <div class="color-pick"><input type="color" id="c-text" value="#0f1729" oninput="applyColors()"><span>Texto</span></div>
+      <div class="color-pick"><input type="color" id="c-notesbg" value="#f8f9fc" oninput="applyColors()"><span>Notas</span></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-t">Documento</div>
+    <div class="fr">
+      <div class="f"><label>Número</label><input id="docNum" placeholder="PRE-0001" oninput="upd()"></div>
+      <div class="f"><label>Fecha</label><input type="date" id="docDate" oninput="upd()"></div>
+    </div>
+    <div class="fr">
+      <div class="f"><label>Válido hasta</label><input type="date" id="dueDate" oninput="upd()"></div>
+      <div class="f"><label>Título (opcional)</label><input id="docTitle" placeholder="Proyecto web" oninput="upd()"></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-t">Tu empresa</div>
+    <div class="f"><label>Nombre / Empresa</label><input id="fromName" placeholder="Studio Norte S.L." oninput="upd()"></div>
+    <div class="fr">
+      <div class="f"><label>NIF / CIF</label><input id="fromNif" placeholder="B-12345678" oninput="upd()"></div>
+      <div class="f"><label>Email</label><input type="email" id="fromEmail" placeholder="hola@empresa.com" oninput="upd()"></div>
+    </div>
+    <div class="f"><label>Dirección</label><input id="fromAddr" placeholder="Calle Gran Vía, 28, Madrid" oninput="upd()"></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-t">Cliente</div>
+    <div class="cs">
+      <select id="clientPick" onchange="pickClient()"><option value="">— Cliente guardado —</option></select>
+      <button class="cs-b" onclick="clearClient()">Limpiar</button>
+    </div>
+    <div class="f"><label>Nombre / Empresa</label><input id="toName" placeholder="Acme Corp S.L." oninput="upd()"></div>
+    <div class="fr">
+      <div class="f"><label>NIF / CIF</label><input id="toNif" placeholder="A-87654321" oninput="upd()"></div>
+      <div class="f"><label>Email</label><input type="email" id="toEmail" placeholder="facturas@acme.com" oninput="upd()"></div>
+    </div>
+    <div class="f"><label>Dirección</label><input id="toAddr" placeholder="Calle Provença, 123, Barcelona" oninput="upd()"></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-t">Introducción (opcional)</div>
+    <div class="f"><textarea id="intro" placeholder="Gracias por contactarnos. Le presentamos nuestra propuesta para el proyecto solicitado." oninput="upd()"></textarea></div>
+  </div>
+  <div class="sec">
+    <div class="sec-t">Servicios propuestos</div>
+    <div class="lh"><span>Descripción</span><span>Cant.</span><span>Precio</span><span></span></div>
+    <div id="lines"></div>
+    <button class="al" onclick="addLine()">+ Añadir línea</button>
+  </div>
+
+  <div class="sec">
+    <div class="sec-t">Impuestos</div>
+    <div class="fr">
+      <div class="f"><label>IVA (%)</label><input type="number" id="taxRate" value="21" min="0" max="100" oninput="upd()"></div>
+      <div class="f"><label>IRPF (%)</label><input type="number" id="irpfRate" value="0" min="0" max="100" oninput="upd()"></div>
+    </div>
+    <div class="tbox">
+      <div class="tr"><span>Subtotal</span><span id="t-sub">€0,00</span></div>
+      <div class="tr"><span id="t-iva-l">IVA (21%)</span><span id="t-iva">€0,00</span></div>
+      <div class="tr" id="t-irpf-r" style="display:none"><span id="t-irpf-l">IRPF</span><span id="t-irpf">-€0,00</span></div>
+      <div class="tr tot"><span>Total</span><span id="t-total">€0,00</span></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-t">Extras</div>
+    <div class="f"><label>Notas</label><textarea id="notes" placeholder="Pago en 14 días. Gracias por su confianza." oninput="upd()"></textarea></div>
+    <div class="f"><label>Datos bancarios</label><textarea id="bank" placeholder="IBAN: ES91 2100 0418..." oninput="upd()"></textarea></div>
+    <div class="f"><label>Pie de página</label><input id="footer" placeholder="¡Gracias por su confianza!" oninput="upd()"></div>
+  </div>
+
+</div></div>
+
+<div class="pp">
+<div class="page" id="preview">
+  <div class="ph ph-border" id="ph">
+    <div class="pb" id="pv-brand">Tu empresa</div>
+    <div><div class="pdt-name" id="pv-type">PRESUPUESTO</div><div class="pdt-sub" id="pv-num">Nº —</div><div class="pdt-sub" id="pv-date">Fecha: —</div><div class="pdt-sub" id="pv-due"></div></div>
+  </div>
+  <div class="parties">
+    <div><div class="pl">De</div><div class="pn" id="pv-fn">Tu empresa</div><div class="pd" id="pv-fd">—</div></div>
+    <div><div class="pl">Para</div><div class="pn" id="pv-tn">Cliente</div><div class="pd" id="pv-td">—</div></div>
+  </div>
+  <table class="ptable"><thead><tr><th>Descripción</th><th>Cant.</th><th>Precio</th><th>Importe</th></tr></thead><tbody id="pv-lines"></tbody></table>
+  <div class="ptots">
+    <div class="ptr"><span>Subtotal</span><span id="pv-sub">€0,00</span></div>
+    <div class="ptr"><span id="pv-iva-l">IVA (21%)</span><span id="pv-iva">€0,00</span></div>
+    <div class="ptr" id="pv-irpf-r" style="display:none"><span id="pv-irpf-l">IRPF</span><span id="pv-irpf">-€0,00</span></div>
+    <div class="ptr g" id="pv-grand"><span>Total</span><span id="pv-total">€0,00</span></div>
+  </div>
+  <div class="pnotes" id="pv-notes-box" style="display:none"><div class="pnl">Notas</div><div class="pnt" id="pv-notes"></div></div>
+  <div class="pnotes" id="pv-bank-box" style="display:none"><div class="pnl">Método de pago</div><div class="pnt" id="pv-bank"></div></div>
+  <div class="pfooter" id="pv-footer">Invoicely · invoicely0.netlify.app</div>
+</div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+var SB=window.supabase.createClient('https://ihrloxoilbutrraddynw.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlocmxveG9pbGJ1dHJyYWRkeW53Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3NTA1MzIsImV4cCI6MjA5ODMyNjUzMn0.Br0ht6CwfJEwmakTc9_qL9B0uauBrBq5b9cLrLVx3js');
+var user=null,clients=[],lc=0,docId=null;
+
+SB.auth.getSession().then(function(r){
+  if(!r.data||!r.data.session){location.href='login.html';return;}
+  user=r.data.session.user;
+  loadProfile();
+});
+
+function loadProfile(){
+  SB.from('profiles').select('*').eq('id',user.id).maybeSingle().then(function(r){
+    var p=r.data||{};
+    if(p.company_name)set('fromName',p.company_name);
+    if(p.nif)set('fromNif',p.nif);
+    if(p.email)set('fromEmail',p.email||user.email);
+    if(p.address)set('fromAddr',(p.address||'')+(p.city?', '+p.city:''));
+    if(p.data){if(p.data.tax)set('taxRate',p.data.tax);if(p.data.notes)set('notes',p.data.notes);if(p.data.bank)set('bank',p.data.bank);}
+    loadClients();
+    var today=new Date(),due=new Date();due.setDate(due.getDate()+14);
+    var fmt=function(d){return d.toISOString().split('T')[0];};
+    set('docDate',fmt(today));set('dueDate',fmt(due));
+    set('docNum','PRE-'+(Math.floor(Math.random()*9000)+1000));
+    addLine();upd();
+  });
+}
+
+function loadClients(){
+  SB.from('clients').select('*').eq('user_id',user.id).order('name').then(function(r){
+    clients=r.data||[];
+    var sel=document.getElementById('clientPick');
+    clients.forEach(function(c){var o=document.createElement('option');o.value=c.id;o.textContent=c.name;sel.appendChild(o);});
+  });
+}
+
+function set(id,v){var e=document.getElementById(id);if(e)e.value=v;}
+function get(id){var e=document.getElementById(id);return e?e.value.trim():'';}
+function fmt(n){return n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2});}
+
+function pickClient(){
+  var id=document.getElementById('clientPick').value;if(!id)return;
+  var c=clients.find(function(x){return x.id===id;});if(!c)return;
+  set('toName',c.name||'');set('toNif',c.nif||'');set('toEmail',c.email||'');
+  set('toAddr',(c.address||'')+(c.city?', '+c.city:''));upd();
+}
+function clearClient(){document.getElementById('clientPick').value='';['toName','toNif','toEmail','toAddr'].forEach(function(id){set(id,'');});upd();}
+
+function addLine(){
+  lc++;var id='l'+lc;
+  var d=document.createElement('div');d.className='li';d.id=id;
+  d.innerHTML='<input placeholder="Descripción" oninput="upd()"><input type="number" value="1" min="0" placeholder="1" oninput="upd()"><input type="number" value="" min="0" step="0.01" placeholder="0,00" oninput="upd()"><button class="dl" onclick="delLine(\''+id+'\')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M9 6V4h6v2"/></svg></button>';
+  document.getElementById('lines').appendChild(d);upd();
+}
+function delLine(id){var el=document.getElementById(id);if(el&&document.getElementById('lines').children.length>1){el.remove();upd();}}
+
+function getLines(){
+  var rows=[];
+  document.querySelectorAll('#lines .li').forEach(function(d){
+    var ins=d.querySelectorAll('input');
+    var qty=parseFloat(ins[1].value)||1,price=parseFloat(ins[2].value)||0;
+    rows.push({desc:ins[0].value.trim(),qty:qty,price:price,total:qty*price});
+  });
+  return rows;
+}
+
+function applyColors(){
+  var ac=document.getElementById('c-accent').value;
+  var bg=document.getElementById('c-bg').value;
+  var tx=document.getElementById('c-text').value;
+  var nb=document.getElementById('c-notesbg').value;
+  var pg=document.getElementById('preview');
+  pg.style.background=bg;pg.style.color=tx;
+  document.getElementById('ph').style.borderBottomColor=ac;
+  document.getElementById('pv-grand').style.borderTopColor=ac;
+  document.querySelectorAll('.pdt-name,.pb').forEach(function(e){e.style.color=tx;});
+  document.querySelectorAll('.pnotes').forEach(function(e){e.style.background=nb;});
+  document.querySelectorAll('.ptr.g span').forEach(function(e){e.style.color=tx;});
+  document.getElementById('t-total').style.color=ac;
+}
+
+function upd(){
+  var lines=getLines();
+  var sub=lines.reduce(function(s,l){return s+l.total;},0);
+  var tax=parseFloat(get('taxRate'))||0,irpf=parseFloat(get('irpfRate'))||0;
+  var iva=sub*tax/100,irpfAmt=sub*irpf/100,total=sub+iva-irpfAmt;
+  document.getElementById('t-sub').textContent='€'+fmt(sub);
+  document.getElementById('t-iva-l').textContent='IVA ('+tax+'%)';document.getElementById('t-iva').textContent='€'+fmt(iva);
+  document.getElementById('t-irpf-r').style.display=irpf>0?'':'none';
+  document.getElementById('t-irpf-l').textContent='IRPF ('+irpf+'%)';document.getElementById('t-irpf').textContent='-€'+fmt(irpfAmt);
+  document.getElementById('t-total').textContent='€'+fmt(total);
+  document.getElementById('pv-brand').textContent=get('fromName')||'Tu empresa';
+  document.getElementById('pv-num').textContent='Nº '+(get('docNum')||'—');
+  document.getElementById('pv-date').textContent='Fecha: '+(get('docDate')||'—');
+  document.getElementById('pv-due').textContent=get('dueDate')?'Válido hasta: '+get('dueDate'):'';
+  document.getElementById('pv-fn').textContent=get('fromName')||'Tu empresa';
+  document.getElementById('pv-fd').textContent=[get('fromNif'),get('fromEmail'),get('fromAddr')].filter(Boolean).join(' · ')||'—';
+  document.getElementById('pv-tn').textContent=get('toName')||'Cliente';
+  document.getElementById('pv-td').textContent=[get('toNif'),get('toEmail'),get('toAddr')].filter(Boolean).join(' · ')||'—';
+  document.getElementById('pv-lines').innerHTML=lines.map(function(l){return'<tr><td>'+(l.desc||'—')+'</td><td>'+l.qty+'</td><td>€'+fmt(l.price)+'</td><td>€'+fmt(l.total)+'</td></tr>';}).join('');
+  document.getElementById('pv-sub').textContent='€'+fmt(sub);
+  document.getElementById('pv-iva-l').textContent='IVA ('+tax+'%)';document.getElementById('pv-iva').textContent='€'+fmt(iva);
+  document.getElementById('pv-irpf-r').style.display=irpf>0?'':'none';
+  document.getElementById('pv-irpf-l').textContent='IRPF ('+irpf+'%)';document.getElementById('pv-irpf').textContent='-€'+fmt(irpfAmt);
+  document.getElementById('pv-total').textContent='€'+fmt(total);
+  var notes=get('notes'),bank=get('bank');
+  document.getElementById('pv-notes-box').style.display=notes?'':'none';document.getElementById('pv-notes').textContent=notes;
+  document.getElementById('pv-bank-box').style.display=bank?'':'none';document.getElementById('pv-bank').textContent=bank;
+  document.getElementById('pv-footer').textContent=get('footer')||'Invoicely · invoicely0.netlify.app';
+}
+
+function getDocData(){
+  var lines=getLines();
+  var sub=lines.reduce(function(s,l){return s+l.total;},0);
+  var tax=parseFloat(get('taxRate'))||0,irpf=parseFloat(get('irpfRate'))||0;
+  var iva=sub*tax/100,irpfAmt=sub*irpf/100,total=sub+iva-irpfAmt;
+  return{user_id:user.id,type:'quote',doc_number:get('docNum'),title:get('docTitle')||get('toName'),client_name:get('toName'),total:total,status:'draft',
+    data:{from:{name:get('fromName'),nif:get('fromNif'),email:get('fromEmail'),address:get('fromAddr')},
+    to:{name:get('toName'),nif:get('toNif'),email:get('toEmail'),address:get('toAddr')},
+    lines:lines,tax:tax,irpf:irpf,sub:sub,iva:iva,irpfAmt:irpfAmt,total:total,
+    date:get('docDate'),due:get('dueDate'),notes:get('notes'),bank:get('bank'),footer:get('footer')}};
+}
+
+function saveDoc(){
+  if(!user)return;
+  var data=getDocData();
+  var p=docId?SB.from('documents').update(data).eq('id',docId).eq('user_id',user.id):SB.from('documents').insert(data).select().single();
+  p.then(function(r){if(r.error){toast('Error: '+r.error.message,'err');return;}if(!docId&&r.data)docId=r.data.id;toast('Guardado.','ok');});
+}
+
+function printDoc(){
+  saveDoc();
+  var lines=getLines();
+  var sub=lines.reduce(function(s,l){return s+l.total;},0);
+  var tax=parseFloat(get('taxRate'))||0,irpf=parseFloat(get('irpfRate'))||0;
+  var iva=sub*tax/100,irpfAmt=sub*irpf/100,total=sub+iva-irpfAmt;
+  var ac=document.getElementById('c-accent').value;
+  var win=window.open('','_blank');
+  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;padding:28px;color:#0f1729;font-size:13px}.h{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid '+ac+'}.brand{font-size:1.2rem;font-weight:800;color:'+ac+'}.dtn{font-size:1.5rem;font-weight:800;text-align:right}.dts{font-size:11px;color:#6b7280;text-align:right;margin-top:2px}.parties{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}.lbl{font-size:9px;font-weight:700;color:#9ca3af;text-transform:uppercase;margin-bottom:3px}.pn{font-size:13px;font-weight:700;margin-bottom:2px}.pd{font-size:11px;color:#6b7280;line-height:1.5}table{width:100%;border-collapse:collapse;margin-bottom:14px}th{font-size:9px;font-weight:700;color:#9ca3af;text-align:left;padding:6px 4px;border-bottom:1.5px solid #e5e7eb;text-transform:uppercase}th:not(:first-child){text-align:right}td{padding:8px 4px;border-bottom:1px solid #f8f9fc;font-size:12px;color:#374151}td:not(:first-child){text-align:right}.tots{margin-left:auto;width:190px;margin-bottom:16px}.tr{display:flex;justify-content:space-between;padding:3px 0;font-size:11px;color:#6b7280}.tr.g{border-top:2px solid '+ac+';padding-top:6px;margin-top:3px;font-weight:800;font-size:14px;color:#0f1729}.notes{background:#f8f9fc;border-radius:6px;padding:10px;margin-bottom:12px}.nl{font-size:9px;font-weight:700;color:#9ca3af;text-transform:uppercase;margin-bottom:3px}.nt{font-size:11px;color:#6b7280;line-height:1.5}.ft{margin-top:24px;border-top:1px solid #e5e7eb;padding-top:7px;font-size:10px;color:#9ca3af;text-align:center}@media print{body{padding:0}}</style></head><body>');
+  win.document.write('<div class="h"><div class="brand">'+(get('fromName')||'Tu empresa')+'</div><div><div class="dtn">PRESUPUESTO</div><div class="dts">Nº '+(get('docNum')||'—')+'</div><div class="dts">Fecha: '+(get('docDate')||'—')+'</div>'+(get('dueDate')?'<div class="dts">Válido hasta: '+get('dueDate')+'</div>':'')+'</div></div>');
+  win.document.write('<div class="parties"><div><div class="lbl">De</div><div class="pn">'+(get('fromName')||'—')+'</div><div class="pd">'+[get('fromNif'),get('fromEmail'),get('fromAddr')].filter(Boolean).join('<br>')||'—'+'</div></div><div><div class="lbl">Para</div><div class="pn">'+(get('toName')||'—')+'</div><div class="pd">'+[get('toNif'),get('toEmail'),get('toAddr')].filter(Boolean).join('<br>')||'—'+'</div></div></div>');
+  win.document.write('<table><thead><tr><th>Descripción</th><th>Cant.</th><th>Precio</th><th>Importe</th></tr></thead><tbody>');
+  lines.forEach(function(l){win.document.write('<tr><td>'+(l.desc||'—')+'</td><td>'+l.qty+'</td><td>€'+fmt(l.price)+'</td><td>€'+fmt(l.total)+'</td></tr>');});
+  win.document.write('</tbody></table>');
+  win.document.write('<div class="tots"><div class="tr"><span>Subtotal</span><span>€'+fmt(sub)+'</span></div><div class="tr"><span>IVA ('+tax+'%)</span><span>€'+fmt(iva)+'</span></div>'+(irpf>0?'<div class="tr"><span>IRPF ('+irpf+'%)</span><span>-€'+fmt(irpfAmt)+'</span></div>':'')+'<div class="tr g"><span>Total</span><span>€'+fmt(total)+'</span></div></div>');
+  if(get('notes'))win.document.write('<div class="notes"><div class="nl">Notas</div><div class="nt">'+get('notes')+'</div></div>');
+  if(get('bank'))win.document.write('<div class="notes"><div class="nl">Método de pago</div><div class="nt">'+get('bank')+'</div></div>');
+  win.document.write('<div class="ft">'+(get('footer')||'Invoicely · invoicely0.netlify.app')+'</div></body></html>');
+  win.document.close();
+  setTimeout(function(){win.print();},500);
+  toast('PDF generado.','ok');
+}
+
+function toast(m,t){var e=document.getElementById('toast');e.textContent=m;e.className='toast '+(t||'inf');e.classList.add('show');setTimeout(function(){e.classList.remove('show');},2600);}
+</script>
+</body>
+</html>
