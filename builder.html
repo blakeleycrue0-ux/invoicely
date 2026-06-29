@@ -495,6 +495,9 @@ var bgColors = {default:'#faf9f6',white:'#ffffff',cream:'#fffbf0',blue:'#f0f4ff'
   document.getElementById('validDate').value = fmt(valid);
   var pfx = {invoice:'FAC-',quote:'PRE-',receipt:'REC-',proforma:'PRO-'};
   document.getElementById('docNumber').value = (pfx[t]||'FAC-') + (Math.floor(Math.random()*9000)+1000);
+
+  // Pre-fill with example data so visitors see a real invoice immediately
+  prefillExample(t);
   updatePreview();
 
   // Check if returning from Stripe success
@@ -909,6 +912,98 @@ function showToast(msg,type){
 }
 
 window.addEventListener('load', updatePreview);
+
+function prefillExample(type){
+  // Business info
+  var biz = document.getElementById('bizName');
+  if(biz && !biz.value) biz.value = 'Studio Norte S.L.';
+  var bizEmail = document.getElementById('bizEmail');
+  if(bizEmail && !bizEmail.value) bizEmail.value = 'hola@studionorte.com';
+  var bizPhone = document.getElementById('bizPhone');
+  if(bizPhone && !bizPhone.value) bizPhone.value = '+34 600 123 456';
+  var bizNif = document.getElementById('bizNif');
+  if(bizNif && !bizNif.value) bizNif.value = 'B-12345678';
+  var bizAddr = document.getElementById('bizAddress');
+  if(bizAddr && !bizAddr.value) bizAddr.value = 'Calle Gran Vía, 28\n28013 Madrid, España';
+
+  if(type === 'receipt'){
+    var recFrom = document.getElementById('recFrom');
+    if(recFrom && !recFrom.value) recFrom.value = 'Acme Corp S.L.';
+    var recAmount = document.getElementById('recAmount');
+    if(recAmount && !recAmount.value) recAmount.value = '1500.00';
+    var recDesc = document.getElementById('recDesc');
+    if(recDesc && !recDesc.value) recDesc.value = 'Diseño web — Factura FAC-0042';
+    return;
+  }
+
+  // Client info
+  var client = document.getElementById('clientName');
+  if(client && !client.value) client.value = 'Acme Corporation S.L.';
+  var clientEmail = document.getElementById('clientEmail');
+  if(clientEmail && !clientEmail.value) clientEmail.value = 'facturacion@acme.es';
+  var clientNif = document.getElementById('clientNif');
+  if(clientNif && !clientNif.value) clientNif.value = 'A-87654321';
+  var clientAddr = document.getElementById('clientAddress');
+  if(clientAddr && !clientAddr.value) clientAddr.value = 'Calle Provença, 123\n08008 Barcelona, España';
+
+  // Tax
+  var tax = document.getElementById('taxRate');
+  if(tax && !tax.value) tax.value = '21';
+
+  // Notes
+  var notes = document.getElementById('notes');
+  if(notes && !notes.value) notes.value = 'Pago en 14 días naturales. Gracias por su confianza.';
+
+  // Footer
+  var footer = document.getElementById('footer');
+  if(footer && !footer.value) footer.value = '¡Gracias por confiar en nosotros!';
+
+  // Bank details
+  var bank = document.getElementById('bankDetails');
+  if(bank && !bank.value) bank.value = 'IBAN: ES91 2100 0418 4502 0005 1332\nBanco: CaixaBank · SWIFT: CAIXESBBXXX';
+
+  // Quote intro
+  if(type === 'quote'){
+    var qi = document.getElementById('quoteIntro');
+    if(qi && !qi.value) qi.value = 'Gracias por su interés. A continuación encontrará nuestra propuesta detallada para el proyecto solicitado.';
+  }
+
+  // Line items — fill first item, add second
+  var firstDesc = document.querySelector('#lineItems .li-desc');
+  var firstPrice = document.querySelector('#lineItems .price-in');
+  if(firstDesc && !firstDesc.value){
+    if(type === 'proforma'){
+      firstDesc.value = 'Diseño de identidad visual';
+      if(firstPrice) firstPrice.value = '800';
+    } else if(type === 'quote'){
+      firstDesc.value = 'Diseño web — página principal';
+      if(firstPrice) firstPrice.value = '1200';
+    } else {
+      firstDesc.value = 'Diseño web — Homepage';
+      if(firstPrice) firstPrice.value = '1200';
+    }
+  }
+
+  // Add a second line item
+  addLine();
+  var items = document.querySelectorAll('#lineItems .line-item');
+  if(items.length >= 2){
+    var d2 = items[1].querySelector('.li-desc');
+    var p2 = items[1].querySelector('.price-in');
+    if(d2) d2.value = type === 'quote' ? 'Identidad visual y branding' : 'Mantenimiento mensual';
+    if(p2) p2.value = type === 'quote' ? '800' : '150';
+  }
+
+  // Add a third line item
+  addLine();
+  var items2 = document.querySelectorAll('#lineItems .line-item');
+  if(items2.length >= 3){
+    var d3 = items2[2].querySelector('.li-desc');
+    var p3 = items2[2].querySelector('.price-in');
+    if(d3) d3.value = 'Optimización SEO';
+    if(p3) p3.value = '300';
+  }
+}
 
 // Block right-click on preview
 document.getElementById('previewPanel').addEventListener('contextmenu', function(e){ e.preventDefault(); });
