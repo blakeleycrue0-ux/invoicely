@@ -89,36 +89,36 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 </div>
 
 <script>
-var SUPA_URL='https://ihrloxoilbutrraddynw.supabase.co';
-var SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlocmxveG9pbGJ1dHJyYWRkeW53Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3NTA1MzIsImV4cCI6MjA5ODMyNjUzMn0.Br0ht6CwfJEwmakTc9_qL9B0uauBrBq5b9cLrLVx3js';
-var sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
+var SB_URL='https://ihrloxoilbutrraddynw.supabase.co';
+var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlocmxveG9pbGJ1dHJyYWRkeW53Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3NTA1MzIsImV4cCI6MjA5ODMyNjUzMn0.Br0ht6CwfJEwmakTc9_qL9B0uauBrBq5b9cLrLVx3js';
+var sb=window.supabase.createClient(SB_URL,SB_KEY);
 
-// Always hide msg on load
+// Always start clean
 document.getElementById('msgBox').style.display='none';
+document.getElementById('msgBox').textContent='';
 
-sb.auth.getSession().then(function(r){
-  if(r.data&&r.data.session) checkOnboarding(r.data.session.user);
-}).catch(function(){
-  // Clear any bad session silently
-  sb.auth.signOut().catch(function(){});
-});
+// Check existing session silently - never show errors here
+try {
+  sb.auth.getSession().then(function(r){
+    try {
+      if(r && r.data && r.data.session && r.data.session.user) {
+        goToDashboard(r.data.session.user);
+      }
+    } catch(e){}
+  }).catch(function(){});
+} catch(e){}
 
 if(new URLSearchParams(window.location.search).get('signup')==='true') switchTab('register');
 
-function checkOnboarding(user){
+function goToDashboard(user){
   sb.from('profiles').select('company_name').eq('id',user.id).maybeSingle().then(function(res){
-    if(res.data&&res.data.company_name) window.location.href='dashboard.html';
-    else window.location.href='onboarding.html';
+    try {
+      if(res && res.data && res.data.company_name) window.location.href='dashboard.html';
+      else window.location.href='onboarding.html';
+    } catch(e){ window.location.href='onboarding.html'; }
   }).catch(function(){ window.location.href='onboarding.html'; });
 }
 
-function errMsg(e){
-  if(!e) return 'Error desconocido.';
-  if(typeof e==='string') return e;
-  if(e.message) return e.message;
-  if(e.msg) return e.msg;
-  try{ return JSON.stringify(e); } catch(x){ return 'Error desconocido.'; }
-}
 function switchTab(tab){
   document.getElementById('formLogin').style.display=tab==='login'?'':'none';
   document.getElementById('formRegister').style.display=tab==='register'?'':'none';
@@ -133,65 +133,87 @@ function showForgot(){
   document.getElementById('tabLogin').classList.remove('active');
   clearMsg();
 }
-function showMsg(m,t){var e=document.getElementById('msgBox');e.textContent=m;e.className='msg '+t;e.style.display='block'}
-function clearMsg(){document.getElementById('msgBox').style.display='none'}
+function showMsg(m,t){
+  var e=document.getElementById('msgBox');
+  var txt = (typeof m==='string') ? m : (m && m.message) ? m.message : 'Error. Inténtalo de nuevo.';
+  e.textContent=txt;
+  e.className='msg '+(t||'error');
+  e.style.display='block';
+}
+function clearMsg(){
+  var e=document.getElementById('msgBox');
+  e.style.display='none';
+  e.textContent='';
+}
 
 function doLogin(){
   var email=document.getElementById('loginEmail').value.trim();
   var pass=document.getElementById('loginPass').value;
-  if(!email||!pass){showMsg('Rellena todos los campos.','error');return;}
+  if(!email||!pass){showMsg('Rellena todos los campos.');return;}
   clearMsg();
   var btn=document.getElementById('btnLogin');
   btn.disabled=true;btn.textContent='Entrando...';
   sb.auth.signInWithPassword({email:email,password:pass}).then(function(r){
     btn.disabled=false;btn.textContent='Entrar';
-    if(r.error){ showMsg(errMsg(r.error),'error'); return;
-    }
-    checkOnboarding(r.data.user);
+    if(r.error){showMsg(r.error.message||'Email o contraseña incorrectos.');return;}
+    goToDashboard(r.data.user);
+  }).catch(function(e){
+    btn.disabled=false;btn.textContent='Entrar';
+    showMsg(e.message||'Error al entrar.');
   });
 }
+
 function doRegister(){
   var name=document.getElementById('regName').value.trim();
   var email=document.getElementById('regEmail').value.trim();
   var pass=document.getElementById('regPass').value;
-  if(!name||!email||!pass){showMsg('Rellena todos los campos.','error');return;}
-  if(pass.length<6){showMsg('La contraseña debe tener al menos 6 caracteres.','error');return;}
+  if(!name||!email||!pass){showMsg('Rellena todos los campos.');return;}
+  if(pass.length<6){showMsg('La contraseña debe tener al menos 6 caracteres.');return;}
   clearMsg();
   var btn=document.getElementById('btnRegister');
   btn.disabled=true;btn.textContent='Creando cuenta...';
-  sb.auth.signUp({email:email,password:pass,options:{data:{full_name:name}}}).then(function(r){
+  sb.auth.signUp({
+    email:email,
+    password:pass,
+    options:{data:{full_name:name}}
+  }).then(function(r){
     btn.disabled=false;btn.textContent='Crear cuenta gratis';
-    if(r.error){ showMsg(errMsg(r.error),'error'); return;
-    }
-    if(r.data&&r.data.session){
-      window.location.href='onboarding.html';
-    } else if(r.data&&r.data.user&&r.data.user.id){
-      // No session but user created — email confirmation probably still on
-      // Try to sign in directly
-      sb.auth.signInWithPassword({email:email,password:pass}).then(function(r2){
-        if(r2.data&&r2.data.session){window.location.href='onboarding.html';}
-        else{showMsg('Cuenta creada. Revisa tu email para confirmarla.','success');}
-      });
-    } else {
-      showMsg('Algo salió mal. Inténtalo de nuevo.','error');
-    }
+    if(r.error){showMsg(r.error.message||'Error al crear la cuenta.');return;}
+    // Try immediate login
+    sb.auth.signInWithPassword({email:email,password:pass}).then(function(r2){
+      if(r2.data&&r2.data.session){
+        window.location.href='onboarding.html';
+      } else {
+        showMsg('Cuenta creada. Entra con tu email y contraseña.','success');
+        switchTab('login');
+        document.getElementById('loginEmail').value=email;
+      }
+    }).catch(function(){
+      showMsg('Cuenta creada. Entra con tu email y contraseña.','success');
+      switchTab('login');
+    });
   }).catch(function(e){
     btn.disabled=false;btn.textContent='Crear cuenta gratis';
-    showMsg(e.message||'Error al crear la cuenta.','error');
+    showMsg(e.message||'Error al crear la cuenta.');
   });
 }
+
 function doForgot(){
   var email=document.getElementById('forgotEmail').value.trim();
-  if(!email){showMsg('Introduce tu email.','error');return;}
+  if(!email){showMsg('Introduce tu email.');return;}
   clearMsg();
   var btn=document.getElementById('btnForgot');
   btn.disabled=true;btn.textContent='Enviando...';
   sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/login.html'}).then(function(r){
     btn.disabled=false;btn.textContent='Enviar enlace';
-    if(r.error){showMsg(errMsg(r.error),'error');return;}
+    if(r.error){showMsg(r.error.message||'Error.');return;}
     showMsg('Enlace enviado. Revisa tu bandeja de entrada.','success');
+  }).catch(function(e){
+    btn.disabled=false;btn.textContent='Enviar enlace';
+    showMsg(e.message||'Error.');
   });
 }
+
 document.addEventListener('keydown',function(e){
   if(e.key!=='Enter') return;
   if(document.getElementById('formLogin').style.display!=='none') doLogin();
@@ -199,5 +221,3 @@ document.addEventListener('keydown',function(e){
   else if(document.getElementById('formForgot').style.display!=='none') doForgot();
 });
 </script>
-</body>
-</html>
