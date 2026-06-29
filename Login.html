@@ -95,14 +95,22 @@ var sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
 
 sb.auth.getSession().then(function(r){
   if(r.data&&r.data.session) checkOnboarding(r.data.session.user);
-});
+}).catch(function(){});
 if(new URLSearchParams(window.location.search).get('signup')==='true') switchTab('register');
 
 function checkOnboarding(user){
-  sb.from('profiles').select('company_name').eq('id',user.id).single().then(function(res){
+  sb.from('profiles').select('company_name').eq('id',user.id).maybeSingle().then(function(res){
     if(res.data&&res.data.company_name) window.location.href='dashboard.html';
     else window.location.href='onboarding.html';
-  });
+  }).catch(function(){ window.location.href='onboarding.html'; });
+}
+
+function errMsg(e){
+  if(!e) return 'Error desconocido.';
+  if(typeof e==='string') return e;
+  if(e.message) return e.message;
+  if(e.msg) return e.msg;
+  try{ return JSON.stringify(e); } catch(x){ return 'Error desconocido.'; }
 }
 function switchTab(tab){
   document.getElementById('formLogin').style.display=tab==='login'?'':'none';
@@ -130,9 +138,7 @@ function doLogin(){
   btn.disabled=true;btn.textContent='Entrando...';
   sb.auth.signInWithPassword({email:email,password:pass}).then(function(r){
     btn.disabled=false;btn.textContent='Entrar';
-    if(r.error){
-      var msg=typeof r.error==='string'?r.error:(r.error.message||r.error.msg||'Email o contraseña incorrectos.');
-      showMsg(msg,'error');return;
+    if(r.error){ showMsg(errMsg(r.error),'error'); return;
     }
     checkOnboarding(r.data.user);
   });
@@ -148,9 +154,7 @@ function doRegister(){
   btn.disabled=true;btn.textContent='Creando cuenta...';
   sb.auth.signUp({email:email,password:pass,options:{data:{full_name:name}}}).then(function(r){
     btn.disabled=false;btn.textContent='Crear cuenta gratis';
-    if(r.error){
-      var msg=typeof r.error==='string'?r.error:(r.error.message||r.error.msg||JSON.stringify(r.error));
-      showMsg(msg,'error');return;
+    if(r.error){ showMsg(errMsg(r.error),'error'); return;
     }
     if(r.data&&r.data.session){
       window.location.href='onboarding.html';
@@ -177,7 +181,7 @@ function doForgot(){
   btn.disabled=true;btn.textContent='Enviando...';
   sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/login.html'}).then(function(r){
     btn.disabled=false;btn.textContent='Enviar enlace';
-    if(r.error){showMsg(r.error.message,'error');return;}
+    if(r.error){showMsg(errMsg(r.error),'error');return;}
     showMsg('Enlace enviado. Revisa tu bandeja de entrada.','success');
   });
 }
