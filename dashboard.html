@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -336,25 +336,25 @@ body{display:flex}
 
   <!-- FACTURAS -->
   <div class="pg" id="pg-invoices">
-    <div class="ph"><div><div class="pt">Facturas</div><div class="ps">Todas tus facturas</div></div><button class="tbtn p" onclick="location.href='builder.html'">+ Nueva factura</button></div>
+    <div class="ph"><div><div class="pt">Facturas</div><div class="ps">Todas tus facturas</div></div><button class="tbtn p" onclick="location.href='builder-factura.html'">+ Nueva factura</button></div>
     <div class="cd"><div id="t-invoices"></div></div>
   </div>
 
   <!-- PRESUPUESTOS -->
   <div class="pg" id="pg-quotes">
-    <div class="ph"><div><div class="pt">Presupuestos</div><div class="ps">Tus propuestas comerciales</div></div><button class="tbtn p" onclick="location.href='builder.html?type=quote'">+ Nuevo presupuesto</button></div>
+    <div class="ph"><div><div class="pt">Presupuestos</div><div class="ps">Tus propuestas comerciales</div></div><button class="tbtn p" onclick="location.href='builder-presupuesto.html'">+ Nuevo presupuesto</button></div>
     <div class="cd"><div id="t-quotes"></div></div>
   </div>
 
   <!-- RECIBOS -->
   <div class="pg" id="pg-receipts">
-    <div class="ph"><div><div class="pt">Recibos</div><div class="ps">Confirmaciones de pago</div></div><button class="tbtn p" onclick="location.href='builder.html?type=receipt'">+ Nuevo recibo</button></div>
+    <div class="ph"><div><div class="pt">Recibos</div><div class="ps">Confirmaciones de pago</div></div><button class="tbtn p" onclick="location.href='builder-recibo.html'">+ Nuevo recibo</button></div>
     <div class="cd"><div id="t-receipts"></div></div>
   </div>
 
   <!-- PROFORMA -->
   <div class="pg" id="pg-proforma">
-    <div class="ph"><div><div class="pt">Proforma</div><div class="ps">Facturas proforma</div></div><button class="tbtn p" onclick="location.href='builder.html?type=proforma'">+ Nueva proforma</button></div>
+    <div class="ph"><div><div class="pt">Proforma</div><div class="ps">Facturas proforma</div></div><button class="tbtn p" onclick="location.href='builder-proforma.html'">+ Nueva proforma</button></div>
     <div class="cd"><div id="t-proforma"></div></div>
   </div>
 
@@ -661,35 +661,42 @@ function filterDocs(type,btn){
   renderTable(filtered,'docs-table');
 }
 
+var BUILDER_MAP={invoice:'builder-factura.html',quote:'builder-presupuesto.html',receipt:'builder-recibo.html',proforma:'builder-proforma.html',custom:'builder-custom.html'};
+
 function renderTable(list,tid){
   var el=document.getElementById(tid);if(!el)return;
   if(!list.length){el.innerHTML='<div class="empty"><h3>Sin documentos</h3><p>Crea tu primer documento para empezar</p><button class="empty-btn" onclick="location.href=\'builder.html\'">Crear documento</button></div>';return;}
   var h='<div class="th"><span>Documento</span><span>Cliente</span><span>Importe</span><span>Fecha</span><span>Estado</span></div>';
   list.forEach(function(d){
     var t=d.type||'invoice',bc,bt;
-    if(t==='receipt'){bc='receipt';bt='Recibo';}
-    else if(t==='proforma'){bc='proforma';bt='Proforma';}
-    else if(t==='quote'){bc='quote';bt='Presupuesto';}
-    else if(d.status==='paid'){bc='paid';bt='Cobrada';}
-    else if(d.status==='sent'){bc='sent';bt='Enviada';}
-    else if(d.status==='draft'){bc='draft';bt='Borrador';}
-    else{bc='unpaid';bt='Pendiente';}
+    var st=d.status||'draft';
+    if(st==='paid'){bc='paid';bt='Cobrado';}
+    else if(st==='sent'){bc='sent';bt='Enviado';}
+    else if(st==='unpaid'){bc='unpaid';bt='Pendiente';}
+    else{bc='draft';bt='Borrador';}
     var date=d.created_at?new Date(d.created_at).toLocaleDateString('es-ES',{day:'numeric',month:'short'}):'—';
-    h+='<div class="tr"><div><div class="d-name">'+(d.doc_number||'—')+'</div><div class="d-sub">'+(d.title||'Sin título')+'</div></div>'
+    h+='<div class="tr" onclick="editDoc(\''+d.id+'\',\''+t+'\')"><div><div class="d-name">'+(d.doc_number||'—')+'</div><div class="d-sub">'+(d.title||'Sin título')+'</div></div>'
       +'<div class="d-client">'+(d.client_name||'—')+'</div>'
       +'<div class="d-amt">€'+(parseFloat(d.total)||0).toFixed(2)+'</div>'
       +'<div class="d-date">'+date+'</div>'
       +'<div style="display:flex;align-items:center;gap:4px">'
-      +'<button class="bg '+bc+'" onclick="event.stopPropagation();cycleStatus(\''+d.id+'\',\''+d.status+'\',\''+t+'\')">'+bt+'</button>'
-      +'<button onclick="event.stopPropagation();delDoc(\''+d.id+'\')" style="background:none;border:none;cursor:pointer;color:var(--ink-4);line-height:0;padding:3px;border-radius:4px" onmouseover="this.style.color=\'var(--red)\'" onmouseout="this.style.color=\'var(--ink-4)\'">'
+      +'<button class="bg '+bc+'" onclick="event.stopPropagation();cycleStatus(\''+d.id+'\',\''+(d.status||'draft')+'\',\''+t+'\')">'+bt+'</button>'
+      +'<button onclick="event.stopPropagation();editDoc(\''+d.id+'\',\''+t+'\')" title="Editar" style="background:none;border:none;cursor:pointer;color:var(--ink-4);line-height:0;padding:3px;border-radius:4px" onmouseover="this.style.color=\'var(--accent)\'" onmouseout="this.style.color=\'var(--ink-4)\'">'
+      +'<svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>'
+      +'</button>'
+      +'<button onclick="event.stopPropagation();delDoc(\''+d.id+'\')" title="Eliminar" style="background:none;border:none;cursor:pointer;color:var(--ink-4);line-height:0;padding:3px;border-radius:4px" onmouseover="this.style.color=\'var(--red)\'" onmouseout="this.style.color=\'var(--ink-4)\'">'
       +'<svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M9 6V4h6v2"/></svg>'
       +'</button></div></div>';
   });
   el.innerHTML=h;
 }
 
+function editDoc(id,type){
+  var file=BUILDER_MAP[type]||'builder-factura.html';
+  window.location.href=file+'?id='+id;
+}
+
 function cycleStatus(id,status,type){
-  if(type==='quote'||type==='receipt'||type==='proforma')return;
   var order=['draft','sent','paid','unpaid'];
   var next=order[(order.indexOf(status)+1)%order.length];
   sb.from('documents').update({status:next,updated_at:new Date().toISOString()}).eq('id',id).eq('user_id',user.id).then(function(){
