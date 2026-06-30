@@ -374,20 +374,22 @@ function checkLimit(){
 }
 
 function printDoc(){
+  var win=window.open('','_blank');
+  if(win){ win.document.write('<html><body style="font-family:sans-serif;padding:40px;color:#666">Generando documento...</body></html>'); }
   checkLimit().then(function(allowed){
-    if(!allowed) return;
-    doPrintDoc();
+    if(!allowed){ if(win) win.close(); return; }
+    doPrintDoc(win);
   });
 }
 
-function doPrintDoc(){
+function doPrintDoc(win){
   saveDoc();
+  if(!win || win.closed){ win=window.open('','_blank'); }
   var lines=getLines();
   var sub=lines.reduce(function(s,l){return s+l.total;},0);
   var tax=parseFloat(get('taxRate'))||0,irpf=parseFloat(get('irpfRate'))||0;
   var iva=sub*tax/100,irpfAmt=sub*irpf/100,total=sub+iva-irpfAmt;
   var ac=document.getElementById('c-accent').value;
-  var win=window.open('','_blank');
   win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;padding:28px;color:#0f1729;font-size:13px}.h{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid '+ac+'}.brand{font-size:1.2rem;font-weight:800;color:'+ac+'}.dtn{font-size:1.5rem;font-weight:800;text-align:right}.dts{font-size:11px;color:#6b7280;text-align:right;margin-top:2px}.parties{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}.lbl{font-size:9px;font-weight:700;color:#9ca3af;text-transform:uppercase;margin-bottom:3px}.pn{font-size:13px;font-weight:700;margin-bottom:2px}.pd{font-size:11px;color:#6b7280;line-height:1.5}table{width:100%;border-collapse:collapse;margin-bottom:14px}th{font-size:9px;font-weight:700;color:#9ca3af;text-align:left;padding:6px 4px;border-bottom:1.5px solid #e5e7eb;text-transform:uppercase}th:not(:first-child){text-align:right}td{padding:8px 4px;border-bottom:1px solid #f8f9fc;font-size:12px;color:#374151}td:not(:first-child){text-align:right}.tots{margin-left:auto;width:190px;margin-bottom:16px}.tr{display:flex;justify-content:space-between;padding:3px 0;font-size:11px;color:#6b7280}.tr.g{border-top:2px solid '+ac+';padding-top:6px;margin-top:3px;font-weight:800;font-size:14px;color:#0f1729}.notes{background:#f8f9fc;border-radius:6px;padding:10px;margin-bottom:12px}.nl{font-size:9px;font-weight:700;color:#9ca3af;text-transform:uppercase;margin-bottom:3px}.nt{font-size:11px;color:#6b7280;line-height:1.5}.ft{margin-top:24px;border-top:1px solid #e5e7eb;padding-top:7px;font-size:10px;color:#9ca3af;text-align:center}@media print{body{padding:0}}</style></head><body>');
   win.document.write('<div class="h"><div class="brand">'+(get('fromName')||'Tu empresa')+'</div><div><div class="dtn">PROFORMA</div><div class="dts">Nº '+(get('docNum')||'—')+'</div><div class="dts">Fecha: '+(get('docDate')||'—')+'</div>'+(get('dueDate')?'<div class="dts">Vence: '+get('dueDate')+'</div>':'')+'</div></div>');
   win.document.write('<div class="parties"><div><div class="lbl">De</div><div class="pn">'+(get('fromName')||'—')+'</div><div class="pd">'+[get('fromNif'),get('fromEmail'),get('fromAddr')].filter(Boolean).join('<br>')||'—'+'</div></div><div><div class="lbl">Para</div><div class="pn">'+(get('toName')||'—')+'</div><div class="pd">'+[get('toNif'),get('toEmail'),get('toAddr')].filter(Boolean).join('<br>')||'—'+'</div></div></div>');
