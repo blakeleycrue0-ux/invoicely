@@ -374,16 +374,18 @@ function checkLimit(){
 }
 
 function printDoc(){
+  var win=window.open('','_blank');
+  if(win){ win.document.write('<html><body style="font-family:sans-serif;padding:40px;color:#666">Generando documento...</body></html>'); }
   checkLimit().then(function(allowed){
-    if(!allowed) return;
-    doPrintDoc();
+    if(!allowed){ if(win) win.close(); return; }
+    doPrintDoc(win);
   });
 }
 
-function doPrintDoc(){
+function doPrintDoc(win){
   saveDoc();
+  if(!win || win.closed){ win=window.open('','_blank'); }
   var pv=document.getElementById('preview').innerHTML;
-  var win=window.open('','_blank');
   win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;600;700&family=Bebas+Neue&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"><style>body{margin:20px;padding:0}@media print{body{margin:0}}</style></head><body>'+pv+'</body></html>');
   win.document.close();setTimeout(function(){win.print();},800);
   toast('PDF generado.','ok');
