@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -107,7 +107,9 @@ body{display:flex}
 .d-date{font-size:0.7rem;color:var(--ink-4)}
 
 /* BADGES */
-.bg{display:inline-flex;padding:2px 7px;border-radius:4px;font-size:0.6rem;font-weight:700;cursor:pointer;border:none;font-family:'Plus Jakarta Sans',sans-serif}
+.bg{display:inline-flex;align-items:center;gap:3px;padding:3px 8px 3px 7px;border-radius:5px;font-size:0.6rem;font-weight:700;cursor:pointer;border:1.5px dashed currentColor;font-family:'Plus Jakarta Sans',sans-serif;transition:all .15s;opacity:0.92}
+.bg:hover{opacity:1;transform:scale(1.04)}
+.bg::after{content:'';width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);margin-left:1px;opacity:0.6}
 .bg.paid{background:var(--green-bg);color:var(--green)}
 .bg.unpaid{background:var(--yellow-bg);color:var(--yellow)}
 .bg.sent{background:var(--blue-bg);color:var(--blue)}
@@ -865,6 +867,48 @@ function saveSettings(){
 // STRIPE
 function subPro(){location.href='https://buy.stripe.com/dRm28r2CG4VS9ce8wJ?prefilled_email='+encodeURIComponent(user.email)+'&client_reference_id='+user.id;}
 function subBiz(){location.href='https://buy.stripe.com/dRm28r2CG4VS9ce8wJ?prefilled_email='+encodeURIComponent(user.email)+'&client_reference_id='+user.id;}
+
+// LOGO UPLOAD - saved to Supabase profiles.logo_url
+function handleLogoUpload(input){
+  var file=input.files[0];if(!file)return;
+  if(file.size>1.5*1024*1024){toast('El logo debe ser menor de 1.5MB.','err');return;}
+  if(!file.type.startsWith('image/')){toast('Sube una imagen válida.','err');return;}
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var b64=e.target.result;
+    sb.from('profiles').update({logo_url:b64}).eq('id',user.id).then(function(r){
+      if(r.error){toast('Error al guardar el logo.','err');return;}
+      if(profile)profile.logo_url=b64;
+      applyLogo(b64);
+      toast('Logo guardado.','ok');
+    });
+  };
+  reader.onerror=function(){toast('Error al leer la imagen.','err');};
+  reader.readAsDataURL(file);
+}
+function removeLogo(){
+  sb.from('profiles').update({logo_url:null}).eq('id',user.id).then(function(r){
+    if(r.error){toast('Error al quitar el logo.','err');return;}
+    if(profile)profile.logo_url=null;
+    applyLogo(null);
+    toast('Logo eliminado.','inf');
+  });
+}
+function applyLogo(url){
+  var ini=(profile&&(profile.full_name||profile.company_name)||'?').charAt(0).toUpperCase();
+  ['sbav','set-av'].forEach(function(id){
+    var e=document.getElementById(id);
+    if(!e)return;
+    if(url){
+      e.innerHTML='<img src="'+url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+    } else {
+      e.innerHTML=ini;
+    }
+  });
+}
+function loadLogo(){
+  if(profile&&profile.logo_url) applyLogo(profile.logo_url);
+}
 
 // TOAST
 function toast(msg,type){var t=document.getElementById('toast');t.textContent=msg;t.className='toast '+(type||'inf');t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2800);}
