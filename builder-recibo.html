@@ -248,17 +248,19 @@ function checkLimit(){
 }
 
 function printDoc(){
+  var win=window.open('','_blank');
+  if(win){ win.document.write('<html><body style="font-family:sans-serif;padding:40px;color:#666">Generando documento...</body></html>'); }
   checkLimit().then(function(allowed){
-    if(!allowed) return;
-    doPrintDoc();
+    if(!allowed){ if(win) win.close(); return; }
+    doPrintDoc(win);
   });
 }
 
-function doPrintDoc(){
+function doPrintDoc(win){
   saveDoc();
+  if(!win || win.closed){ win=window.open('','_blank'); }
   var amt=parseFloat(get('amount'))||0;
   var ac=document.getElementById('c-accent').value;
-  var win=window.open('','_blank');
   win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;padding:28px;color:#0f1729;max-width:600px;margin:0 auto}.rh{text-align:center;margin-bottom:24px;padding-bottom:16px;border-bottom:3px solid '+ac+'}.rh-t{font-size:1.8rem;font-weight:800;margin-bottom:3px}.rh-s{font-size:11px;color:#6b7280}.r-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0}.r-lbl{font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase}.r-val{font-size:13px;font-weight:600;text-align:right}.total-box{background:'+ac+'12;border:2px solid '+ac+';border-radius:8px;padding:16px;text-align:center;margin:16px 0}.total-lbl{font-size:10px;font-weight:700;color:'+ac+';text-transform:uppercase;margin-bottom:4px}.total-amt{font-size:2rem;font-weight:800;color:'+ac+'}.sigs{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;padding-top:14px;border-top:1px solid #e5e7eb}.sig-box{text-align:center}.sig-line{height:1px;background:#e5e7eb;margin-bottom:5px}.sig-lbl{font-size:10px;color:#9ca3af}.ft{text-align:center;font-size:10px;color:#9ca3af;margin-top:16px}@media print{body{padding:0}}</style></head><body>');
   win.document.write('<div class="rh"><div class="rh-t">RECIBO</div><div class="rh-s">Nº '+(get('docNum')||'—')+' · Fecha: '+(get('docDate')||'—')+'</div></div>');
   win.document.write('<div class="r-row"><span class="r-lbl">Recibido por</span><span class="r-val">'+([get('fromName'),get('fromNif')].filter(Boolean).join(' · ')||'—')+'</span></div>');
